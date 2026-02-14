@@ -26,7 +26,7 @@ To keep development simple and efficient, the following technologies are propose
 
 ### Main tables:
 
-1. **users** (id, email, password, role, is_active, created_at, updated_at)
+1. **users** (id, email, password, role, is_active, remember_token, created_at, updated_at)
 2. **students** (id, user_id, first_name, last_name, class, academic_year, created_at, updated_at)
 3. **fees** (id, name, amount, description, academic_year, created_at, updated_at)
 4. **invoices** (id, student_id, fee_id, status, issued_date, due_date, total_amount, amount_paid, balance_due, created_at, updated_at)
@@ -39,6 +39,7 @@ To keep development simple and efficient, the following technologies are propose
 1. **users**
 - `role`: ENUM('super_admin','admin','student') - Defines the user's role for access control.
 - `is_active`: BOOLEAN, default true - Indicates whether the user account is active. Inactive users cannot log in.
+- `remember_token`: VARCHAR(100), nullable – Token for "remember me" functionality.
 
 2. **students**
 - `class`: VARCHAR(255) - The student's class or level (e.g., "L3 Computer Science").
@@ -84,9 +85,9 @@ To keep development simple and efficient, the following technologies are propose
 ### Object Examples:
 
 1. **users**
-- (1, superadmin@univ.edu, password1_hashed, super_admin, 1, 2026-02-01 10:00:00, 2026-02-01 10:00:00)
-- (2, admin1@univ.edu, password2_hashed, admin, 1, 2026-02-01 10:05:00, 2026-02-01 10:05:00)
-- (3, student.ahmed@univ.edu, password3_hashed, student, 1, 2026-02-01 10:10:00, 2026-02-01 10:10:00)
+- (1, superadmin@univ.edu, password1_hashed, super_admin, 1, NULL, 2026-02-01 10:00:00, 2026-02-01 10:00:00)
+- (2, admin1@univ.edu, password2_hashed, admin, 1, NULL, 2026-02-01 10:05:00, 2026-02-01 10:05:00)
+- (3, student.ahmed@univ.edu, password3_hashed, student, 1, NULL, 2026-02-01 10:10:00, 2026-02-01 10:10:00)
 
 2. **students**
 - (1, 3, Ahmed, Benali, L3 Computer Science, 2025-2026, 2026-02-01 10:10:00, 2026-02-01 10:10:00)
