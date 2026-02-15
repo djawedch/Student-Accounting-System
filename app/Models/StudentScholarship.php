@@ -4,23 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\{HasMany, BelongsTo};
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Invoice extends Model
+class StudentScholarship extends Model
 {
     use HasFactory;
 
+    protected $table = 'student_scholarship';
+
     protected $fillable = [
         'student_id',
-        'fee_id',
+        'scholarship_id',
+        'grant_date',
+        'end_date',
         'status',
-        'issued_date',
-        'due_date',
+        'paid_at',
+        'reference',
     ];
 
     protected $casts = [
-        'issued_date' => 'date',
-        'due_date' => 'date',
+        'grant_date' => 'date',
+        'end_date' => 'date',
+        'paid_at' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -30,13 +35,8 @@ class Invoice extends Model
         return $this->belongsTo(Student::class);
     }
 
-    public function fee(): BelongsTo
+    public function scholarship(): BelongsTo
     {
-        return $this->belongsTo(Fee::class);
-    }
-
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payment::class);
+        return $this->belongsTo(Scholarship::class);
     }
 }

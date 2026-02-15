@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('academic_year', 9);
-            $table->year('bacalauriat_year');
+            $table->year('baccalaureate_year');
             $table->enum('study_system', [
                 'LMD',
                 'classic',

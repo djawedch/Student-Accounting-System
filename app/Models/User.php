@@ -2,14 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\{HasMany, BelongsTo, HasOne};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    use HasFactory;
+
     protected $fillable = [
-        'name',
+        'departement_id',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'date_of_birth',
+        'role',
+        'is_active',
+        'remember_token',
     ];
 
     protected $hidden = [
@@ -17,10 +27,25 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
+    protected $casts = [
+        'date_of_birth' => 'date',
+        'is_active' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    public function department(): BelongsTo
     {
-        return [
-            'password' => 'hashed',
-        ];
+        return $this->belongsTo(Department::class);
+    }
+
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class);
     }
 }
