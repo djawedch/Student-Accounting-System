@@ -27,10 +27,10 @@ To keep development simple and efficient, the following technologies are propose
 ### Main tables:
 
 1. **universities** (id, name, city, created_at, updated_at)
-2. **departements** (id, university_id, name, created_at, updated_at)
-3. **users** (id, departement_id, first_name, last_name, email, password, date_of_birth, role, is_active, remember_token, created_at, updated_at)
+2. **departments** (id, university_id, name, created_at, updated_at)
+3. **users** (id, department_id, first_name, last_name, email, password, date_of_birth, role, is_active, remember_token, created_at, updated_at)
 4. **students** (id, user_id, academic_year, bacalauriat_year, study_system, level, created_at, updated_at)
-5. **fees** (id, departement_id, name, amount, academic_year, description, created_at, updated_at)
+5. **fees** (id, department_id, name, amount, academic_year, description, created_at, updated_at)
 6. **invoices** (id, student_id, fee_id, status, issued_date, due_date, created_at, updated_at)
 7. **payments** (id, invoice_id, payment_method, amount, reference, payment_date, created_at, updated_at)
 8. **scholarships** (id, name, description, amount, created_at, updated_at)
@@ -52,7 +52,7 @@ To keep development simple and efficient, the following technologies are propose
 - `level`: VARCHAR(50) - academic level (e.g., "2024", "2025").
 
 3. **fees**
-- `departement_id`: BIGINT — associated department.
+- `department_id`: BIGINT — associated department.
 - `name`: VARCHAR(255) - Fee name (e.g., "Tuition Fee", "Library Fee").
 - `amount`: DECIMAL(10,2) - Fee amount in the local currency (Algerian Dinar).
 - `description`: TEXT, nullable - Optional details about the fee.
@@ -96,9 +96,9 @@ To keep development simple and efficient, the following technologies are propose
 5. fees → invoices [one‑to‑many] (A fee definition can be used in many invoices (one per student))
 6. invoices → payments [one‑to‑many] (An invoice can receive many partial payments.)
 7. auditlogs → users [many‑to‑one] (Each log entry belongs to a user)
-8. departements → users [One-to-many] (A department can have many users: students, admins, etc.)
-9. universities → departements [One-to-many] (A university has many departments)
-10. fees → departements [Many-to-one] (Each fee belongs to a department)
+8. departments → users [one-to-many] (A department can have many users: students, admins, etc.)
+9. universities → departments [one-to-many] (A university has many departments)
+10. fees → departments [many-to-one] (Each fee belongs to a department)
 
 ## 3.5 System Modules
 

@@ -8,19 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('scholarships', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
-            $table->enum('payment_method', ['cash', 'bank_transfer', 'ccp']);
+            $table->string('name');
+            $table->text('description')->nullable();
             $table->decimal('amount', 10, 2);
-            $table->string('reference')->nullable();
-            $table->date('payment_date');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('scholarships');
     }
 };
