@@ -26,13 +26,16 @@ To keep development simple and efficient, the following technologies are propose
 
 ### Main tables:
 
-1. **users** (id, email, password, role, is_active, remember_token, created_at, updated_at)
-2. **students** (id, user_id, first_name, last_name, class, academic_year, created_at, updated_at)
-3. **fees** (id, name, amount, description, academic_year, created_at, updated_at)
-4. **invoices** (id, student_id, fee_id, status, issued_date, due_date, total_amount, amount_paid, balance_due, created_at, updated_at)
-5. **payments** (id, invoice_id, payment_method, amount, reference, payment_date, created_at, updated_at)
-6. **Scholarships** (id, student_id, type, amount, grant_date, end_date, description, status, paid_at, reference, created_at, updated_at)
-7. **AuditLogs** (id, user_id, action, model_type, model_id, ip_address, user_agent, created_at)
+1. **universities** (id, name, city, created_at, updated_at)
+2. **departements** (id, university_id, name, created_at, updated_at)
+3. **users** (id, departement_id, first_name, last_name, email, password, date_of_birth, role, is_active, remember_token, created_at, updated_at)
+4. **students** (id, user_id, academic_year, bacalauriat_year, study_system, level, created_at, updated_at)
+5. **fees** (id, departement_id, name, amount, academic_year, description, created_at, updated_at)
+6. **invoices** (id, student_id, fee_id, status, issued_date, due_date, created_at, updated_at)
+7. **payments** (id, invoice_id, payment_method, amount, reference, payment_date, created_at, updated_at)
+8. **scholarships** (id, name, description, amount, created_at, updated_at)
+9. **student_scholarship** (id, student_id, scholarship_id , grant_date, end_date, status, paid_at, reference, created_at, updated_at)
+10. **audit_logs** (id, user_id, event_type, model_type, model_id, ip_address, user_agent, created_at)
 
 ### Column Clarifications:
 
@@ -44,8 +47,12 @@ To keep development simple and efficient, the following technologies are propose
 2. **students**
 - `class`: VARCHAR(255) - The student's class or level (e.g., "L3 Computer Science").
 - `academic_year`: VARCHAR(9) - Academic year (e.g., "2024-2025").
+- `bacalauriat_year`: YEAR.
+- `study_system`: VARCHAR(50) - (e.g., "LMD", "Classic").
+- `level`: VARCHAR(50) - academic level (e.g., "2024", "2025").
 
 3. **fees**
+- `departement_id`: BIGINT — associated department.
 - `name`: VARCHAR(255) - Fee name (e.g., "Tuition Fee", "Library Fee").
 - `amount`: DECIMAL(10,2) - Fee amount in the local currency (Algerian Dinar).
 - `description`: TEXT, nullable - Optional details about the fee.
@@ -53,11 +60,7 @@ To keep development simple and efficient, the following technologies are propose
 
 4. **invoices**
 - `status`: ENUM('unpaid','partially_paid','paid','overdue') - Current payment status. Updated automatically when payments are recorded.
-- `issued_date`: DATE - Date the invoice was generated.
-- `due_date`: DATE - Deadline for full payment.
-- `total_amount`: DECIMAL(10,2) - Original amount due (from the associated fee).
-- `amount_paid`: DECIMAL(10,2), default 0 - Sum of all payments recorded against this invoice.
-- `balance_due`: DECIMAL(10,2) - Remaining amount to be paid (total_amount – amount_paid).
+- `issued_date` & `due_date`: DATE.
 
 5. **payments**
 - `payment_method`: ENUM('cash','bank_transfer','ccp') - Method used for the payment: cash, bank transfer, or CCP (Algerian postal cheque).
@@ -66,62 +69,36 @@ To keep development simple and efficient, the following technologies are propose
 - `payment_date`: DATE - Date the payment was made (may differ from the date it was recorded).
 
 6. **scholarships**
-- `type`: VARCHAR(255) - Scholarship type (e.g., "Merit", "Study Abroad", "Social Aid").
+- `name`: VARCHAR(255) - Scholarship type (e.g., "Merit", "Study Abroad", "Social Aid").
 - `amount`: DECIMAL(10,2) - Grant amount awarded.
+- `description`: TEXT, nullable - Additional notes (e.g., destination, conditions).
+
+7. **student_scholarship**
 - `grant_date`: DATE - Date the scholarship was awarded.
 - `end_date`: DATE, nullable - Expiration or end date of the scholarship (if applicable).
-- `description`: TEXT, nullable - Additional notes (e.g., destination, conditions).
 - `status`: ENUM('awarded','paid','cancelled'), default 'awarded'- Current state of the grant.
 - `paid_at`: DATE, nullable - Date the money was actually transferred/paid to the student.
 - `reference`: VARCHAR(255), nullable - Cheque number, transaction ID, or other external reference.
 
-7. **auditlogs**
-- `action`: VARCHAR(255) - Description of the action performed (e.g., "created", "updated", "deleted").
+8. **auditlogs**
+- `event_type`: ENUM('create','update','delete').
 - `model_type`: VARCHAR(255) - Full class name of the affected model (e.g., App\Models\Fee).
 - `model_id`: BIGINT - ID of the affected record.
 - `ip_address`: VARCHAR(45), nullable - Client IP address at the time of the action.
 - `user_agent`: TEXT, nullable - Browser/user agent string.
 
-### Object Examples:
-
-1. **users**
-- (1, superadmin@univ.edu, password1_hashed, super_admin, 1, NULL, 2026-02-01 10:00:00, 2026-02-01 10:00:00)
-- (2, admin1@univ.edu, password2_hashed, admin, 1, NULL, 2026-02-01 10:05:00, 2026-02-01 10:05:00)
-- (3, student.ahmed@univ.edu, password3_hashed, student, 1, NULL, 2026-02-01 10:10:00, 2026-02-01 10:10:00)
-
-2. **students**
-- (1, 3, Ahmed, Benali, L3 Computer Science, 2025-2026, 2026-02-01 10:10:00, 2026-02-01 10:10:00)
-
-3. **fees**
-- (1, Registration Fee, 500.00, Annual registration, 2025-2026, 2026-02-01 10:15:00, 2026-02-01 10:15:00)
-- (2, Library Fee, 200.00, Library access and materials, 2025-2026, 2026-02-01 10:16:00, 2026-02-01 10:16:00)
-
-4. **invoices**
-- (1, 1, 1, unpaid, 2026-02-01, 2026-03-01, 500.00, 0.00, 500.00, 2026-02-01 10:20:00, 2026-02-01 10:20:00)
-- (2, 1, 2, paid, 2026-02-01, 2026-03-01, 200.00, 200.00, 0.00, 2026-02-01 10:21:00, 2026-02-02 09:30:00)
-
-5. **payments**
-- (1, 2, cash, 200.00, NULL, 2026-02-02, 2026-02-02 09:30:00, 2026-02-02 09:30:00)
-
-6. **scholarships**
-- (1, 1, Study Abroad, 150000.00, 2026-02-05, 2026-12-31, "Erasmus+ mobility grant", paid, 2026-02-10, "CHQ-12345", 2026-02-05 11:00:00, 2026-02-10 16:00:00)
-- (2, 1, Merit, 200000.00, 2026-02-05, NULL, "Academic excellence award", awarded, NULL, NULL, 2026-02-05 11:05:00, 2026-02-05 11:05:00)
-
-7. **auditlogs**
-- (1, 1, created, App\Models\Fee, 1, 192.168.1.100, "Mozilla/5.0 ...", 2026-02-01 10:15:00)
-- (2, 1, created, App\Models\Invoice, 1, 192.168.1.100, "Mozilla/5.0 ...", 2026-02-01 10:20:00)
-- (3, 2, updated, App\Models\Payment, 1, 192.168.1.101, "Mozilla/5.0 ...", 2026-02-02 09:30:00)
-- (4, 2, created, App\Models\Scholarship, 1, 192.168.1.101, "Mozilla/5.0 ...", 2026-02-05 11:00:00)
-
 ### Relationships:
 
 1. users → students [one‑to‑one] (Each user with role = student has exactly one student profile)
 2. users → auditlogs [one‑to‑many] (A user can have many audit log entries.)
-3. students → invoices [one‑to‑many] (A student can have many invoices (each for a different fee))
-4. students → scholarships [one‑to‑many] (A student can receive many scholarship grants (independent))
+3. students → invoices [one‑to‑many] (A student can have multiple invoices for different fees)
+4. students → student_scholarships → scholarships [many‑to‑many] (A student can receive multiple scholarships; each scholarship can be awarded to multiple students)
 5. fees → invoices [one‑to‑many] (A fee definition can be used in many invoices (one per student))
 6. invoices → payments [one‑to‑many] (An invoice can receive many partial payments.)
 7. auditlogs → users [many‑to‑one] (Each log entry belongs to a user)
+8. departements → users [One-to-many] (A department can have many users: students, admins, etc.)
+9. universities → departements [One-to-many] (A university has many departments)
+10. fees → departements [Many-to-one] (Each fee belongs to a department)
 
 ## 3.5 System Modules
 
