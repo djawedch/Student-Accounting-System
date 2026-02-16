@@ -29,7 +29,7 @@ To keep development simple and efficient, the following technologies are propose
 1. **universities** (id, name, city, created_at, updated_at)
 2. **departments** (id, university_id, name, created_at, updated_at)
 3. **users** (id, department_id, first_name, last_name, email, password, date_of_birth, role, is_active, remember_token, created_at, updated_at)
-4. **students** (id, user_id, academic_year, bacalauriat_year, study_system, level, created_at, updated_at)
+4. **students** (id, user_id, academic_year, baccalaureate_year, study_system, level, created_at, updated_at)
 5. **fees** (id, department_id, name, amount, academic_year, description, created_at, updated_at)
 6. **invoices** (id, student_id, fee_id, status, issued_date, due_date, created_at, updated_at)
 7. **payments** (id, invoice_id, payment_method, amount, reference, payment_date, created_at, updated_at)
@@ -47,7 +47,7 @@ To keep development simple and efficient, the following technologies are propose
 2. **students**
 - `class`: VARCHAR(255) - The student's class or level (e.g., "L3 Computer Science").
 - `academic_year`: VARCHAR(9) - Academic year (e.g., "2024-2025").
-- `bacalauriat_year`: YEAR.
+- `baccalaureate_year`: YEAR.
 - `study_system`: VARCHAR(50) - (e.g., "LMD", "Classic").
 - `level`: VARCHAR(50) - academic level (e.g., "2024", "2025").
 
