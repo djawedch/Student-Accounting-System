@@ -1,0 +1,21 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\University;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class UniversityFactory extends Factory
+{
+    protected $model = University::class;
+
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->company() . ' University',
+            'city' => $this->faker->city(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+    }
+}

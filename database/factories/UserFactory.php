@@ -2,43 +2,55 @@
 
 namespace Database\Factories;
 
+use App\Models\{Department, User};
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = User::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'department_id' => Department::factory(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'password' => Hash::make('password'),
+            'date_of_birth' => $this->faker->date('Y-m-d', '2008-01-01'),
+            'role' => $this->faker->randomElement(['super_admin', 'university_admin', 'department_admin', 'staff_admin', 'student']),
+            'is_active' => true,
             'remember_token' => Str::random(10),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    // State for specific roles
+    public function superAdmin()
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->state(['role' => 'super_admin']);
+    }
+
+    public function universityAdmin()
+    {
+        return $this->state(['role' => 'university_admin']);
+    }
+
+    public function departmentAdmin()
+    {
+        return $this->state(['role' => 'department_admin']);
+    }
+
+    public function staffAdmin()
+    {
+        return $this->state(['role' => 'staff_admin']);
+    }
+
+    public function student()
+    {
+        return $this->state(['role' => 'student']);
     }
 }
