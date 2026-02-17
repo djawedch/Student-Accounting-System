@@ -14,7 +14,9 @@ return new class extends Migration {
             $table->year('baccalaureate_year');
             $table->enum('study_system', [
                 'LMD',
-                'classic',
+                '3 years classic',
+                '4 years classic',
+                '5 years classic',
                 '6 years classic',
                 '7 years classic'
             ]);
