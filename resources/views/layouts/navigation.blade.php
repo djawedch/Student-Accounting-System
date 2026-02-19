@@ -9,6 +9,12 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+
+                @if(auth()->user() && in_array(auth()->user()->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']))
+                    <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                        {{ __('System Users') }}
+                    </x-nav-link>
+                @endif
             </div>
 
             <!-- Settings Dropdown -->

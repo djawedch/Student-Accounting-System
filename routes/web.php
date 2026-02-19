@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\{UniversityController, DepartmentController};
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -31,6 +32,14 @@ Route::middleware(['auth', 'role:super_admin, university_admin'])->prefix('depar
     Route::delete('/{department}', 'destroy')->name('departments.destroy');
 });
 
-Route::resource('departments', DepartmentController::class)->middleware(['auth', 'role:super_admin,university_admin']);
+Route::middleware(['auth', 'role:super_admin,university_admin'])->prefix('admin/users')->controller(UserController::class)->group(function () {
+    Route::get('/', 'index')->name('admin.users.index');
+    Route::get('/create', 'create')->name('admin.users.create');
+    Route::post('/', 'store')->name('admin.users.store');
+    Route::get('/{user}', 'show')->name('admin.users.show');
+    Route::get('/{user}/edit', 'edit')->name('admin.users.edit');
+    Route::patch('/{user}', 'update')->name('admin.users.update');
+    Route::patch('/users/{user}/toggle-status', 'toggleStatus')->name('admin.users.toggle-status');
+});
 
 require __DIR__ . '/auth.php';
