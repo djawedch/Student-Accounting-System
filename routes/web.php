@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\{UniversityController, DepartmentController};
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,7 +40,17 @@ Route::middleware(['auth', 'role:super_admin,university_admin'])->prefix('admin/
     Route::get('/{user}', 'show')->name('admin.users.show');
     Route::get('/{user}/edit', 'edit')->name('admin.users.edit');
     Route::patch('/{user}', 'update')->name('admin.users.update');
-    Route::patch('/users/{user}/toggle-status', 'toggleStatus')->name('admin.users.toggle-status');
+    Route::patch('/{user}/toggle-status', 'toggleStatus')->name('admin.users.toggle-status');
+});
+
+Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin/students')->controller(StudentController::class)->group(function () {
+    Route::get('/', 'index')->name('admin.students.index');
+    Route::get('/create', 'create')->name('admin.students.create');
+    Route::post('/', 'store')->name('admin.students.store');
+    Route::get('/{student}', 'show')->name('admin.students.show');
+    Route::get('/{student}/edit', 'edit')->name('admin.students.edit');
+    Route::patch('/{student}', 'update')->name('admin.students.update');
+    Route::patch('/{student}/toggle-status', 'toggleStatus')->name('admin.students.toggle-status');
 });
 
 require __DIR__ . '/auth.php';

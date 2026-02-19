@@ -8,13 +8,23 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                </div>
 
-                @if(auth()->user() && in_array(auth()->user()->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']))
+                    <x-nav-link :href="route('universities.index')" :active="request()->routeIs('universities.*')">
+                        {{ __('Universities') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('departments.index')" :active="request()->routeIs('departments.*')">
+                        {{ __('Departments') }}
+                    </x-nav-link>
+
                     <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                         {{ __('System Users') }}
                     </x-nav-link>
-                @endif
+
+                    <x-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.students.*')">
+                        {{ __('Students') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->

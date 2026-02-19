@@ -14,25 +14,14 @@ return new class extends Migration {
             $table->year('baccalaureate_year');
             $table->enum('study_system', [
                 'LMD',
-                '3 years classic',
-                '4 years classic',
-                '5 years classic',
-                '6 years classic',
-                '7 years classic'
+                'Classic'
             ]);
             $table->enum('level', [
                 'L1',
                 'L2',
                 'L3',
                 'M1',
-                'M2',
-                'first year',
-                'second year',
-                'third year',
-                'fourth year',
-                'fifth year',
-                'sixth year',
-                'seventh year'
+                'M2'
             ]);
             $table->timestamps();
         });

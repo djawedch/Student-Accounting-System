@@ -42,6 +42,32 @@
                             </div>
                         </div>
                     </a>
+
+                    {{-- System Users Card (non‑student) --}}
+                    <a href="{{ route('admin.users.index') }}"
+                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                        <div class="p-6 border-l-4 border-purple-600">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">System Users</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Manage admins, staff, and other roles</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    {{-- Students Card --}}
+                    <a href="{{ route('admin.students.index') }}"
+                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                        <div class="p-6 border-l-4 border-orange-600">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Students</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Manage student profiles and academic info</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             @endif
         </div>
