@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('department_id')->constrained('departments')->cascadeOnDelete();
+            $table->foreignId('department_id')->constrained()->cascadeOnDelete();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
@@ -18,8 +18,6 @@ return new class extends Migration
             $table->date('date_of_birth');
             $table->enum('role', ['super_admin', 'university_admin', 'department_admin', 'staff_admin', 'student']);
             $table->boolean('is_active')->default(true);
-            $table->rememberToken();
-
             $table->timestamps();
         });
     }

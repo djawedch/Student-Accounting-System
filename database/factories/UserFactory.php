@@ -22,7 +22,6 @@ class UserFactory extends Factory
             'date_of_birth' => $this->faker->date('Y-m-d', '2008-01-01'),
             'role' => $this->faker->randomElement(['super_admin', 'university_admin', 'department_admin', 'staff_admin', 'student']),
             'is_active' => true,
-            'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
         ];

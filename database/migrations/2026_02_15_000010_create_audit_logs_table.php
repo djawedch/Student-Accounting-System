@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->enum('event_type', ['create','update','delete']);
             $table->string('model_type');
             $table->unsignedBigInteger('model_id');

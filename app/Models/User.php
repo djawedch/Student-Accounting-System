@@ -19,12 +19,10 @@ class User extends Authenticatable
         'date_of_birth',
         'role',
         'is_active',
-        'remember_token',
     ];
 
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     protected $casts = [

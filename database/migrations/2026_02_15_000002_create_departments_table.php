@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('university_id')->constrained('universities')->onDelete('cascade');
+            $table->foreignId('university_id')->constrained()->onDelete('restrict');
             $table->string('name');
             $table->timestamps();
         });

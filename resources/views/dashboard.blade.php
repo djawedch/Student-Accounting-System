@@ -7,11 +7,43 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            {{-- Welcome message --}}
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
                     {{ __("You're logged in!") }}
                 </div>
             </div>
+
+            {{-- Quick access cards (visible only to admin/super_admin) --}}
+            @if(auth()->user() && in_array(auth()->user()->role, ['super_admin', 'university_admin']))
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {{-- Universities Card --}}
+                    <a href="{{ route('universities.index') }}"
+                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                        <div class="p-6 border-l-4 border-indigo-600">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Universities</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Manage universities and their details</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    {{-- Departments Card --}}
+                    <a href="{{ route('departments.index') }}"
+                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                        <div class="p-6 border-l-4 border-green-600">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Departments</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Manage departments within universities</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>
