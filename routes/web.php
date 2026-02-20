@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\{UniversityController, DepartmentController};
-use App\Http\Controllers\Admin\{UserController, StudentController, FeeController, InvoiceController};
+use App\Http\Controllers\Admin\{UserController, StudentController, FeeController, InvoiceController, PaymentController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -54,7 +54,8 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
 
 Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('fees', FeeController::class);
-    Route::resource('invoices', InvoiceController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);    
+    Route::resource('invoices', InvoiceController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
+    Route::resource('payments', PaymentController::class);
 });
 
 require __DIR__ . '/auth.php';

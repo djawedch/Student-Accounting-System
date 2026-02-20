@@ -32,6 +32,10 @@
                     <x-nav-link :href="route('admin.invoices.index')" :active="request()->routeIs('admin.invoices.*')">
                         {{ __('Invoices') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('admin.payments.index')" :active="request()->routeIs('admin.payments.*')">
+                        {{ __('Payments') }}
+                    </x-nav-link>
                 </div>
             </div>
 

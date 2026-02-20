@@ -94,6 +94,19 @@
                             </div>
                         </div>
                     </a>
+
+                    {{-- Payments Card --}}
+                    <a href="{{ route('admin.payments.index') }}"
+                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                        <div class="p-6 border-l-4 border-pink-600">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Payments</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Record and manage payments</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             @endif
         </div>
