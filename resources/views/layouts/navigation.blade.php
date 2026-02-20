@@ -24,6 +24,14 @@
                     <x-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.students.*')">
                         {{ __('Students') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('admin.fees.index')" :active="request()->routeIs('admin.fees.*')">
+                        {{ __('Fees') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('admin.invoices.index')" :active="request()->routeIs('admin.invoices.*')">
+                        {{ __('Invoices') }}
+                    </x-nav-link>
                 </div>
             </div>
 

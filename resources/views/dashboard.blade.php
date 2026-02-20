@@ -68,6 +68,32 @@
                             </div>
                         </div>
                     </a>
+
+                    {{-- Fees Card --}}
+                    <a href="{{ route('admin.fees.index') }}"
+                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                        <div class="p-6 border-l-4 border-amber-600">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Fees</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Manage fee structures by department</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    {{-- Invoices Card --}}
+                    <a href="{{ route('admin.invoices.index') }}"
+                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                        <div class="p-6 border-l-4 border-teal-600">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Invoices</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Generate and manage student invoices</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             @endif
         </div>

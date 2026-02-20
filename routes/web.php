@@ -1,8 +1,7 @@
 <?php
 
 use App\Http\Controllers\{UniversityController, DepartmentController};
-use App\Http\Controllers\Admin\StudentController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\{UserController, StudentController, FeeController, InvoiceController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -51,6 +50,11 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
     Route::get('/{student}/edit', 'edit')->name('admin.students.edit');
     Route::patch('/{student}', 'update')->name('admin.students.update');
     Route::patch('/{student}/toggle-status', 'toggleStatus')->name('admin.students.toggle-status');
+});
+
+Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('fees', FeeController::class);
+    Route::resource('invoices', InvoiceController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);    
 });
 
 require __DIR__ . '/auth.php';

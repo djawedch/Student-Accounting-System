@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->foreignId('fee_id')->constrained()->onDelete('restrict');
+            $table->foreignId('fee_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['unpaid', 'partially_paid', 'paid', 'overdue'])->default('unpaid');
             $table->date('issued_date');
             $table->date('due_date');

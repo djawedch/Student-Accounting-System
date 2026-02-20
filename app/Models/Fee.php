@@ -11,7 +11,7 @@ class Fee extends Model
     use HasFactory;
 
     protected $fillable = [
-        'departement_id',
+        'department_id',
         'name',
         'amount',
         'academic_year',
