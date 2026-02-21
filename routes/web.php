@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\{UniversityController, DepartmentController};
-use App\Http\Controllers\Admin\{UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController};
+use App\Http\Controllers\Admin\{UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController, StudentScholarshipController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -57,6 +57,7 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
     Route::resource('invoices', InvoiceController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
     Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
     Route::resource('scholarships', ScholarshipController::class);
+    Route::resource('student-scholarships', StudentScholarshipController::class);
 });
 
 require __DIR__ . '/auth.php';

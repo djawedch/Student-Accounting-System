@@ -120,6 +120,19 @@
                             </div>
                         </div>
                     </a>
+
+                    {{-- Scholarship Awards Card --}}
+                    <a href="{{ route('admin.student-scholarships.index') }}"
+                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                        <div class="p-6 border-l-4 border-cyan-600">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Scholarship Awards</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Manage student scholarship awards</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             @endif
         </div>

@@ -41,6 +41,11 @@
                         :active="request()->routeIs('admin.scholarships.*')">
                         {{ __('Scholarships') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('admin.student-scholarships.index')"
+                        :active="request()->routeIs('admin.student-scholarships.*')">
+                        {{ __('Scholarship Awards') }}
+                    </x-nav-link>
                 </div>
             </div>
 
