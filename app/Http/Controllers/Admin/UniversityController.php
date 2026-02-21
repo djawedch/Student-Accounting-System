@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\University\{StoreUniversityRequest, UpdateUniversityRequest};
 use App\Models\University;
-use Illuminate\Http\Request;
 
 class UniversityController extends Controller
 {
     public function index()
     {
         $universities = University::withCount('departments')->latest()->paginate(10);
-        
+
         return view('admin.universities.index', compact('universities'));
     }
 
@@ -20,16 +20,11 @@ class UniversityController extends Controller
         return view('admin.universities.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreUniversityRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:universities,name',
-            'city' => 'required|string|max:255',
-        ]);
+        University::create($request->validated());
 
-        University::create($validated);
-
-        return redirect()->route('universities.index')->with('success', 'University created successfully.');
+        return redirect()->route('admin.universities.index')->with('success', 'University created successfully.');
     }
 
     public function show(University $university)
@@ -44,27 +39,22 @@ class UniversityController extends Controller
         return view('admin.universities.edit', compact('university'));
     }
 
-    public function update(Request $request, University $university)
+    public function update(UpdateUniversityRequest $request, University $university)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:universities,name,' . $university->id,
-            'city' => 'required|string|max:255',
-        ]);
+        $university->update($request->validated());
 
-        $university->update($validated);
-
-        return redirect()->route('universities.index')->with('success', 'University updated successfully.');
+        return redirect()->route('admin.universities.index')->with('success', 'University updated successfully.');
     }
 
     public function destroy(University $university)
     {
         if ($university->departments()->count() > 0) {
-            return redirect()->route('universities.index')
+            return redirect()->route('admin.universities.index')
                 ->with('error', 'Cannot delete university because it has associated departments.');
         }
 
         $university->delete();
-        return redirect()->route('universities.index')
+        return redirect()->route('admin.universities.index')
             ->with('success', 'University deleted successfully.');
     }
 }

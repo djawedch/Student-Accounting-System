@@ -14,11 +14,11 @@
                 </div>
             </div>
 
-            {{-- Quick access cards (visible only to admin/super_admin) --}}
-            @if(auth()->user() && in_array(auth()->user()->role, ['super_admin', 'university_admin']))
+            {{-- Quick access cards --}}
+            @if(auth()->user() && in_array(auth()->user()->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']))
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- Universities Card --}}
-                    <a href="{{ route('universities.index') }}"
+                    <a href="{{ route('admin.universities.index') }}"
                         class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
                         <div class="p-6 border-l-4 border-indigo-600">
                             <div class="flex items-center">

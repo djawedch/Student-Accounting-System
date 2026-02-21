@@ -8,11 +8,9 @@
 
     <title>{{ config('app.name', 'Laravel') }} - University Fee Management</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Styles / Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -28,20 +26,15 @@
                         </a>
                     </div>
                     <div class="flex items-center space-x-4">
-                        @if (Route::has('login'))
-                            @auth
-                                <a href="{{ url('/dashboard') }}"
-                                    class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
-                            @else
-                                <a href="{{ route('login') }}"
-                                    class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Log
-                                    in</a>
-                                @if (Route::has('register'))
-                                    <a href="{{ route('register') }}"
-                                        class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Register</a>
-                                @endif
-                            @endauth
-                        @endif
+                        @auth
+                            <a href="{{ url('/dashboard') }}"
+                                class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        @else
+                            <a href="{{ route('login') }}"
+                                class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Login</a>
+                            <a href="{{ route('register') }}"
+                                class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Register</a>
+                        @endauth
                     </div>
                 </div>
             </div>

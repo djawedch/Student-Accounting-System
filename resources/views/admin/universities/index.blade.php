@@ -5,7 +5,7 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">Universities</h2>
-                        <a href="{{ route('universities.create') }}"
+                        <a href="{{ route('admin.universities.create') }}"
                             class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Add University</a>
                     </div>
 
@@ -41,11 +41,11 @@
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $university->city }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $university->departments_count }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('universities.show', $university) }}"
+                                        <a href="{{ route('admin.universities.show', $university) }}"
                                             class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                        <a href="{{ route('universities.edit', $university) }}"
+                                        <a href="{{ route('admin.universities.edit', $university) }}"
                                             class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                        <form action="{{ route('universities.destroy', $university) }}" method="POST"
+                                        <form action="{{ route('admin.universities.destroy', $university) }}" method="POST"
                                             class="inline">
                                             @csrf
                                             @method('DELETE')

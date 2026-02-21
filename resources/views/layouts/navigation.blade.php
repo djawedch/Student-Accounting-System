@@ -9,7 +9,7 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('universities.index')" :active="request()->routeIs('universities.*')">
+                    <x-nav-link :href="route('admin.universities.index')" :active="request()->routeIs('admin.universities.*')">
                         {{ __('Universities') }}
                     </x-nav-link>
 
