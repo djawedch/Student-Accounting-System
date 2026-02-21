@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\{UniversityController, DepartmentController};
-use App\Http\Controllers\Admin\{UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController, StudentScholarshipController};
+use App\Http\Controllers\Admin\{UniversityController, DepartmentController, UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController, StudentScholarshipController};
+use App\Models\Department;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\{University, Department};
 use Illuminate\Http\Request;
 
@@ -11,14 +12,14 @@ class DepartmentController extends Controller
     {
         $departments = Department::with('university')->latest()->paginate(10);
 
-        return view('departments.index', compact('departments'));
+        return view('admin.departments.index', compact('departments'));
     }
 
     public function create()
     {
         $universities = University::orderBy('name')->get();
 
-        return view('departments.create', compact('universities'));
+        return view('admin.departments.create', compact('universities'));
     }
 
     public function store(Request $request)
@@ -38,14 +39,14 @@ class DepartmentController extends Controller
     {
         $department->load('university', 'users', 'fees');
 
-        return view('departments.show', compact('department'));
+        return view('admin.departments.show', compact('department'));
     }
 
     public function edit(Department $department)
     {
         $universities = University::orderBy('name')->get();
 
-        return view('departments.edit', compact('department', 'universities'));
+        return view('admin.departments.edit', compact('department', 'universities'));
     }
 
     public function update(Request $request, Department $department)

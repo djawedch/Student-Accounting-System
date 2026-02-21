@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\University;
 use Illuminate\Http\Request;
 
@@ -11,12 +12,12 @@ class UniversityController extends Controller
     {
         $universities = University::withCount('departments')->latest()->paginate(10);
         
-        return view('universities.index', compact('universities'));
+        return view('admin.universities.index', compact('universities'));
     }
 
     public function create()
     {
-        return view('universities.create');
+        return view('admin.universities.create');
     }
 
     public function store(Request $request)
@@ -35,12 +36,12 @@ class UniversityController extends Controller
     {
         $university->load('departments');
 
-        return view('universities.show', compact('university'));
+        return view('admin.universities.show', compact('university'));
     }
 
     public function edit(University $university)
     {
-        return view('universities.edit', compact('university'));
+        return view('admin.universities.edit', compact('university'));
     }
 
     public function update(Request $request, University $university)
