@@ -11,16 +11,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth')->name('dashboard');
 
-Route::middleware(['auth', 'role:super_admin,university_admin'])->prefix('admin/departments')->controller(DepartmentController::class)->group(function () {
-    Route::get('/', 'index')->name('departments.index');
-    Route::get('/create', 'create')->name('departments.create');
-    Route::post('/', 'store')->name('departments.store');
-    Route::get('/{department}', 'show')->name('departments.show');
-    Route::get('/{department}/edit', 'edit')->name('departments.edit');
-    Route::patch('/{department}', 'update')->name('departments.update');
-    Route::delete('/{department}', 'destroy')->name('departments.destroy');
-});
-
 Route::middleware(['auth', 'role:super_admin,university_admin'])->prefix('admin/users')->controller(UserController::class)->group(function () {
     Route::get('/', 'index')->name('admin.users.index');
     Route::get('/create', 'create')->name('admin.users.create');
@@ -43,6 +33,7 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
 
 Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('universities', UniversityController::class);
+    Route::resource('departments', DepartmentController::class);
     Route::resource('fees', FeeController::class);
     Route::resource('invoices', InvoiceController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
     Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);

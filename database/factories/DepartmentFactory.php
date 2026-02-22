@@ -9,18 +9,11 @@ class DepartmentFactory extends Factory
 {
     protected $model = Department::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
-            'university_id' => University::factory(),
-            'name' => $this->faker->randomElement([
-                'Computer Science',
-                'Mathematics',
-                'Physics',
-                'Chemistry',
-                'Biology',
-                'Economics'
-            ]) . ' Department',
+            'university_id' => University::inRandomOrder()->first()?->id ?? University::factory(),
+            'name' => $this->faker->unique()->word() . ' Department',
             'created_at' => now(),
             'updated_at' => now(),
         ];

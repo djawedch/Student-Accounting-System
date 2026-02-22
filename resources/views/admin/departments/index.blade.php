@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Departments</h2>
-                        <a href="{{ route('departments.create') }}"
+                        <a href="{{ route('admin.departments.create') }}"
                             class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
                             Add Department
                         </a>
@@ -57,11 +57,11 @@
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $department->created_at->format('M d, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="{{ route('departments.show', $department) }}"
+                                        <a href="{{ route('admin.departments.show', $department) }}"
                                             class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                        <a href="{{ route('departments.edit', $department) }}"
+                                        <a href="{{ route('admin.departments.edit', $department) }}"
                                             class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                        <form action="{{ route('departments.destroy', $department) }}" method="POST"
+                                        <form action="{{ route('admin.departments.destroy', $department) }}" method="POST"
                                             class="inline">
                                             @csrf
                                             @method('DELETE')

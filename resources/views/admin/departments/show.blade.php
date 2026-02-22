@@ -12,11 +12,11 @@
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">Department Information</h2>
                         <div>
-                            <a href="{{ route('departments.edit', $department) }}"
+                            <a href="{{ route('admin.departments.edit', $department) }}"
                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
                                 Edit
                             </a>
-                            <a href="{{ route('departments.index') }}"
+                            <a href="{{ route('admin.departments.index') }}"
                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
                                 Back to List
                             </a>
@@ -37,7 +37,7 @@
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">University</dt>
                                 <dd class="mt-1 text-lg text-gray-900">
-                                    <a href="{{ route('universities.show', $department->university) }}" class="text-indigo-600 hover:underline">
+                                    <a href="{{ route('admin.universities.show', $department->university) }}" class="text-indigo-600 hover:underline">
                                         {{ $department->university->name }}
                                     </a>
                                     ({{ $department->university->city }})

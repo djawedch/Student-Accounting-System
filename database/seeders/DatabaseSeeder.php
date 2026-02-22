@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             PaymentSeeder::class,
             ScholarshipSeeder::class,
             StudentScholarshipSeeder::class,
-            AuditLogSeeder::class,
         ]);
     }
 }

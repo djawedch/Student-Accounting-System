@@ -13,7 +13,7 @@
                         {{ __('Universities') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('departments.index')" :active="request()->routeIs('departments.*')">
+                    <x-nav-link :href="route('admin.departments.index')" :active="request()->routeIs('admin.departments.*')">
                         {{ __('Departments') }}
                     </x-nav-link>
 

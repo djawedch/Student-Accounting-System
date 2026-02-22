@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('university_id')->constrained()->onDelete('restrict');
             $table->string('name');
+            $table->unique(['name', 'university_id']);
             $table->timestamps();
         });
     }

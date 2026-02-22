@@ -12,8 +12,8 @@ class UniversityFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->company() . ' University',
-            'city' => $this->faker->city(),
+            'name' => fake()->unique()->company() . ' University',
+            'city' => fake()->city(),
             'created_at' => now(),
             'updated_at' => now(),
         ];

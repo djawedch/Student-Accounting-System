@@ -11,18 +11,7 @@
                 <div class="p-6 text-gray-900">
                     <h2 class="text-2xl font-semibold mb-4">Create Department</h2>
 
-                    {{-- Display validation errors --}}
-                    @if ($errors->any())
-                        <div class="mb-4">
-                            <ul class="list-disc list-inside text-sm text-red-600">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <form method="POST" action="{{ route('departments.store') }}">
+                    <form method="POST" action="{{ route('admin.departments.store') }}">
                         @csrf
 
                         {{-- University Dropdown --}}
@@ -57,7 +46,7 @@
 
                         {{-- Buttons --}}
                         <div class="flex items-center justify-end">
-                            <a href="{{ route('departments.index') }}"
+                            <a href="{{ route('admin.departments.index') }}"
                                 class="px-4 py-2 bg-gray-300 rounded-md mr-2 hover:bg-gray-400">
                                 Cancel
                             </a>

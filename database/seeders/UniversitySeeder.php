@@ -9,6 +9,6 @@ class UniversitySeeder extends Seeder
 {
     public function run()
     {
-        University::factory(5)->create();
+        University::factory(3)->create();
     }
 }

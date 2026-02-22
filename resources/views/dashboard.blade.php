@@ -31,7 +31,7 @@
                     </a>
 
                     {{-- Departments Card --}}
-                    <a href="{{ route('departments.index') }}"
+                    <a href="{{ route('admin.departments.index') }}"
                         class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
                         <div class="p-6 border-l-4 border-green-600">
                             <div class="flex items-center">

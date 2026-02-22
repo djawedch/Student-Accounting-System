@@ -15,7 +15,7 @@ class InvoiceFactory extends Factory
         $due = (clone $issued)->modify('+30 days');
 
         return [
-            'student_id' => Student::factory(),
+            'student_id' => Student::inRandomOrder()->first()?->id ?? Student::factory(),
             'fee_id' => Fee::factory(),
             'status' => $this->faker->randomElement(['unpaid', 'partially_paid', 'paid', 'overdue']),
             'issued_date' => $issued,

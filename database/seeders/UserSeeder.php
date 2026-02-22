@@ -16,15 +16,16 @@ class UserSeeder extends Seeder
 
         User::factory(3)->universityAdmin()->create();
 
-        Department::all()->each(function ($department) {
+        Department::all()->each(function ($department) 
+        {
             User::factory()->departmentAdmin()->create([
                 'department_id' => $department->id,
                 'email' => 'admin.' . $department->id . '@example.com',
             ]);
+
+            User::factory(2)->staffAdmin()->create();
+
+            User::factory(10)->student()->create();
         });
-
-        User::factory(5)->staffAdmin()->create();
-
-        User::factory(50)->student()->create();
     }
 }

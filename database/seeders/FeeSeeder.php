@@ -10,7 +10,7 @@ class FeeSeeder extends Seeder
     public function run()
     {
         Department::all()->each(function ($department) {
-            Fee::factory(rand(3, 6))->create([
+            Fee::factory(3)->create([
                 'department_id' => $department->id,
             ]);
         });
