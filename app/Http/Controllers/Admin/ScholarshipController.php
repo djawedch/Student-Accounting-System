@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Scholarship\{StoreScholarshipRequest, UpdateScholarshipRequest};
 use App\Models\Scholarship;
-use Illuminate\Http\Request;
 
 class ScholarshipController extends Controller
 {
@@ -20,13 +20,9 @@ class ScholarshipController extends Controller
         return view('admin.scholarships.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreScholarshipRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'amount' => 'required|numeric|min:0',
-            'description' => 'nullable|string',
-        ]);
+        $request->validated();
 
         Scholarship::create($request->only(['name', 'amount', 'description']));
 
@@ -46,17 +42,9 @@ class ScholarshipController extends Controller
         return view('admin.scholarships.edit', compact('scholarship'));
     }
 
-    public function update(Request $request, Scholarship $scholarship)
+    public function update(UpdateScholarshipRequest $request, Scholarship $scholarship)
     {
-        $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-            'amount' => 'required|numeric|min:0',
-            'description' => 'nullable|string',
-        ]);
+        $request->validated();
 
         $scholarship->update($request->only(['name', 'amount', 'description']));
 
