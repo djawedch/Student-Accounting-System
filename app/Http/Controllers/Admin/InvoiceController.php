@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Fee;
-use App\Models\Invoice;
-use App\Models\Student;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\Invoice\{StoreInvoiceRequest, UpdateInvoiceRequest};
+use App\Models\{Student, Fee, Invoice};
 use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
@@ -26,16 +24,9 @@ class InvoiceController extends Controller
         return view('admin.invoices.create', compact('students', 'fees'));
     }
 
-    public function store(Request $request)
+    public function store(StoreInvoiceRequest $request)
     {
-        $request->validate([
-            'student_ids' => 'required|array|min:1',
-            'student_ids.*' => 'exists:students,id',
-            'fee_ids' => 'required|array|min:1',
-            'fee_ids.*' => 'exists:fees,id',
-            'issued_date' => 'required|date',
-            'due_date' => 'required|date|after_or_equal:issued_date',
-        ]);
+        $request->validated();
 
         $studentIds = $request->student_ids;
         $feeIds = $request->fee_ids;
@@ -57,7 +48,7 @@ class InvoiceController extends Controller
                         continue;
                     }
 
-                    $invoice = Invoice::create([
+                    Invoice::create([
                         'student_id' => $studentId,
                         'fee_id' => $feeId,
                         'status' => $status,
@@ -100,15 +91,11 @@ class InvoiceController extends Controller
         return view('admin.invoices.edit', compact('invoice'));
     }
 
-    public function update(Request $request, Invoice $invoice)
+    public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
-        $request->validate([
-            'status' => 'required|in:unpaid,partially_paid,paid,overdue',
-            'issued_date' => 'required|date',
-            'due_date' => 'required|date|after_or_equal:issued_date',
-        ]);
+        $request->validated();
 
-        $oldData = $invoice->only(['status', 'issued_date', 'due_date']);
+        $invoice->only(['status', 'issued_date', 'due_date']);
 
         $invoice->update($request->only(['status', 'issued_date', 'due_date']));
 
