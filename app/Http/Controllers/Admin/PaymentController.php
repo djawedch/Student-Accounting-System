@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Invoice;
-use App\Models\Payment;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\Payment\{StorePaymentRequest, UpdatePaymentRequest};
+use App\Models\{Invoice, Payment};
 use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
@@ -28,15 +27,9 @@ class PaymentController extends Controller
         return view('admin.payments.create', compact('invoices'));
     }
 
-    public function store(Request $request)
+    public function store(StorePaymentRequest $request)
     {
-        $request->validate([
-            'invoice_id' => 'required|exists:invoices,id',
-            'amount' => 'required|numeric|min:0.01',
-            'payment_method' => 'required|in:cash,bank_transfer,ccp',
-            'reference' => 'nullable|string|max:255',
-            'payment_date' => 'required|date',
-        ]);
+        $request->validated();
 
         DB::beginTransaction();
 
@@ -87,14 +80,9 @@ class PaymentController extends Controller
         return view('admin.payments.edit', compact('payment'));
     }
 
-    public function update(Request $request, Payment $payment)
+    public function update(UpdatePaymentRequest $request, Payment $payment)
     {
-        $request->validate([
-            'amount' => 'required|numeric|min:0.01',
-            'payment_method' => 'required|in:cash,bank_transfer,ccp',
-            'reference' => 'nullable|string|max:255',
-            'payment_date' => 'required|date',
-        ]);
+        $request->validated();
 
         DB::beginTransaction();
 
@@ -128,10 +116,5 @@ class PaymentController extends Controller
             return back()->with('error', 'Failed to update payment: ' . $e->getMessage())
                 ->withInput();
         }
-    }
-
-    public function destroy(Payment $payment)
-    {
-        //
     }
 }
