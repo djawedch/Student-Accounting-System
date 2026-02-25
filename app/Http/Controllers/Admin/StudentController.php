@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Student\{StoreStudentRequest, UpdateStudentRequest};
 use App\Models\{Department, Student, User};
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\{DB, Hash};
 
 class StudentController extends Controller
 {
@@ -28,21 +26,9 @@ class StudentController extends Controller
         return view('admin.students.create', compact('departments'));
     }
 
-    public function store(Request $request)
+    public function store(StoreStudentRequest $request)
     {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'date_of_birth' => 'required|date|before:today',
-            'department_id' => 'required|exists:departments,id',
-            'level' => 'required|string|max:50',
-            'academic_year' => 'required|string|max:20',
-            'study_system' => 'required|in:LMD,Classic',
-            'baccalaureate_year' => 'required|integer|min:1900|max:' . date('Y'),
-            'is_active' => 'sometimes|boolean',
-        ]);
+        $validated = $request->validated();
 
         try {
             DB::beginTransaction();
@@ -93,31 +79,13 @@ class StudentController extends Controller
         return view('admin.students.edit', compact('student', 'departments'));
     }
 
-    public function update(Request $request, User $student)
+    public function update(UpdateStudentRequest $request, User $student)
     {
         if ($student->role !== 'student') {
             abort(404, 'Student not found.');
         }
 
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($student->id),
-            ],
-            'password' => 'nullable|string|min:8|confirmed',
-            'date_of_birth' => 'required|date|before:today',
-            'department_id' => 'required|exists:departments,id',
-            'level' => 'required|string|max:50',
-            'academic_year' => 'required|string|max:20',
-            'study_system' => 'required|in:LMD,Classic',
-            'baccalaureate_year' => 'required|integer|min:1900|max:' . date('Y'),
-            'is_active' => 'sometimes|boolean',
-        ]);
+        $validated = $request->validated();
 
         try {
             DB::beginTransaction();

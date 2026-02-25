@@ -61,7 +61,7 @@
                             <dt class="text-sm font-medium text-gray-500">Department</dt>
                             <dd class="mt-1 text-gray-900">
                                 @if($student->department)
-                                    <a href="{{ route('departments.show', $student->department) }}" class="text-indigo-600 hover:underline">
+                                    <a href="{{ route('admin.departments.show', $student->department) }}" class="text-indigo-600 hover:underline">
                                         {{ $student->department->name }}
                                     </a>
                                 @else
@@ -73,7 +73,7 @@
                             <dt class="text-sm font-medium text-gray-500">University</dt>
                             <dd class="mt-1 text-gray-900">
                                 @if($student->department && $student->department->university)
-                                    <a href="{{ route('universities.show', $student->department->university) }}" class="text-indigo-600 hover:underline">
+                                    <a href="{{ route('admin.universities.show', $student->department->university) }}" class="text-indigo-600 hover:underline">
                                         {{ $student->department->university->name }}
                                     </a>
                                 @else
