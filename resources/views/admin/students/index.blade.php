@@ -43,6 +43,9 @@
                                         Department</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        University</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Level</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -71,6 +74,9 @@
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $student->email }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             {{ $student->department->name ?? 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {{ $student->department->university->name ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $student->student->level ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">

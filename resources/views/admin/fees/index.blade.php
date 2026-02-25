@@ -39,6 +39,9 @@
                                         Department</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        University</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Amount</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -57,6 +60,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $fee->id }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $fee->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $fee->department->name ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">{{ $fee->department->university->name ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ number_format($fee->amount, 2) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $fee->academic_year }}</td>
                                         <td class="px-6 py-4 max-w-xs truncate">{{ $fee->description ?? '—' }}</td>

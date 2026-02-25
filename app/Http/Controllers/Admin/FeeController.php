@@ -10,7 +10,7 @@ class FeeController extends Controller
 {
     public function index()
     {
-        $fees = Fee::with('department')->latest()->paginate(10);
+        $fees = Fee::with('department.university')->latest()->paginate(10);
 
         return view('admin.fees.index', compact('fees'));
     }
