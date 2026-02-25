@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Scholarship;
-use App\Models\Student;
-use App\Models\StudentScholarship;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\StudentScholarship\{StoreStudentScholarshipRequest, UpdateStudentScholarshipRequest};
+use App\Models\{Student, Scholarship, StudentScholarship};
 use Illuminate\Support\Facades\DB;
 
 class StudentScholarshipController extends Controller
@@ -26,19 +24,9 @@ class StudentScholarshipController extends Controller
         return view('admin.student-scholarships.create', compact('students', 'scholarships'));
     }
 
-    public function store(Request $request)
+    public function store(StoreStudentScholarshipRequest $request)
     {
-        $request->validate([
-            'student_ids' => 'required|array|min:1',
-            'student_ids.*' => 'exists:students,id',
-            'scholarship_ids' => 'required|array|min:1',
-            'scholarship_ids.*' => 'exists:scholarships,id',
-            'grant_date' => 'required|date',
-            'end_date' => 'nullable|date|after_or_equal:grant_date',
-            'status' => 'required|in:awarded,paid,cancelled',
-            'paid_at' => 'nullable|date',
-            'reference' => 'nullable|string|max:255',
-        ]);
+        $request->validated();
 
         $studentIds = $request->student_ids;
         $scholarshipIds = $request->scholarship_ids;
@@ -90,30 +78,14 @@ class StudentScholarshipController extends Controller
         return view('admin.student-scholarships.edit', compact('studentScholarship', 'students', 'scholarships'));
     }
 
-    public function update(Request $request, StudentScholarship $studentScholarship)
+    public function update(UpdateStudentScholarshipRequest $request, StudentScholarship $studentScholarship)
     {
-        $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'scholarship_id' => 'required|exists:scholarships,id',
-            'grant_date' => 'required|date',
-            'end_date' => 'nullable|date|after_or_equal:grant_date',
-            'status' => 'required|in:awarded,paid,cancelled',
-            'paid_at' => 'nullable|date',
-            'reference' => 'nullable|string|max:255',
-        ]);
+        $request->validated();
 
         $studentScholarship->toArray();
         $studentScholarship->update($request->all());
 
         return redirect()->route('admin.student-scholarships.index')
             ->with('success', 'Scholarship award updated successfully.');
-    }
-
-    public function destroy(StudentScholarship $studentScholarship)
-    {
-        $studentScholarship->delete();
-
-        return redirect()->route('admin.student-scholarships.index')
-            ->with('success', 'Scholarship award deleted successfully.');
     }
 }

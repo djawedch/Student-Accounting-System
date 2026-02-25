@@ -81,13 +81,6 @@
                                                 class="text-blue-600 hover:text-blue-900 mr-3">View</a>
                                             <a href="{{ route('admin.student-scholarships.edit', $award) }}"
                                                 class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                            <form action="{{ route('admin.student-scholarships.destroy', $award) }}"
-                                                method="POST" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900"
-                                                    onclick="return confirm('Are you sure you want to delete this award?')">Delete</button>
-                                            </form>
                                         </td>
                                     </tr>
                                 @empty

@@ -20,7 +20,7 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
     Route::resource('invoices', InvoiceController::class)->except(['destroy']);
     Route::resource('payments', PaymentController::class)->except(['destroy']);
     Route::resource('scholarships', ScholarshipController::class);
-    Route::resource('student-scholarships', StudentScholarshipController::class);
+    Route::resource('student-scholarships', StudentScholarshipController::class)->except(['destroy']);
 });
 
 Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin/')->group(function () {
