@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::where('role', '!=', 'student')->latest()->paginate(10);
+        $users = User::where('role', '!=', 'student')->with('department.university')->latest()->paginate(10);
 
         return view('admin.users.index', compact('users'));
     }
