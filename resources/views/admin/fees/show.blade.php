@@ -36,7 +36,7 @@
                             <dt class="text-sm font-medium text-gray-500">Department</dt>
                             <dd class="mt-1 text-lg text-gray-900">
                                 @if($fee->department)
-                                    <a href="{{ route('departments.show', $fee->department) }}"
+                                    <a href="{{ route('admin.departments.show', $fee->department) }}"
                                         class="text-indigo-600 hover:underline">
                                         {{ $fee->department->name }}
                                     </a>

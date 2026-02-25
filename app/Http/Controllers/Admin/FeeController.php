@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Fee\{StoreFeeRequest, UpdateFeeRequest};
 use App\Models\{Department, Fee};
-use Illuminate\Http\Request;
 
 class FeeController extends Controller
 {
@@ -22,15 +22,9 @@ class FeeController extends Controller
         return view('admin.fees.create', compact('departments'));
     }
 
-    public function store(Request $request)
+    public function store(StoreFeeRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'department_id' => 'required|exists:departments,id',
-            'amount' => 'required|numeric|min:0',
-            'academic_year' => 'required|string|max:20',
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $fee = Fee::create($validated);
 
@@ -52,15 +46,9 @@ class FeeController extends Controller
         return view('admin.fees.edit', compact('fee', 'departments'));
     }
 
-    public function update(Request $request, Fee $fee)
+    public function update(UpdateFeeRequest $request, Fee $fee)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'department_id' => 'required|exists:departments,id',
-            'amount' => 'required|numeric|min:0',
-            'academic_year' => 'required|string|max:20',
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $fee->update($validated);
 
