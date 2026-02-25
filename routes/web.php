@@ -11,13 +11,18 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth')->name('dashboard');
 
-Route::middleware(['auth', 'role:super_admin,university_admin'])->prefix('admin/users')->controller(UserController::class)->group(function () {
-    Route::get('/', 'index')->name('admin.users.index');
-    Route::get('/create', 'create')->name('admin.users.create');
-    Route::post('/', 'store')->name('admin.users.store');
-    Route::get('/{user}', 'show')->name('admin.users.show');
-    Route::get('/{user}/edit', 'edit')->name('admin.users.edit');
-    Route::patch('/{user}', 'update')->name('admin.users.update');
+Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('universities', UniversityController::class);
+    Route::resource('departments', DepartmentController::class);
+    Route::resource('users', UserController::class)->except(['destroy']);
+    Route::resource('fees', FeeController::class);
+    Route::resource('invoices', InvoiceController::class)->except(['destroy']);
+    Route::resource('payments', PaymentController::class)->except(['destroy']);
+    Route::resource('scholarships', ScholarshipController::class);
+    Route::resource('student-scholarships', StudentScholarshipController::class);
+});
+
+Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin/users')->controller(UserController::class)->group(function () {
     Route::patch('/{user}/toggle-status', 'toggleStatus')->name('admin.users.toggle-status');
 });
 
@@ -29,16 +34,6 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
     Route::get('/{student}/edit', 'edit')->name('admin.students.edit');
     Route::patch('/{student}', 'update')->name('admin.students.update');
     Route::patch('/{student}/toggle-status', 'toggleStatus')->name('admin.students.toggle-status');
-});
-
-Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('universities', UniversityController::class);
-    Route::resource('departments', DepartmentController::class);
-    Route::resource('fees', FeeController::class);
-    Route::resource('invoices', InvoiceController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
-    Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show', 'edit', 'update']);
-    Route::resource('scholarships', ScholarshipController::class);
-    Route::resource('student-scholarships', StudentScholarshipController::class);
 });
 
 require __DIR__ . '/auth.php';
