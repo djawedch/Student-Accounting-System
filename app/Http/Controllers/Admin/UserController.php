@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\{StoreUserRequest, UpdateUserRequest};
-use App\Models\{Department, User};
+use App\Models\{AuditLog, Department, User};
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -26,11 +27,19 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $validated = $request->validated();
-
         $validated['password'] = Hash::make($validated['password']);
         $validated['is_active'] = $request->has('is_active') ? true : false;
 
-        User::create($validated);
+        $user = User::create($validated);
+
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'event_type' => 'create',
+            'model_type' => 'User',
+            'model_id'   => $user->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return redirect()->route('admin.users.index')
             ->with('success', 'User created successfully.');
@@ -74,6 +83,15 @@ class UserController extends Controller
 
         $user->update($validated);
 
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'event_type' => 'update',
+            'model_type' => 'User',
+            'model_id'   => $user->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return redirect()->route('admin.users.index')
             ->with('success', 'User updated successfully.');
     }
@@ -82,6 +100,15 @@ class UserController extends Controller
     {
         $user->is_active = !$user->is_active;
         $user->save();
+
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'event_type' => 'update',
+            'model_type' => 'User',
+            'model_id'   => $user->id,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
 
         $status = $user->is_active ? 'activated' : 'deactivated';
         return redirect()->route('admin.users.index')
