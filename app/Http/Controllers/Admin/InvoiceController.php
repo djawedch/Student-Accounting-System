@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoice\{StoreInvoiceRequest, UpdateInvoiceRequest};
-use App\Models\{Student, Fee, Invoice};
+use App\Models\{AuditLog, Student, Fee, Invoice};
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
@@ -48,12 +49,21 @@ class InvoiceController extends Controller
                         continue;
                     }
 
-                    Invoice::create([
+                    $invoice = Invoice::create([
                         'student_id' => $studentId,
                         'fee_id' => $feeId,
                         'status' => $status,
                         'issued_date' => $issuedDate,
                         'due_date' => $dueDate,
+                    ]);
+
+                    AuditLog::create([
+                        'user_id'    => Auth::id(),
+                        'event_type' => 'create',
+                        'model_type' => 'Invoice',
+                        'model_id'   => $invoice->id,
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
                     ]);
 
                     $createdCount++;
@@ -95,9 +105,16 @@ class InvoiceController extends Controller
     {
         $request->validated();
 
-        $invoice->only(['status', 'issued_date', 'due_date']);
-
         $invoice->update($request->only(['status', 'issued_date', 'due_date']));
+
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'event_type' => 'update',
+            'model_type' => 'Invoice',
+            'model_id'   => $invoice->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return redirect()->route('admin.invoices.show', $invoice)
             ->with('success', 'Invoice updated successfully.');
