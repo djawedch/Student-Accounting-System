@@ -8,44 +8,6 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-
-                    <x-nav-link :href="route('admin.universities.index')" :active="request()->routeIs('admin.universities.*')">
-                        {{ __('Universities') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('admin.departments.index')" :active="request()->routeIs('admin.departments.*')">
-                        {{ __('Departments') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
-                        {{ __('System Users') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('admin.students.index')" :active="request()->routeIs('admin.students.*')">
-                        {{ __('Students') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('admin.fees.index')" :active="request()->routeIs('admin.fees.*')">
-                        {{ __('Fees') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('admin.invoices.index')" :active="request()->routeIs('admin.invoices.*')">
-                        {{ __('Invoices') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('admin.payments.index')" :active="request()->routeIs('admin.payments.*')">
-                        {{ __('Payments') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('admin.scholarships.index')"
-                        :active="request()->routeIs('admin.scholarships.*')">
-                        {{ __('Scholarships') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('admin.student-scholarships.index')"
-                        :active="request()->routeIs('admin.student-scholarships.*')">
-                        {{ __('Scholarship Awards') }}
-                    </x-nav-link>
                 </div>
             </div>
 

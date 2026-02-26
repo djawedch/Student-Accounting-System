@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\{UniversityController, DepartmentController, UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController, StudentScholarshipController};
+use App\Http\Controllers\Admin\{AuditLogController, UniversityController, DepartmentController, UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController, StudentScholarshipController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +21,7 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
     Route::resource('payments', PaymentController::class)->except(['destroy']);
     Route::resource('scholarships', ScholarshipController::class);
     Route::resource('student-scholarships', StudentScholarshipController::class)->except(['destroy']);
+    Route::resource('audit-logs', AuditLogController::class)->only(['index', 'show']);
 });
 
 Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin/')->group(function () {

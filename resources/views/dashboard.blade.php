@@ -133,6 +133,19 @@
                             </div>
                         </div>
                     </a>
+
+                    {{-- Audit Logs Card --}}
+                    <a href="{{ route('admin.audit-logs.index') }}"
+                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                        <div class="p-6 border-l-4 border-gray-600">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Audit Logs</h3>
+                                    <p class="text-sm text-gray-600 mt-1">View system activity logs</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             @endif
         </div>
