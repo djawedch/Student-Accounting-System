@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StudentScholarship\{StoreStudentScholarshipRequest, UpdateStudentScholarshipRequest};
-use App\Models\{Student, Scholarship, StudentScholarship};
+use App\Models\{AuditLog, Student, Scholarship, StudentScholarship};
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StudentScholarshipController extends Controller
@@ -38,7 +39,7 @@ class StudentScholarshipController extends Controller
             foreach ($studentIds as $studentId) {
                 foreach ($scholarshipIds as $scholarshipId) {
 
-                    StudentScholarship::create([
+                    $award = StudentScholarship::create([
                         'student_id' => $studentId,
                         'scholarship_id' => $scholarshipId,
                         'grant_date' => $request->grant_date,
@@ -46,6 +47,15 @@ class StudentScholarshipController extends Controller
                         'status' => $request->status,
                         'paid_at' => $request->paid_at,
                         'reference' => $request->reference,
+                    ]);
+
+                    AuditLog::create([
+                        'user_id'    => Auth::id(),
+                        'event_type' => 'create',
+                        'model_type' => 'StudentScholarship',
+                        'model_id'   => $award->id,
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
                     ]);
 
                     $createdCount++;
@@ -81,9 +91,17 @@ class StudentScholarshipController extends Controller
     public function update(UpdateStudentScholarshipRequest $request, StudentScholarship $studentScholarship)
     {
         $request->validated();
-
         $studentScholarship->toArray();
         $studentScholarship->update($request->all());
+
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'event_type' => 'update',
+            'model_type' => 'StudentScholarship',
+            'model_id'   => $studentScholarship->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return redirect()->route('admin.student-scholarships.index')
             ->with('success', 'Scholarship award updated successfully.');
