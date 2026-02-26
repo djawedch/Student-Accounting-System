@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Payment\{StorePaymentRequest, UpdatePaymentRequest};
-use App\Models\{Invoice, Payment};
+use App\Models\{Invoice, Payment, AuditLog};
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
@@ -53,6 +54,15 @@ class PaymentController extends Controller
             }
 
             $invoice->save();
+
+            AuditLog::create([
+                'user_id'    => Auth::id(),
+                'event_type' => 'create',
+                'model_type' => 'Payment',
+                'model_id'   => $payment->id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
 
             DB::commit();
 
@@ -106,6 +116,15 @@ class PaymentController extends Controller
                 $invoice->status = 'unpaid';
             }
             $invoice->save();
+
+            AuditLog::create([
+                'user_id'    => Auth::id(),
+                'event_type' => 'update',
+                'model_type' => 'Payment',
+                'model_id'   => $payment->id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
 
             DB::commit();
 
