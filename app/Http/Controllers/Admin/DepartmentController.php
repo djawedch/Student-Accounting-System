@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Department\{StoreDepartmentRequest, UpdateDepartmentRequest};
-use App\Models\{University, Department};
+use App\Models\{University, Department, AuditLog};
+use Illuminate\Support\Facades\Auth;
 
 class DepartmentController extends Controller
 {
@@ -24,7 +25,16 @@ class DepartmentController extends Controller
 
     public function store(StoreDepartmentRequest $request)
     {
-        Department::create($request->validated());
+        $department = Department::create($request->validated());
+
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'event_type' => 'create',
+            'model_type' => 'Department',
+            'model_id'   => $department->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return redirect()->route('admin.departments.index')
             ->with('success', 'Department created successfully.');
@@ -48,6 +58,15 @@ class DepartmentController extends Controller
     {
         $department->update($request->validated());
 
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'event_type' => 'update',
+            'model_type' => 'Department',
+            'model_id'   => $department->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return redirect()->route('admin.departments.index')
             ->with('success', 'Department updated successfully.');
     }
@@ -65,6 +84,15 @@ class DepartmentController extends Controller
         }
 
         $department->delete();
+
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'event_type' => 'delete',
+            'model_type' => 'Department',
+            'model_id'   => $department->id,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
 
         return redirect()->route('admin.departments.index')
             ->with('success', 'Department deleted successfully.');
