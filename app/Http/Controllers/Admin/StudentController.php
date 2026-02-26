@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Student\{StoreStudentRequest, UpdateStudentRequest};
-use App\Models\{Department, Student, User};
-use Illuminate\Support\Facades\{DB, Hash};
+use App\Models\{AuditLog, Department, Student, User};
+use Illuminate\Support\Facades\{Auth, DB, Hash};
 
 class StudentController extends Controller
 {
@@ -50,6 +50,15 @@ class StudentController extends Controller
                 'academic_year' => $validated['academic_year'],
                 'study_system' => $validated['study_system'],
                 'baccalaureate_year' => $validated['baccalaureate_year'],
+            ]);
+
+            AuditLog::create([
+                'user_id'    => Auth::id(),
+                'event_type' => 'create',
+                'model_type' => 'User',
+                'model_id'   => $user->id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
             ]);
 
             DB::commit();
@@ -122,6 +131,15 @@ class StudentController extends Controller
                 ]);
             }
 
+            AuditLog::create([
+                'user_id'    => Auth::id(),
+                'event_type' => 'update',
+                'model_type' => 'User',
+                'model_id'   => $student->id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             DB::commit();
 
             return redirect()->route('admin.students.index')
@@ -137,6 +155,15 @@ class StudentController extends Controller
     {
         $student->is_active = !$student->is_active;
         $student->save();
+
+        AuditLog::create([
+            'user_id'    => Auth::id(),
+            'event_type' => 'update',
+            'model_type' => 'User',
+            'model_id'   => $student->id,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
 
         $status = $student->is_active ? 'activated' : 'deactivated';
         return redirect()->route('admin.students.index')
