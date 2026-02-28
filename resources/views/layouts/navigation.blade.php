@@ -31,21 +31,16 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <!-- Profile - conditional based on role -->
-                        @if(Auth::user()->role === 'student')
-                            <x-dropdown-link :href="route('admin.students.show', Auth::user())">
-                                {{ __('Profile') }}
-                            </x-dropdown-link>
-                        @else
-                            <x-dropdown-link :href="route('admin.users.show', Auth::user())">
-                                {{ __('Profile') }}
-                            </x-dropdown-link>
-                        @endif
+                        <!-- Profile link (for all logged-in users) -->
+                        <x-dropdown-link :href="route('profile.show')">
+                            {{ __('Profile') }}
+                        </x-dropdown-link>
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
+                            <x-dropdown-link :href="route('logout')"
+                                onclick="event.preventDefault(); this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>
@@ -80,7 +75,8 @@
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</div>
+                <div class="font-medium text-base text-gray-800">{{ Auth::user()->first_name }}
+                    {{ Auth::user()->last_name }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
 
@@ -99,7 +95,8 @@
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
+                    <x-responsive-nav-link :href="route('logout')"
+                        onclick="event.preventDefault(); this.closest('form').submit();">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>

@@ -28,7 +28,7 @@ To keep development simple and efficient, the following technologies are propose
 
 1. **universities** (id, name, city, created_at, updated_at)
 2. **departments** (id, university_id, name, created_at, updated_at)
-3. **users** (id, department_id, first_name, last_name, email, password, date_of_birth, role, is_active, remember_token, created_at, updated_at)
+3. **users** (id, university_id, department_id, first_name, last_name, email, password, date_of_birth, role, is_active, remember_token, created_at, updated_at)
 4. **students** (id, user_id, academic_year, baccalaureate_year, study_system, level, created_at, updated_at)
 5. **fees** (id, department_id, name, amount, academic_year, description, created_at, updated_at)
 6. **invoices** (id, student_id, fee_id, status, issued_date, due_date, created_at, updated_at)
@@ -37,68 +37,20 @@ To keep development simple and efficient, the following technologies are propose
 9. **student_scholarship** (id, student_id, scholarship_id , grant_date, end_date, status, paid_at, reference, created_at, updated_at)
 10. **audit_logs** (id, user_id, event_type, model_type, model_id, ip_address, user_agent, created_at)
 
-### Column Clarifications:
-
-1. **users**
-- `role`: ENUM('super_admin','admin','student') - Defines the user's role for access control.
-- `is_active`: BOOLEAN, default true - Indicates whether the user account is active. Inactive users cannot log in.
-- `remember_token`: VARCHAR(100), nullable – Token for "remember me" functionality.
-
-2. **students**
-- `class`: VARCHAR(255) - The student's class or level (e.g., "L3 Computer Science").
-- `academic_year`: VARCHAR(9) - Academic year (e.g., "2024-2025").
-- `baccalaureate_year`: YEAR.
-- `study_system`: VARCHAR(50) - (e.g., "LMD", "Classic").
-- `level`: VARCHAR(50) - academic level (e.g., "2024", "2025").
-
-3. **fees**
-- `department_id`: BIGINT — associated department.
-- `name`: VARCHAR(255) - Fee name (e.g., "Tuition Fee", "Library Fee").
-- `amount`: DECIMAL(10,2) - Fee amount in the local currency (Algerian Dinar).
-- `description`: TEXT, nullable - Optional details about the fee.
-- `academic_year`: VARCHAR(9) - Academic year the fee applies to (e.g., "2024-2025").
-
-4. **invoices**
-- `status`: ENUM('unpaid','partially_paid','paid','overdue') - Current payment status. Updated automatically when payments are recorded.
-- `issued_date` & `due_date`: DATE.
-
-5. **payments**
-- `payment_method`: ENUM('cash','bank_transfer','ccp') - Method used for the payment: cash, bank transfer, or CCP (Algerian postal cheque).
-- `amount`: DECIMAL(10,2) - Payment amount.
-- `reference`: VARCHAR(255), nullable - Optional reference number (e.g., bank transaction ID, receipt number).
-- `payment_date`: DATE - Date the payment was made (may differ from the date it was recorded).
-
-6. **scholarships**
-- `name`: VARCHAR(255) - Scholarship type (e.g., "Merit", "Study Abroad", "Social Aid").
-- `amount`: DECIMAL(10,2) - Grant amount awarded.
-- `description`: TEXT, nullable - Additional notes (e.g., destination, conditions).
-
-7. **student_scholarship**
-- `grant_date`: DATE - Date the scholarship was awarded.
-- `end_date`: DATE, nullable - Expiration or end date of the scholarship (if applicable).
-- `status`: ENUM('awarded','paid','cancelled'), default 'awarded'- Current state of the grant.
-- `paid_at`: DATE, nullable - Date the money was actually transferred/paid to the student.
-- `reference`: VARCHAR(255), nullable - Cheque number, transaction ID, or other external reference.
-
-8. **auditlogs**
-- `event_type`: ENUM('create','update','delete').
-- `model_type`: VARCHAR(255) - Full class name of the affected model (e.g., App\Models\Fee).
-- `model_id`: BIGINT - ID of the affected record.
-- `ip_address`: VARCHAR(45), nullable - Client IP address at the time of the action.
-- `user_agent`: TEXT, nullable - Browser/user agent string.
-
 ### Relationships:
 
 1. users → students [one‑to‑one] (Each user with role = student has exactly one student profile)
-2. users → auditlogs [one‑to‑many] (A user can have many audit log entries.)
-3. students → invoices [one‑to‑many] (A student can have multiple invoices for different fees)
-4. students → student_scholarships → scholarships [many‑to‑many] (A student can receive multiple scholarships; each scholarship can be awarded to multiple students)
-5. fees → invoices [one‑to‑many] (A fee definition can be used in many invoices (one per student))
-6. invoices → payments [one‑to‑many] (An invoice can receive many partial payments.)
-7. auditlogs → users [many‑to‑one] (Each log entry belongs to a user)
-8. departments → users [one-to-many] (A department can have many users: students, admins, etc.)
-9. universities → departments [one-to-many] (A university has many departments)
-10. fees → departments [many-to-one] (Each fee belongs to a department)
+2. users → auditlogs [one‑to‑many] (A user can have many audit log entries)
+3. users → universities [many‑to‑one] (A user can belong to a university)
+4. users → departments [many‑to‑one] (A user can belong to a department)
+5. students → invoices [one‑to‑many] (A student can have multiple invoices for different fees)
+6. students → student_scholarships → scholarships [many‑to‑many] (A student can receive multiple scholarships; each scholarship can be awarded to multiple students)
+7. fees → invoices [one‑to‑many] (A fee definition can be used in many invoices (one per student))
+8. invoices → payments [one‑to‑many] (An invoice can receive many partial payments)
+9. auditlogs → users [many‑to‑one] (Each log entry belongs to a user)
+10. departments → users [one-to-many] (A department can have many users: students, admins, etc)
+11. universities → departments [one-to-many] (A university has many departments)
+12. fees → departments [many-to-one] (Each fee belongs to a department)
 
 ## 3.5 System Modules
 

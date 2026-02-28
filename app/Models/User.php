@@ -11,6 +11,7 @@ class User extends Authenticatable
     use HasFactory;
 
     protected $fillable = [
+        'university_id',
         'department_id',
         'first_name',
         'last_name',
@@ -31,6 +32,11 @@ class User extends Authenticatable
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function university()
+    {
+        return $this->belongsTo(University::class);
+    }
 
     public function department(): BelongsTo
     {

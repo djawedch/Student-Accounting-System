@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\{Department, User};
+use App\Models\{University, Department, User};
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,6 +13,7 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
+            'university_id' => University::inRandomOrder()->first()?->id ?? University::factory(),
             'department_id' => Department::inRandomOrder()->first()?->id ?? Department::factory(),
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
