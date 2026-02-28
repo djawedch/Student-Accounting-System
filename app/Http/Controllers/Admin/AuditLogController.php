@@ -24,6 +24,12 @@ class AuditLogController extends Controller
             $query->where('model_type', $request->model_type);
         }
 
+        if ($request->filled('role')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('role', $request->role);
+            });
+        }
+
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
@@ -33,18 +39,18 @@ class AuditLogController extends Controller
         }
 
         $logs = $query->paginate(20)->withQueryString();
-
         $users = User::get(['id', 'first_name', 'last_name']);
         $eventTypes = AuditLog::select('event_type')->distinct()->pluck('event_type');
         $modelTypes = AuditLog::select('model_type')->distinct()->pluck('model_type');
+        $roles = User::distinct()->pluck('role');
 
-        return view('admin.audit-logs.index', compact('logs', 'users', 'eventTypes', 'modelTypes'));
+        return view('admin.audit-logs.index', compact('logs', 'users', 'eventTypes', 'modelTypes', 'roles'));
     }
 
     public function show(AuditLog $auditLog)
     {
         $auditLog->load('user');
-        
+
         return view('admin.audit-logs.show', compact('auditLog'));
     }
 }

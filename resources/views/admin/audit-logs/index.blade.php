@@ -54,6 +54,19 @@
                         </div>
 
                         <div>
+                            <label for="role" class="block text-sm font-medium text-gray-700">User Role</label>
+                            <select name="role" id="role"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">All Roles</option>
+                                @foreach($roles as $role)
+                                    <option value="{{ $role }}" {{ request('role') == $role ? 'selected' : '' }}>
+                                        {{ ucfirst($role) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
                             <label for="date_from" class="block text-sm font-medium text-gray-700">From Date</label>
                             <input type="date" name="date_from" id="date_from" value="{{ request('date_from') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -109,11 +122,11 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    @if($log->event_type == 'create') bg-green-100 text-green-800
-                                                    @elseif($log->event_type == 'update') bg-blue-100 text-blue-800
-                                                    @elseif($log->event_type == 'delete') bg-red-100 text-red-800
-                                                    @else bg-gray-100 text-gray-800
-                                                    @endif">
+                                                        @if($log->event_type == 'create') bg-green-100 text-green-800
+                                                        @elseif($log->event_type == 'update') bg-blue-100 text-blue-800
+                                                        @elseif($log->event_type == 'delete') bg-red-100 text-red-800
+                                                        @else bg-gray-100 text-gray-800
+                                                        @endif">
                                                 {{ ucfirst($log->event_type) }}
                                             </span>
                                         </td>
