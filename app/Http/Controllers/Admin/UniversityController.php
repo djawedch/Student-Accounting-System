@@ -5,13 +5,24 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\University\{StoreUniversityRequest, UpdateUniversityRequest};
 use App\Models\{University, AuditLog};
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UniversityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $universities = University::withCount('departments')->latest()->paginate(10);
+        $query = University::withCount('departments');
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('city')) {
+            $query->where('city', 'like', '%' . $request->city . '%');
+        }
+
+        $universities = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.universities.index', compact('universities'));
     }
@@ -26,10 +37,10 @@ class UniversityController extends Controller
         $university = University::create($request->validated());
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'create',
             'model_type' => 'University',
-            'model_id'   => $university->id,
+            'model_id' => $university->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -54,10 +65,10 @@ class UniversityController extends Controller
         $university->update($request->validated());
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'update',
             'model_type' => 'University',
-            'model_id'   => $university->id,
+            'model_id' => $university->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -75,10 +86,10 @@ class UniversityController extends Controller
         $university->delete();
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'delete',
             'model_type' => 'University',
-            'model_id'   => $university->id,
+            'model_id' => $university->id,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
