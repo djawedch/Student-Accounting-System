@@ -6,12 +6,42 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Fee\{StoreFeeRequest, UpdateFeeRequest};
 use App\Models\{Department, Fee, AuditLog};
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class FeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $fees = Fee::with('department.university')->latest()->paginate(10);
+        $query = Fee::with('department.university');
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('department')) {
+            $query->whereHas('department', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->department . '%');
+            });
+        }
+
+        if ($request->filled('university')) {
+            $query->whereHas('department.university', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->university . '%');
+            });
+        }
+
+        if ($request->filled('amount_min')) {
+            $query->where('amount', '>=', $request->amount_min);
+        }
+        if ($request->filled('amount_max')) {
+            $query->where('amount', '<=', $request->amount_max);
+        }
+
+        if ($request->filled('academic_year')) {
+            $query->where('academic_year', 'like', '%' . $request->academic_year . '%');
+        }
+
+        $fees = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.fees.index', compact('fees'));
     }
@@ -30,10 +60,10 @@ class FeeController extends Controller
         $fee = Fee::create($validated);
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'create',
             'model_type' => 'Fee',
-            'model_id'   => $fee->id,
+            'model_id' => $fee->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -63,10 +93,10 @@ class FeeController extends Controller
         $fee->update($validated);
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'update',
             'model_type' => 'Fee',
-            'model_id'   => $fee->id,
+            'model_id' => $fee->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -87,10 +117,10 @@ class FeeController extends Controller
         $fee->delete();
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'delete',
             'model_type' => 'Fee',
-            'model_id'   => $fee->id,
+            'model_id' => $fee->id,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
