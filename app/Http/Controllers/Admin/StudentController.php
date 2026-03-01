@@ -5,19 +5,68 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Student\{StoreStudentRequest, UpdateStudentRequest};
 use App\Models\{AuditLog, Department, Student, User};
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB, Hash};
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $students = User::where('role', 'student')
-            ->with('student', 'department.university')
-            ->latest()
-            ->paginate(10);
+        $query = User::where('role', 'student')->with('student', 'department.university');
 
-        return view('admin.students.index', compact('students'));
+        if ($request->filled('name')) {
+            $name = $request->name;
+            $query->where(function ($q) use ($name) {
+                $q->where('first_name', 'like', "%{$name}%")
+                    ->orWhere('last_name', 'like', "%{$name}%");
+            });
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        if ($request->filled('department')) {
+            $query->whereHas('department', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->department . '%');
+            });
+        }
+
+        if ($request->filled('university')) {
+            $query->whereHas('department.university', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->university . '%');
+            });
+        }
+
+        if ($request->filled('level')) {
+            $query->whereHas('student', function ($q) use ($request) {
+                $q->where('level', 'like', '%' . $request->level . '%');
+            });
+        }
+
+        if ($request->filled('study_system')) {
+            $query->whereHas('student', function ($q) use ($request) {
+                $q->where('study_system', $request->study_system);
+            });
+        }
+
+        if ($request->filled('academic_year')) {
+            $query->whereHas('student', function ($q) use ($request) {
+                $q->where('academic_year', 'like', '%' . $request->academic_year . '%');
+            });
+        }
+
+        if ($request->filled('is_active')) {
+            $query->where('is_active', $request->is_active);
+        }
+
+        $students = $query->latest()->paginate(10)->withQueryString();
+
+        $studySystems = ['LMD', 'Classic'];
+
+        return view('admin.students.index', compact('students', 'studySystems'));
     }
+
 
     public function create()
     {
@@ -53,10 +102,10 @@ class StudentController extends Controller
             ]);
 
             AuditLog::create([
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
                 'event_type' => 'create',
                 'model_type' => 'User',
-                'model_id'   => $user->id,
+                'model_id' => $user->id,
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
@@ -132,10 +181,10 @@ class StudentController extends Controller
             }
 
             AuditLog::create([
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
                 'event_type' => 'update',
                 'model_type' => 'User',
-                'model_id'   => $student->id,
+                'model_id' => $student->id,
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
@@ -157,10 +206,10 @@ class StudentController extends Controller
         $student->save();
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'update',
             'model_type' => 'User',
-            'model_id'   => $student->id,
+            'model_id' => $student->id,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);

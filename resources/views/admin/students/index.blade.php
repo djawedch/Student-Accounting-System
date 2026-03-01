@@ -25,6 +25,89 @@
                         <div class="mb-4 text-red-600">{{ session('error') }}</div>
                     @endif
 
+                    {{-- Filter Form --}}
+                    <form method="GET" action="{{ route('admin.students.index') }}"
+                        class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                            <input type="text" name="name" id="name" value="{{ request('name') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="First or last name">
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="text" name="email" id="email" value="{{ request('email') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="Email">
+                        </div>
+
+                        <div>
+                            <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
+                            <input type="text" name="department" id="department" value="{{ request('department') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="Department name">
+                        </div>
+
+                        <div>
+                            <label for="university" class="block text-sm font-medium text-gray-700">University</label>
+                            <input type="text" name="university" id="university" value="{{ request('university') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="University name">
+                        </div>
+
+                        <div>
+                            <label for="level" class="block text-sm font-medium text-gray-700">Level</label>
+                            <input type="text" name="level" id="level" value="{{ request('level') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="e.g., L1, M2">
+                        </div>
+
+                        <div>
+                            <label for="study_system" class="block text-sm font-medium text-gray-700">Study
+                                System</label>
+                            <select name="study_system" id="study_system"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">All</option>
+                                @foreach($studySystems as $system)
+                                    <option value="{{ $system }}" {{ request('study_system') == $system ? 'selected' : '' }}>
+                                        {{ $system }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="academic_year" class="block text-sm font-medium text-gray-700">Academic
+                                Year</label>
+                            <input type="text" name="academic_year" id="academic_year"
+                                value="{{ request('academic_year') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="e.g., 2025/2026">
+                        </div>
+
+                        <div>
+                            <label for="is_active" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select name="is_active" id="is_active"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">All</option>
+                                <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Active</option>
+                                <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-end space-x-2 lg:col-span-4">
+                            <button type="submit"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Filter
+                            </button>
+                            <a href="{{ route('admin.students.index') }}"
+                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                Reset
+                            </a>
+                        </div>
+                    </form>
+
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead>
@@ -123,7 +206,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="px-6 py-4 text-center text-gray-500">No students found.</td>
+                                        <td colspan="11" class="px-6 py-4 text-center text-gray-500">No students found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
