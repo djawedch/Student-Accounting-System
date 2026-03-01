@@ -5,13 +5,31 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Scholarship\{StoreScholarshipRequest, UpdateScholarshipRequest};
 use App\Models\{Scholarship, AuditLog};
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ScholarshipController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $scholarships = Scholarship::latest()->paginate(10);
+        $query = Scholarship::query();
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('description')) {
+            $query->where('description', 'like', '%' . $request->description . '%');
+        }
+
+        if ($request->filled('amount_min')) {
+            $query->where('amount', '>=', $request->amount_min);
+        }
+        if ($request->filled('amount_max')) {
+            $query->where('amount', '<=', $request->amount_max);
+        }
+
+        $scholarships = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.scholarships.index', compact('scholarships'));
     }
@@ -28,10 +46,10 @@ class ScholarshipController extends Controller
         $scholarship = Scholarship::create($request->only(['name', 'amount', 'description']));
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'create',
             'model_type' => 'Scholarship',
-            'model_id'   => $scholarship->id,
+            'model_id' => $scholarship->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -59,10 +77,10 @@ class ScholarshipController extends Controller
         $scholarship->update($request->only(['name', 'amount', 'description']));
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'update',
             'model_type' => 'Scholarship',
-            'model_id'   => $scholarship->id,
+            'model_id' => $scholarship->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -81,10 +99,10 @@ class ScholarshipController extends Controller
         $scholarship->delete();
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'delete',
             'model_type' => 'Scholarship',
-            'model_id'   => $scholarship->id,
+            'model_id' => $scholarship->id,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
