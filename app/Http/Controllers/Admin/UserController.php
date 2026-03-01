@@ -5,16 +5,42 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\{StoreUserRequest, UpdateUserRequest};
 use App\Models\{AuditLog, Department, User};
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\{Auth, Hash};
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('role', '!=', 'student')->with('department.university')->latest()->paginate(10);
+        $query = User::where('role', '!=', 'student')->with('department.university');
 
-        return view('admin.users.index', compact('users'));
+        if ($request->filled('name')) {
+            $name = $request->name;
+            $query->where(function ($q) use ($name) {
+                $q->where('first_name', 'like', "%{$name}%")
+                    ->orWhere('last_name', 'like', "%{$name}%");
+            });
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        if ($request->filled('department')) {
+            $query->whereHas('department', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->department . '%');
+            });
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
+        
+        $roles = ['super_admin', 'university_admin', 'department_admin', 'staff_admin'];
+
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     public function create()
@@ -33,10 +59,10 @@ class UserController extends Controller
         $user = User::create($validated);
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'create',
             'model_type' => 'User',
-            'model_id'   => $user->id,
+            'model_id' => $user->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -78,16 +104,16 @@ class UserController extends Controller
         } else {
             $validated['password'] = Hash::make($validated['password']);
         }
-  
+
         $validated['is_active'] = $request->has('is_active');
 
         $user->update($validated);
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'update',
             'model_type' => 'User',
-            'model_id'   => $user->id,
+            'model_id' => $user->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -102,10 +128,10 @@ class UserController extends Controller
         $user->save();
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'update',
             'model_type' => 'User',
-            'model_id'   => $user->id,
+            'model_id' => $user->id,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
