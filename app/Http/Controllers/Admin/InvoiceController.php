@@ -5,16 +5,64 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoice\{StoreInvoiceRequest, UpdateInvoiceRequest};
 use App\Models\{AuditLog, Student, Fee, Invoice};
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $invoices = Invoice::with('student.user', 'fee.department')->latest()->paginate(10);
+        $query = Invoice::with('student.user', 'fee.department');
 
-        return view('admin.invoices.index', compact('invoices'));
+        if ($request->filled('student')) {
+            $student = $request->student;
+            $query->whereHas('student.user', function ($q) use ($student) {
+                $q->where('first_name', 'like', "%{$student}%")
+                    ->orWhere('last_name', 'like', "%{$student}%");
+            });
+        }
+
+        if ($request->filled('fee')) {
+            $query->whereHas('fee', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->fee . '%');
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('issued_from')) {
+            $query->whereDate('issued_date', '>=', $request->issued_from);
+        }
+        if ($request->filled('issued_to')) {
+            $query->whereDate('issued_date', '<=', $request->issued_to);
+        }
+
+        if ($request->filled('due_from')) {
+            $query->whereDate('due_date', '>=', $request->due_from);
+        }
+        if ($request->filled('due_to')) {
+            $query->whereDate('due_date', '<=', $request->due_to);
+        }
+
+        if ($request->filled('amount_min')) {
+            $query->whereHas('fee', function ($q) use ($request) {
+                $q->where('amount', '>=', $request->amount_min);
+            });
+        }
+        if ($request->filled('amount_max')) {
+            $query->whereHas('fee', function ($q) use ($request) {
+                $q->where('amount', '<=', $request->amount_max);
+            });
+        }
+
+        $invoices = $query->latest()->paginate(10)->withQueryString();
+
+        $statuses = ['unpaid', 'paid', 'overdue', 'cancelled'];
+
+        return view('admin.invoices.index', compact('invoices', 'statuses'));
     }
 
     public function create()
@@ -58,10 +106,10 @@ class InvoiceController extends Controller
                     ]);
 
                     AuditLog::create([
-                        'user_id'    => Auth::id(),
+                        'user_id' => Auth::id(),
                         'event_type' => 'create',
                         'model_type' => 'Invoice',
-                        'model_id'   => $invoice->id,
+                        'model_id' => $invoice->id,
                         'ip_address' => $request->ip(),
                         'user_agent' => $request->userAgent(),
                     ]);
@@ -108,10 +156,10 @@ class InvoiceController extends Controller
         $invoice->update($request->only(['status', 'issued_date', 'due_date']));
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'update',
             'model_type' => 'Invoice',
-            'model_id'   => $invoice->id,
+            'model_id' => $invoice->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
