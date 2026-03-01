@@ -5,16 +5,55 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Payment\{StorePaymentRequest, UpdatePaymentRequest};
 use App\Models\{Invoice, Payment, AuditLog};
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payments = Payment::with('invoice.student.user', 'invoice.fee')->latest()->paginate(10);
+        $query = Payment::with('invoice.student.user', 'invoice.fee');
 
-        return view('admin.payments.index', compact('payments'));
+        if ($request->filled('student')) {
+            $student = $request->student;
+            $query->whereHas('invoice.student.user', function ($q) use ($student) {
+                $q->where('first_name', 'like', "%{$student}%")
+                    ->orWhere('last_name', 'like', "%{$student}%");
+            });
+        }
+
+        if ($request->filled('invoice_id')) {
+            $query->where('invoice_id', $request->invoice_id);
+        }
+
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        if ($request->filled('amount_min')) {
+            $query->where('amount', '>=', $request->amount_min);
+        }
+        if ($request->filled('amount_max')) {
+            $query->where('amount', '<=', $request->amount_max);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('payment_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('payment_date', '<=', $request->date_to);
+        }
+
+        if ($request->filled('reference')) {
+            $query->where('reference', 'like', '%' . $request->reference . '%');
+        }
+
+        $payments = $query->latest()->paginate(10)->withQueryString();
+
+        $paymentMethods = Payment::distinct()->pluck('payment_method');
+
+        return view('admin.payments.index', compact('payments', 'paymentMethods'));
     }
 
     public function create()
@@ -56,10 +95,10 @@ class PaymentController extends Controller
             $invoice->save();
 
             AuditLog::create([
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
                 'event_type' => 'create',
                 'model_type' => 'Payment',
-                'model_id'   => $payment->id,
+                'model_id' => $payment->id,
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
@@ -118,10 +157,10 @@ class PaymentController extends Controller
             $invoice->save();
 
             AuditLog::create([
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
                 'event_type' => 'update',
                 'model_type' => 'Payment',
-                'model_id'   => $payment->id,
+                'model_id' => $payment->id,
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
