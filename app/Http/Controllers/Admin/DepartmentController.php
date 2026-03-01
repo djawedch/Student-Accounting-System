@@ -5,13 +5,26 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Department\{StoreDepartmentRequest, UpdateDepartmentRequest};
 use App\Models\{University, Department, AuditLog};
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DepartmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::with('university')->latest()->paginate(10);
+        $query = Department::with('university');
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('university')) {
+            $query->whereHas('university', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->university . '%');
+            });
+        }
+
+        $departments = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.departments.index', compact('departments'));
     }
@@ -28,10 +41,10 @@ class DepartmentController extends Controller
         $department = Department::create($request->validated());
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'create',
             'model_type' => 'Department',
-            'model_id'   => $department->id,
+            'model_id' => $department->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -59,10 +72,10 @@ class DepartmentController extends Controller
         $department->update($request->validated());
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'update',
             'model_type' => 'Department',
-            'model_id'   => $department->id,
+            'model_id' => $department->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
@@ -86,10 +99,10 @@ class DepartmentController extends Controller
         $department->delete();
 
         AuditLog::create([
-            'user_id'    => Auth::id(),
+            'user_id' => Auth::id(),
             'event_type' => 'delete',
             'model_type' => 'Department',
-            'model_id'   => $department->id,
+            'model_id' => $department->id,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
