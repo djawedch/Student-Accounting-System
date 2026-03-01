@@ -24,6 +24,80 @@
                         <div class="mb-4 text-red-600">{{ session('error') }}</div>
                     @endif
 
+                    {{-- Filter Form --}}
+                    <form method="GET" action="{{ route('admin.student-scholarships.index') }}"
+                        class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label for="student" class="block text-sm font-medium text-gray-700">Student Name</label>
+                            <input type="text" name="student" id="student" value="{{ request('student') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="First or last name">
+                        </div>
+
+                        <div>
+                            <label for="scholarship" class="block text-sm font-medium text-gray-700">Scholarship
+                                Name</label>
+                            <input type="text" name="scholarship" id="scholarship" value="{{ request('scholarship') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="Scholarship name">
+                        </div>
+
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select name="status" id="status"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">All</option>
+                                @foreach($statuses as $status)
+                                    <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                        {{ ucfirst($status) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="reference" class="block text-sm font-medium text-gray-700">Reference</label>
+                            <input type="text" name="reference" id="reference" value="{{ request('reference') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="Reference">
+                        </div>
+
+                        <div>
+                            <label for="grant_from" class="block text-sm font-medium text-gray-700">Grant From</label>
+                            <input type="date" name="grant_from" id="grant_from" value="{{ request('grant_from') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label for="grant_to" class="block text-sm font-medium text-gray-700">Grant To</label>
+                            <input type="date" name="grant_to" id="grant_to" value="{{ request('grant_to') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label for="paid_from" class="block text-sm font-medium text-gray-700">Paid From</label>
+                            <input type="date" name="paid_from" id="paid_from" value="{{ request('paid_from') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label for="paid_to" class="block text-sm font-medium text-gray-700">Paid To</label>
+                            <input type="date" name="paid_to" id="paid_to" value="{{ request('paid_to') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div class="flex items-end space-x-2 lg:col-span-4">
+                            <button type="submit"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Filter
+                            </button>
+                            <a href="{{ route('admin.student-scholarships.index') }}"
+                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                Reset
+                            </a>
+                        </div>
+                    </form>
+
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead>
@@ -63,18 +137,20 @@
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $award->grant_date->format('Y-m-d') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            {{ $award->end_date ? $award->end_date->format('Y-m-d') : '—' }}</td>
+                                            {{ $award->end_date ? $award->end_date->format('Y-m-d') : '—' }}
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    @if($award->status == 'active') bg-green-100 text-green-800
-                                                    @elseif($award->status == 'expired') bg-gray-100 text-gray-800
-                                                    @elseif($award->status == 'cancelled') bg-red-100 text-red-800
-                                                    @endif">
+                                                        @if($award->status == 'active') bg-green-100 text-green-800
+                                                        @elseif($award->status == 'expired') bg-gray-100 text-gray-800
+                                                        @elseif($award->status == 'cancelled') bg-red-100 text-red-800
+                                                        @endif">
                                                 {{ ucfirst($award->status) }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            {{ $award->paid_at ? $award->paid_at->format('Y-m-d') : '—' }}</td>
+                                            {{ $award->paid_at ? $award->paid_at->format('Y-m-d') : '—' }}
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $award->reference ?? '—' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <a href="{{ route('admin.student-scholarships.show', $award) }}"
