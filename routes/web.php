@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\{AuditLogController, UniversityController, DepartmentController, UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController, StudentScholarshipController};
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Student;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -10,7 +11,9 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+});
 
+Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -32,6 +35,16 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
 Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin/')->group(function () {
     Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('admin.users.toggle-status');
     Route::patch('students/{student}/toggle-status', [StudentController::class, 'toggleStatus'])->name('admin.students.toggle-status');
+});
+
+Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
+    Route::get('/dashboard', [Student\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/universities', [Student\UniversityController::class, 'index'])->name('universities.index');
+    Route::get('/departments', [Student\DepartmentController::class, 'index'])->name('departments.index');
+    Route::get('/fees', [Student\FeeController::class, 'index'])->name('fees.index');
+    Route::get('/invoices', [Student\InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/payments', [Student\PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/scholarship-awards', [Student\ScholarshipAwardController::class, 'index'])->name('scholarship-awards.index');
 });
 
 require __DIR__ . '/auth.php';
