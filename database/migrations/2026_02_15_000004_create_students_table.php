@@ -12,17 +12,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('academic_year', 9);
             $table->year('baccalaureate_year');
-            $table->enum('study_system', [
-                'LMD',
-                'Classic'
-            ]);
-            $table->enum('level', [
-                'L1',
-                'L2',
-                'L3',
-                'M1',
-                'M2'
-            ]);
+            $table->enum('study_system', ['LMD','Classic']);
+            $table->enum('level', ['L1','L2','L3','M1','M2']);
             $table->timestamps();
         });
     }

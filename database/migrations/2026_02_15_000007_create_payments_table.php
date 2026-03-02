@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('invoice_id')->constrained()->onDelete('restrict');
             $table->enum('payment_method', ['cash', 'bank_transfer', 'ccp']);
             $table->decimal('amount', 10, 2);
             $table->string('reference')->nullable();

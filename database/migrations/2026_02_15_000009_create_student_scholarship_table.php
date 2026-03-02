@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('student_scholarship', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->foreignId('scholarship_id')->constrained('scholarships')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained()->onDelete('restrict');
+            $table->foreignId('scholarship_id')->constrained()->onDelete('restrict');
             $table->date('grant_date');
             $table->date('end_date')->nullable();
             $table->enum('status', ['awarded', 'paid', 'cancelled'])->default('awarded');

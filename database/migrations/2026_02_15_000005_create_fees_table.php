@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('fees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('department_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('department_id')->constrained()->onDelete('restrict');
             $table->string('name');
             $table->decimal('amount', 10, 2);
             $table->string('academic_year', 9);
