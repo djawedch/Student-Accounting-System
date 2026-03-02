@@ -93,60 +93,46 @@
                             @enderror
                         </div>
 
-                        {{-- Department Dropdown --}}
+                        {{-- Role --}}
                         <div class="mb-4">
-                            <label for="department_id" class="block text-sm font-medium text-gray-700">Department</label>
-                            <select name="department_id" id="department_id"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                required>
-                                <option value="">-- Select Department --</option>
-                                @foreach($departments as $department)
-                                <option value="{{ $department->id }}"
-                                    {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>
-                                    {{ $department->name }} ({{ $department->university->name }})
-                                </option>
-                                @endforeach
+                            <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+                            <select name="role" id="role" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="super_admin" {{ old('role', $user->role) == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
+                                <option value="university_admin" {{ old('role', $user->role) == 'university_admin' ? 'selected' : '' }}>University Admin</option>
+                                <option value="department_admin" {{ old('role', $user->role) == 'department_admin' ? 'selected' : '' }}>Department Admin</option>
+                                <option value="staff_admin" {{ old('role', $user->role) == 'staff_admin' ? 'selected' : '' }}>Staff</option>
                             </select>
-                            @error('department_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
                         </div>
 
-                        {{-- Role --}}
-                        <div x-data="{ role: '{{ old('role', $user->role ?? '') }}' }">
-                            <div class="mb-4">
-                                <label for="role">Role</label>
-                                <select name="role" id="role" x-model="role" required>
-                                    <option value="super_admin">Super Admin</option>
-                                    <option value="university_admin">University Admin</option>
-                                    <option value="department_admin">Department Admin</option>
-                                    <option value="staff_admin">Staff</option>
-                                </select>
-                            </div>
+                        {{-- University field (visible for all except super_admin) --}}
+                        <div id="university-field"
+                            style="{{ in_array(old('role', $user->role), ['university_admin', 'department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
+                            <label for="university_id" class="block text-sm font-medium text-gray-700">University</label>
+                            <select name="university_id" id="university_id"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Select University</option>
+                                @foreach($universities as $university)
+                                    <option value="{{ $university->id }}" {{ old('university_id', $user->university_id) == $university->id ? 'selected' : '' }}>
+                                        {{ $university->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                            <div x-show="role === 'university_admin'" x-cloak>
-                                <label for="university_id">University</label>
-                                <select name="university_id" id="university_id">
-                                    <option value="">Select University</option>
-                                    @foreach($universities as $university)
-                                    <option value="{{ $university->id }}">{{ $university->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div x-show="['department_admin', 'staff_admin'].includes(role)" x-cloak>
-                                <label for="department_id">Department</label>
-                                <select name="department_id" id="department_id">
-                                    <option value="">Select Department</option>
-                                    @foreach($departments as $department)
-                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div x-show="role === 'super_admin'">
-                                <!-- no university or department fields -->
-                            </div>
+                        {{-- Department field (visible only for department_admin and staff_admin) --}}
+                        <div id="department-field"
+                            style="{{ in_array(old('role', $user->role), ['department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
+                            <label for="department_id" class="block text-sm font-medium text-gray-700">Department</label>
+                            <select name="department_id" id="department_id"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Select Department</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>
+                                        {{ $department->name }} ({{ $department->university->name }})
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
                         {{-- Active Status --}}
@@ -179,3 +165,23 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    document.getElementById('role').addEventListener('change', function() {
+        const role = this.value;
+        const universityField = document.getElementById('university-field');
+        const departmentField = document.getElementById('department-field');
+
+        if (role === 'super_admin') {
+            universityField.style.display = 'none';
+            departmentField.style.display = 'none';
+        } else {
+            universityField.style.display = 'block';
+            if (role === 'department_admin' || role === 'staff_admin') {
+                departmentField.style.display = 'block';
+            } else {
+                departmentField.style.display = 'none';
+            }
+        }
+    });
+</script>

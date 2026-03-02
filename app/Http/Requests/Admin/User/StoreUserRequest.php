@@ -14,6 +14,8 @@ class StoreUserRequest extends FormRequest
 
     public function rules(): array
     {
+        dd($this->all(), $this->role);
+        
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -22,12 +24,12 @@ class StoreUserRequest extends FormRequest
             'date_of_birth' => 'required|date|before:today',
             'university_id' => [
                 'nullable',
-                Rule::requiredIf(in_array($this->role, ['university_admin', 'department_admin', 'staff_admin', 'student'])),
+                Rule::requiredIf(in_array($this->role, ['university_admin', 'department_admin', 'staff_admin'])),
                 'exists:universities,id'
             ],
             'department_id' => [
                 'nullable',
-                Rule::requiredIf(in_array($this->role, ['department_admin', 'staff_admin', 'student'])),
+                Rule::requiredIf(in_array($this->role, ['department_admin', 'staff_admin'])),
                 'exists:departments,id'
             ],
             'role' => 'required|in:super_admin,university_admin,department_admin,staff_admin',

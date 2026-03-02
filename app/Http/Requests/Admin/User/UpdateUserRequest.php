@@ -28,7 +28,16 @@ class UpdateUserRequest extends FormRequest
             ],
             'password' => 'nullable|string|min:8|confirmed',
             'date_of_birth' => 'required|date|before:today',
-            'department_id' => 'required|exists:departments,id',
+            'university_id' => [
+                'nullable',
+                Rule::requiredIf(in_array($this->role, ['university_admin', 'department_admin', 'staff_admin'])),
+                'exists:universities,id'
+            ],
+            'department_id' => [
+                'nullable',
+                Rule::requiredIf(in_array($this->role, ['department_admin', 'staff_admin'])),
+                'exists:departments,id'
+            ],
             'role' => 'required|in:super_admin,university_admin,department_admin,staff_admin',
             'is_active' => 'sometimes|boolean',
         ];

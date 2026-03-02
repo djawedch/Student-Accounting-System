@@ -129,7 +129,7 @@
                                             {{ $user->department->name ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            {{ $user->department->university->name ?? 'N/A' }}
+                                            {{ $user->university->name ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <a href="{{ route('admin.users.show', $user) }}"

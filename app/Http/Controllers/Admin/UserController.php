@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\{StoreUserRequest, UpdateUserRequest};
-use App\Models\{AuditLog, Department, User};
+use App\Models\{AuditLog, Department, University, User};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Hash};
 
@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::where('role', '!=', 'student')->with('department.university');
+        $query = User::where('role', '!=', 'student')->with('department', 'university');
 
         if ($request->filled('name')) {
             $name = $request->name;
@@ -37,7 +37,7 @@ class UserController extends Controller
         }
 
         $users = $query->latest()->paginate(10)->withQueryString();
-        
+
         $roles = ['super_admin', 'university_admin', 'department_admin', 'staff_admin'];
 
         return view('admin.users.index', compact('users', 'roles'));
@@ -45,14 +45,21 @@ class UserController extends Controller
 
     public function create()
     {
+        $universities = University::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
 
-        return view('admin.users.create', compact('departments'));
+        return view('admin.users.create', compact('universities', 'departments'));
     }
 
     public function store(StoreUserRequest $request)
     {
         $validated = $request->validated();
+
+        if (in_array($validated['role'], ['department_admin', 'staff_admin']) && !empty($validated['department_id'])) {
+            $department = Department::find($validated['department_id']);
+            $validated['university_id'] = $department->university_id;
+        }
+
         $validated['password'] = Hash::make($validated['password']);
         $validated['is_active'] = $request->has('is_active') ? true : false;
 
@@ -73,7 +80,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $user->load('department.university');
+        $user->load('department', 'university');
 
         return view('admin.users.show', compact('user'));
     }
@@ -85,9 +92,10 @@ class UserController extends Controller
                 ->with('error', 'Please use the Student Management section to edit students.');
         }
 
+        $universities = University::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
 
-        return view('admin.users.edit', compact('user', 'departments'));
+        return view('admin.users.edit', compact('universities', 'departments', 'user'));
     }
 
     public function update(UpdateUserRequest $request, User $user)

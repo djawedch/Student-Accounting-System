@@ -82,11 +82,11 @@
                         <div>
                             <dt class="text-sm font-medium text-gray-500">University</dt>
                             <dd class="mt-1 text-lg text-gray-900">
-                                @if($user->department && $user->department->university)
-                                    <a href="{{ route('admin.universities.show', $user->department->university) }}" class="text-indigo-600 hover:underline">
-                                        {{ $user->department->university->name }}
+                                @if($user->university)
+                                    <a href="{{ route('admin.universities.show', $user->university) }}" class="text-indigo-600 hover:underline">
+                                        {{ $user->university->name }}
                                     </a>
-                                    ({{ $user->department->university->city }})
+                                    ({{ $user->university->city }})
                                 @else
                                     N/A
                                 @endif
