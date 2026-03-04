@@ -12,6 +12,8 @@ class FeeController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Fee::class);
+
         $query = Fee::with('department.university');
 
         if ($request->filled('name')) {
@@ -48,16 +50,27 @@ class FeeController extends Controller
 
     public function create()
     {
-        $departments = Department::orderBy('name')->get();
+        $this->authorize('createAny', Fee::class);
+
+        $user = Auth::user();
+
+        $departments = match ($user->role) {
+            'super_admin' => Department::orderBy('name')->get(),
+            'university_admin' => Department::where('university_id', $user->university_id)->orderBy('name')->get(),
+            'department_admin', 'staff_admin' => Department::where('id', $user->department_id)->orderBy('name')->get(),
+            default => collect()
+        };
 
         return view('admin.fees.create', compact('departments'));
     }
 
     public function store(StoreFeeRequest $request)
     {
-        $validated = $request->validated();
+        $department = Department::findOrFail($request->department_id);
 
-        $fee = Fee::create($validated);
+        $this->authorize('create', [Fee::class, $department]);
+
+        $fee = Fee::create($request->validated());
 
         AuditLog::create([
             'user_id' => Auth::id(),
@@ -74,6 +87,8 @@ class FeeController extends Controller
 
     public function show(Fee $fee)
     {
+        $this->authorize('view', $fee);
+
         $fee->load('department.university');
 
         return view('admin.fees.show', compact('fee'));
@@ -81,6 +96,8 @@ class FeeController extends Controller
 
     public function edit(Fee $fee)
     {
+        $this->authorize('update', $fee);
+
         $departments = Department::orderBy('name')->get();
 
         return view('admin.fees.edit', compact('fee', 'departments'));
@@ -88,6 +105,8 @@ class FeeController extends Controller
 
     public function update(UpdateFeeRequest $request, Fee $fee)
     {
+        $this->authorize('update', $fee);
+
         $validated = $request->validated();
 
         $fee->update($validated);
@@ -107,6 +126,8 @@ class FeeController extends Controller
 
     public function destroy(Fee $fee)
     {
+        $this->authorize('delete', $fee);
+        
         if ($fee->invoices()->exists()) {
             return redirect()->route('admin.fees.index')
                 ->with('error', 'Cannot delete fee because it has associated invoices.');

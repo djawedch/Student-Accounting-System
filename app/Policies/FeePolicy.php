@@ -2,65 +2,62 @@
 
 namespace App\Policies;
 
-use App\Models\Fee;
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\{Department, User, Fee};
 
 class FeePolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
     public function viewAny(User $user): bool
     {
-        return false;
+        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
     public function view(User $user, Fee $fee): bool
     {
-        return false;
+        return $this->viewAny($user);
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function createAny(User $user): bool
     {
+        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
+    }
+
+    public function create(User $user, Department $department): bool
+    {
+        if ($user->role === 'super_admin') {
+            return true;
+        }
+        if ($user->role === 'university_admin') {
+            return $department->university_id === $user->university_id;
+        }
+        if (in_array($user->role, ['department_admin', 'staff_admin'])) {
+            return $department->id === $user->department_id;
+        }
         return false;
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
     public function update(User $user, Fee $fee): bool
     {
-        return false;
+        return $this->canManageFee($user, $fee);
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
     public function delete(User $user, Fee $fee): bool
     {
-        return false;
+        return $this->canManageFee($user, $fee);
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Fee $fee): bool
+    protected function canManageFee(User $user, Fee $fee): bool
     {
-        return false;
-    }
+        if ($user->role === 'super_admin') {
+            return true;
+        }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Fee $fee): bool
-    {
+        if ($user->role === 'university_admin') {
+            return $fee->department->university_id === $user->university_id;
+        }
+
+        if (in_array($user->role, ['department_admin', 'staff_admin'])) {
+            return $fee->department_id === $user->department_id;
+        }
         return false;
     }
 }

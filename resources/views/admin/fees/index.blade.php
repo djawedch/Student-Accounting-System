@@ -11,10 +11,12 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Fees</h2>
-                        <a href="{{ route('admin.fees.create') }}"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Add New Fee
-                        </a>
+                        @can('createAny', App\Models\Fee::class)
+                            <a href="{{ route('admin.fees.create') }}"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Add New Fee
+                            </a>
+                        @endcan
                     </div>
 
                     @if(session('success'))
@@ -120,22 +122,27 @@
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $fee->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $fee->department->name ?? 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            {{ $fee->department->university->name ?? 'N/A' }}</td>
+                                            {{ $fee->department->university->name ?? 'N/A' }}
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ number_format($fee->amount, 2) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $fee->academic_year }}</td>
                                         <td class="px-6 py-4 max-w-xs truncate">{{ $fee->description ?? '—' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <a href="{{ route('admin.fees.show', $fee) }}"
                                                 class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                            <a href="{{ route('admin.fees.edit', $fee) }}"
-                                                class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                            <form action="{{ route('admin.fees.destroy', $fee) }}" method="POST"
-                                                class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900"
-                                                    onclick="return confirm('Are you sure you want to delete this fee?')">Delete</button>
-                                            </form>
+                                            @can('update', $fee)
+                                                <a href="{{ route('admin.fees.edit', $fee) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                            @endcan
+                                            @can('delete', $fee)
+                                                <form action="{{ route('admin.fees.destroy', $fee) }}" method="POST"
+                                                    class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-900"
+                                                        onclick="return confirm('Are you sure you want to delete this fee?')">Delete</button>
+                                                </form>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @empty

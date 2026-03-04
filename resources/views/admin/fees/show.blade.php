@@ -12,10 +12,12 @@
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">Fee Information</h2>
                         <div>
-                            <a href="{{ route('admin.fees.edit', $fee) }}"
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
-                                Edit
-                            </a>
+                            @can('update', $fee)
+                                <a href="{{ route('admin.fees.edit', $fee) }}"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
+                                    Edit
+                                </a>
+                            @endcan
                             <a href="{{ route('admin.fees.index') }}"
                                 class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
                                 Back to List
@@ -58,7 +60,8 @@
                         <div class="md:col-span-2">
                             <dt class="text-sm font-medium text-gray-500">Description</dt>
                             <dd class="mt-1 text-gray-900 whitespace-pre-line">
-                                {{ $fee->description ?? 'No description provided.' }}</dd>
+                                {{ $fee->description ?? 'No description provided.' }}
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Created At</dt>
