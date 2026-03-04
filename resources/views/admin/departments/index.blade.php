@@ -11,10 +11,12 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Departments</h2>
-                        <a href="{{ route('admin.departments.create') }}"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Add Department
-                        </a>
+                        @can('create', App\Models\Department::class)
+                            <a href="{{ route('admin.departments.create') }}"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Add Department
+                            </a>
+                        @endcan
                     </div>
 
                     {{-- Success message --}}
@@ -89,15 +91,19 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="{{ route('admin.departments.show', $department) }}"
                                             class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                        <a href="{{ route('admin.departments.edit', $department) }}"
-                                            class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                        <form action="{{ route('admin.departments.destroy', $department) }}" method="POST"
-                                            class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900"
-                                                onclick="return confirm('Are you sure you want to delete this department?')">Delete</button>
-                                        </form>
+                                        @can('update', $department)
+                                            <a href="{{ route('admin.departments.edit', $department) }}"
+                                                class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                        @endcan
+                                        @can('delete', $department)
+                                            <form action="{{ route('admin.departments.destroy', $department) }}" method="POST"
+                                                class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-900"
+                                                    onclick="return confirm('Are you sure you want to delete this department?')">Delete</button>
+                                            </form>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty
