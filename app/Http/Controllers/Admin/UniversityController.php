@@ -12,6 +12,8 @@ class UniversityController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', University::class);
+
         $query = University::withCount('departments');
 
         if ($request->filled('name')) {
@@ -29,11 +31,15 @@ class UniversityController extends Controller
 
     public function create()
     {
+        $this->authorize('create', University::class);
+
         return view('admin.universities.create');
     }
 
     public function store(StoreUniversityRequest $request)
     {
+        $this->authorize('create', University::class);
+
         $university = University::create($request->validated());
 
         AuditLog::create([
@@ -50,6 +56,8 @@ class UniversityController extends Controller
 
     public function show(University $university)
     {
+        $this->authorize('view', $university);
+
         $university->load('departments');
 
         return view('admin.universities.show', compact('university'));
@@ -57,11 +65,15 @@ class UniversityController extends Controller
 
     public function edit(University $university)
     {
+        $this->authorize('update', $university);
+
         return view('admin.universities.edit', compact('university'));
     }
 
     public function update(UpdateUniversityRequest $request, University $university)
     {
+        $this->authorize('update', $university);
+
         $university->update($request->validated());
 
         AuditLog::create([
@@ -78,6 +90,8 @@ class UniversityController extends Controller
 
     public function destroy(University $university)
     {
+        $this->authorize('delete', $university);
+
         if ($university->departments()->count() > 0) {
             return redirect()->route('admin.universities.index')
                 ->with('error', 'Cannot delete university because it has associated departments.');

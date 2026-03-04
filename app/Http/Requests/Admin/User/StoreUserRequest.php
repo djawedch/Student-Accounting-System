@@ -14,8 +14,6 @@ class StoreUserRequest extends FormRequest
 
     public function rules(): array
     {
-        dd($this->all(), $this->role);
-        
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',

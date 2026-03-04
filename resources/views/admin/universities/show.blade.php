@@ -6,12 +6,14 @@
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">University Details</h2>
                         <div>
-                            <a href="{{ route('admin.universities.edit', $university) }}"
-                               class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
-                                Edit
-                            </a>
+                            @can('update', $university)
+                                <a href="{{ route('admin.universities.edit', $university) }}"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
+                                    Edit
+                                </a>
+                            @endcan
                             <a href="{{ route('admin.universities.index') }}"
-                               class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
                                 Back to List
                             </a>
                         </div>
@@ -47,9 +49,15 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead>
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            ID</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Name</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Created At</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -57,7 +65,8 @@
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">{{ $department->id }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap">{{ $department->name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap">{{ $department->created_at->format('M d, Y') }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                {{ $department->created_at->format('M d, Y') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
