@@ -11,10 +11,12 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Invoices</h2>
-                        <a href="{{ route('admin.invoices.create') }}"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Generate New Invoices
-                        </a>
+                        @can('create', App\Models\Invoice::class)
+                            <a href="{{ route('admin.invoices.create') }}"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Generate New Invoices
+                            </a>
+                        @endcan
                     </div>
 
                     @if(session('success'))
@@ -140,11 +142,11 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                @if($invoice->status == 'paid') bg-green-100 text-green-800
-                                                                @elseif($invoice->status == 'pending') bg-yellow-100 text-yellow-800
-                                                                @elseif($invoice->status == 'overdue') bg-red-100 text-red-800
-                                                                @else bg-gray-100 text-gray-800
-                                                                @endif">
+                                                                            @if($invoice->status == 'paid') bg-green-100 text-green-800
+                                                                            @elseif($invoice->status == 'pending') bg-yellow-100 text-yellow-800
+                                                                            @elseif($invoice->status == 'overdue') bg-red-100 text-red-800
+                                                                            @else bg-gray-100 text-gray-800
+                                                                            @endif">
                                                 {{ ucfirst($invoice->status) }}
                                             </span>
                                         </td>
@@ -153,10 +155,14 @@
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $invoice->due_date->format('Y-m-d') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('admin.invoices.show', $invoice) }}"
-                                                class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                            <a href="{{ route('admin.invoices.edit', $invoice) }}"
-                                                class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                            @can('view', $invoice)
+                                                <a href="{{ route('admin.invoices.show', $invoice) }}"
+                                                    class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                                            @endcan
+                                            @can('update', $invoice)
+                                                <a href="{{ route('admin.invoices.edit', $invoice) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @empty

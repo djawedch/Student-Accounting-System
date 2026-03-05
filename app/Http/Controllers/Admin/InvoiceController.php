@@ -6,14 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoice\{StoreInvoiceRequest, UpdateInvoiceRequest};
 use App\Models\{AuditLog, Student, Fee, Invoice};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\{Auth, DB};
 
 class InvoiceController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Invoice::class);
+
+        $user = Auth::user();
         $query = Invoice::with('student.user', 'fee.department');
+
+        if ($user->role === 'university_admin') {
+            $query->whereHas('student.user', fn($q) => $q->where('university_id', $user->university_id));
+        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
+            $query->whereHas('student.user', fn($q) => $q->where('department_id', $user->department_id));
+        }
 
         if ($request->filled('student')) {
             $student = $request->student;
@@ -67,14 +75,31 @@ class InvoiceController extends Controller
 
     public function create()
     {
-        $students = Student::with('user')->orderBy('id')->get();
-        $fees = Fee::with('department')->orderBy('name')->get();
+        $this->authorize('create', Invoice::class);
+
+        $user = Auth::user();
+
+        $students = match ($user->role) {
+            'super_admin' => Student::with('user')->get(),
+            'university_admin' => Student::whereHas('user', fn($q) => $q->where('university_id', $user->university_id))->with('user')->get(),
+            'department_admin', 'staff_admin' => Student::whereHas('user', fn($q) => $q->where('department_id', $user->department_id))->with('user')->get(),
+            default => collect()
+        };
+
+        $fees = match ($user->role) {
+            'super_admin' => Fee::with('department')->orderBy('name')->get(),
+            'university_admin' => Fee::whereHas('department', fn($q) => $q->where('university_id', $user->university_id))->with('department')->orderBy('name')->get(),
+            'department_admin', 'staff_admin' => Fee::where('department_id', $user->department_id)->with('department')->orderBy('name')->get(),
+            default => collect()
+        };
 
         return view('admin.invoices.create', compact('students', 'fees'));
     }
 
     public function store(StoreInvoiceRequest $request)
     {
+        $this->authorize('create', Invoice::class);
+
         $request->validated();
 
         $studentIds = $request->student_ids;
@@ -137,6 +162,8 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
+        $this->authorize('view', $invoice);
+
         $invoice->load('student.user', 'fee.department');
 
         return view('admin.invoices.show', compact('invoice'));
@@ -144,6 +171,8 @@ class InvoiceController extends Controller
 
     public function edit(Invoice $invoice)
     {
+        $this->authorize('update', $invoice);
+
         $invoice->load('student.user', 'fee');
 
         return view('admin.invoices.edit', compact('invoice'));
@@ -151,6 +180,8 @@ class InvoiceController extends Controller
 
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
+        $this->authorize('update', $invoice);
+
         $request->validated();
 
         $invoice->update($request->only(['status', 'issued_date', 'due_date']));
