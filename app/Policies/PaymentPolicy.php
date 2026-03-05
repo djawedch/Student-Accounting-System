@@ -2,65 +2,62 @@
 
 namespace App\Policies;
 
-use App\Models\Payment;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Payment;
 
 class PaymentPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
     public function viewAny(User $user): bool
     {
-        return false;
+        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
     public function view(User $user, Payment $payment): bool
     {
-        return false;
+        return $this->canAccessPayment($user, $payment);
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
     public function create(User $user): bool
     {
-        return false;
+        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
     public function update(User $user, Payment $payment): bool
     {
-        return false;
+        return $this->canAccessPayment($user, $payment);
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
     public function delete(User $user, Payment $payment): bool
     {
         return false;
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Payment $payment): bool
+    protected function canAccessPayment(User $user, Payment $payment): bool
     {
-        return false;
-    }
+        $invoice = $payment->invoice;
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Payment $payment): bool
-    {
+        if (!$invoice) {
+            return false;
+        }
+
+        $student = $invoice->student;
+
+        if (!$student) {
+            return false;
+        }
+
+        if ($user->role === 'super_admin') {
+            return true;
+        }
+
+        if ($user->role === 'university_admin') {
+            return $student->user->university_id === $user->university_id;
+        }
+
+        if (in_array($user->role, ['department_admin', 'staff_admin'])) {
+            return $student->user->department_id === $user->department_id;
+        }
+
         return false;
     }
 }

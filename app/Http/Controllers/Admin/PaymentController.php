@@ -13,7 +13,16 @@ class PaymentController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Payment::class);
+
+        $user = Auth::user();
         $query = Payment::with('invoice.student.user', 'invoice.fee');
+
+        if ($user->role === 'university_admin') {
+            $query->whereHas('invoice.student.user', fn($q) => $q->where('university_id', $user->university_id));
+        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
+            $query->whereHas('invoice.student.user', fn($q) => $q->where('department_id', $user->department_id));
+        }
 
         if ($request->filled('student')) {
             $student = $request->student;
@@ -58,30 +67,35 @@ class PaymentController extends Controller
 
     public function create()
     {
-        $invoices = Invoice::with(['student.user', 'fee'])
+        $this->authorize('create', Payment::class);
+
+        $user = Auth::user();
+        $invoices = Invoice::with('student.user', 'fee')
+            ->whereHas('student.user', function ($q) use ($user) {
+                if ($user->role === 'university_admin') {
+                    $q->where('university_id', $user->university_id);
+                } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
+                    $q->where('department_id', $user->department_id);
+                }
+            })
             ->get()
-            ->filter(function ($invoice) {
-                return $invoice->remaining_amount > 0;
-            });
+            ->filter(fn($invoice) => $invoice->remaining_amount > 0);
 
         return view('admin.payments.create', compact('invoices'));
     }
 
     public function store(StorePaymentRequest $request)
     {
-        $request->validated();
+        $this->authorize('create', Payment::class);
+
+        $invoice = Invoice::with('student.user')->findOrFail($request->invoice_id);
+
+        $this->authorize('view', $invoice);
 
         DB::beginTransaction();
 
         try {
-            $payment = Payment::create([
-                'invoice_id' => $request->invoice_id,
-                'payment_method' => $request->payment_method,
-                'amount' => $request->amount,
-                'reference' => $request->reference,
-                'payment_date' => $request->payment_date,
-            ]);
-
+            $payment = Payment::create($request->validated());
             $invoice = $payment->invoice;
             $totalPaid = $invoice->total_paid;
             $invoiceAmount = $invoice->fee->amount;
@@ -116,14 +130,17 @@ class PaymentController extends Controller
 
     public function show(Payment $payment)
     {
+        $this->authorize('view', $payment);
+
         $payment->load('invoice.student.user', 'invoice.fee');
 
         return view('admin.payments.show', compact('payment'));
     }
 
-
     public function edit(Payment $payment)
     {
+        $this->authorize('update', $payment);
+
         $payment->load('invoice.student.user', 'invoice.fee');
 
         return view('admin.payments.edit', compact('payment'));
@@ -131,18 +148,12 @@ class PaymentController extends Controller
 
     public function update(UpdatePaymentRequest $request, Payment $payment)
     {
-        $request->validated();
+        $this->authorize('update', $payment);
 
         DB::beginTransaction();
 
         try {
-            $payment->update([
-                'amount' => $request->amount,
-                'payment_method' => $request->payment_method,
-                'reference' => $request->reference,
-                'payment_date' => $request->payment_date,
-            ]);
-
+            $payment->update($request->validated());
             $invoice = $payment->invoice;
             $totalPaid = $invoice->total_paid;
             $invoiceAmount = $invoice->fee->amount;

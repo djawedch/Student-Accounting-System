@@ -11,10 +11,12 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Payments</h2>
-                        <a href="{{ route('admin.payments.create') }}"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Record Payment
-                        </a>
+                        @can('create', App\Models\Payment::class)
+                            <a href="{{ route('admin.payments.create') }}"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Record Payment
+                            </a>
+                        @endcan
                     </div>
 
                     @if(session('success'))
@@ -142,10 +144,14 @@
                                             {{ $payment->payment_date->format('Y-m-d') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('admin.payments.show', $payment) }}"
-                                                class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                            <a href="{{ route('admin.payments.edit', $payment) }}"
-                                                class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                            @can('view', $payment)
+                                                <a href="{{ route('admin.payments.show', $payment) }}"
+                                                    class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                                            @endcan
+                                            @can('update', $payment)
+                                                <a href="{{ route('admin.payments.edit', $payment) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @empty
