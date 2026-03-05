@@ -11,10 +11,12 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Scholarship Awards</h2>
-                        <a href="{{ route('admin.student-scholarships.create') }}"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Award Scholarship
-                        </a>
+                        @can('create', App\Models\StudentScholarship::class)
+                            <a href="{{ route('admin.student-scholarships.create') }}"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Award Scholarship
+                            </a>
+                        @endcan
                     </div>
 
                     @if(session('success'))
@@ -141,10 +143,10 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                        @if($award->status == 'active') bg-green-100 text-green-800
-                                                        @elseif($award->status == 'expired') bg-gray-100 text-gray-800
-                                                        @elseif($award->status == 'cancelled') bg-red-100 text-red-800
-                                                        @endif">
+                                                                    @if($award->status == 'active') bg-green-100 text-green-800
+                                                                    @elseif($award->status == 'expired') bg-gray-100 text-gray-800
+                                                                    @elseif($award->status == 'cancelled') bg-red-100 text-red-800
+                                                                    @endif">
                                                 {{ ucfirst($award->status) }}
                                             </span>
                                         </td>
@@ -153,10 +155,14 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $award->reference ?? '—' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('admin.student-scholarships.show', $award) }}"
-                                                class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                            <a href="{{ route('admin.student-scholarships.edit', $award) }}"
-                                                class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                            @can('view', $award)
+                                                <a href="{{ route('admin.student-scholarships.show', $award) }}"
+                                                    class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                                            @endcan
+                                            @can('view', $award)
+                                                <a href="{{ route('admin.student-scholarships.edit', $award) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @empty

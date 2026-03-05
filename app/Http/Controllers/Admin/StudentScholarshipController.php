@@ -12,7 +12,16 @@ class StudentScholarshipController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', StudentScholarship::class);
+
+        $user = Auth::user();
         $query = StudentScholarship::with('student.user', 'scholarship');
+
+        if ($user->role === 'university_admin') {
+            $query->whereHas('student.user', fn($q) => $q->where('university_id', $user->university_id));
+        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
+            $query->whereHas('student.user', fn($q) => $q->where('department_id', $user->department_id));
+        }
 
         if ($request->filled('student')) {
             $student = $request->student;
@@ -59,7 +68,17 @@ class StudentScholarshipController extends Controller
 
     public function create()
     {
-        $students = Student::with('user')->orderBy('id')->get();
+        $this->authorize('create', StudentScholarship::class);
+
+        $user = Auth::user();
+
+        $students = match ($user->role) {
+            'super_admin' => Student::with('user')->get(),
+            'university_admin' => Student::whereHas('user', fn($q) => $q->where('university_id', $user->university_id))->with('user')->get(),
+            'department_admin', 'staff_admin' => Student::whereHas('user', fn($q) => $q->where('department_id', $user->department_id))->with('user')->get(),
+            default => collect()
+        };
+
         $scholarships = Scholarship::orderBy('name')->get();
 
         return view('admin.student-scholarships.create', compact('students', 'scholarships'));
@@ -67,6 +86,8 @@ class StudentScholarshipController extends Controller
 
     public function store(StoreStudentScholarshipRequest $request)
     {
+        $this->authorize('create', StudentScholarship::class);
+
         $request->validated();
 
         $studentIds = $request->student_ids;
@@ -115,6 +136,8 @@ class StudentScholarshipController extends Controller
 
     public function show(StudentScholarship $studentScholarship)
     {
+        $this->authorize('view', $studentScholarship);
+
         $studentScholarship->load('student.user', 'scholarship');
 
         return view('admin.student-scholarships.show', compact('studentScholarship'));
@@ -122,7 +145,17 @@ class StudentScholarshipController extends Controller
 
     public function edit(StudentScholarship $studentScholarship)
     {
-        $students = Student::with('user')->orderBy('id')->get();
+        $this->authorize('update', $studentScholarship);
+
+        $user = Auth::user();
+
+        $students = match ($user->role) {
+            'super_admin' => Student::with('user')->get(),
+            'university_admin' => Student::whereHas('user', fn($q) => $q->where('university_id', $user->university_id))->with('user')->get(),
+            'department_admin', 'staff_admin' => Student::whereHas('user', fn($q) => $q->where('department_id', $user->department_id))->with('user')->get(),
+            default => collect()
+        };
+        
         $scholarships = Scholarship::orderBy('name')->get();
 
         return view('admin.student-scholarships.edit', compact('studentScholarship', 'students', 'scholarships'));
@@ -130,8 +163,12 @@ class StudentScholarshipController extends Controller
 
     public function update(UpdateStudentScholarshipRequest $request, StudentScholarship $studentScholarship)
     {
+        $this->authorize('update', $studentScholarship);
+
         $request->validated();
+
         $studentScholarship->toArray();
+
         $studentScholarship->update($request->all());
 
         AuditLog::create([
