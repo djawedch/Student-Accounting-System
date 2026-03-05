@@ -12,10 +12,12 @@
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">Scholarship Information</h2>
                         <div>
-                            <a href="{{ route('admin.scholarships.edit', $scholarship) }}"
-                               class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
-                                Edit
+                            @can('update', $scholarship)
+                                <a href="{{ route('admin.scholarships.edit', $scholarship) }}"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
+                                    Edit
                             </a>
+                            @endcan
                             <a href="{{ route('admin.scholarships.index') }}"
                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
                                 Back to List

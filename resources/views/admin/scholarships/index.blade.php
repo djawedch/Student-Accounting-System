@@ -11,10 +11,12 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Scholarships</h2>
-                        <a href="{{ route('admin.scholarships.create') }}"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Add New Scholarship
-                        </a>
+                        @can('create', App\Models\Scholarship::class)
+                            <a href="{{ route('admin.scholarships.create') }}"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Add New Scholarship
+                            </a>
+                        @endcan
                     </div>
 
                     @if(session('success'))
@@ -103,17 +105,23 @@
                                             {{ $scholarship->created_at->format('Y-m-d') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('admin.scholarships.show', $scholarship) }}"
-                                                class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                            <a href="{{ route('admin.scholarships.edit', $scholarship) }}"
-                                                class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                            <form action="{{ route('admin.scholarships.destroy', $scholarship) }}"
-                                                method="POST" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900"
-                                                    onclick="return confirm('Are you sure you want to delete this scholarship?')">Delete</button>
-                                            </form>
+                                            @can('view', $scholarship)
+                                                <a href="{{ route('admin.scholarships.show', $scholarship) }}"
+                                                    class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                                            @endcan
+                                            @can('update', $scholarship)
+                                                <a href="{{ route('admin.scholarships.edit', $scholarship) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                            @endcan
+                                            @can('delete', $scholarship)
+                                                <form action="{{ route('admin.scholarships.destroy', $scholarship) }}"
+                                                    method="POST" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-900"
+                                                        onclick="return confirm('Are you sure you want to delete this scholarship?')">Delete</button>
+                                                </form>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @empty
