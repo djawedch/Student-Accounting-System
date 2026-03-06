@@ -12,12 +12,14 @@
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">Student Information</h2>
                         <div>
-                            <a href="{{ route('admin.students.edit', $student) }}"
-                               class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
-                                Edit
-                            </a>
+                            @can('update', $student)
+                                <a href="{{ route('admin.students.edit', $student) }}"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
+                                    Edit
+                                </a>
+                            @endcan
                             <a href="{{ route('admin.students.index') }}"
-                               class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
                                 Back to List
                             </a>
                         </div>
@@ -46,9 +48,11 @@
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1">
                                 @if($student->is_active)
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
                                 @else
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>
                                 @endif
                             </dd>
                         </div>
@@ -61,7 +65,8 @@
                             <dt class="text-sm font-medium text-gray-500">Department</dt>
                             <dd class="mt-1 text-gray-900">
                                 @if($student->department)
-                                    <a href="{{ route('admin.departments.show', $student->department) }}" class="text-indigo-600 hover:underline">
+                                    <a href="{{ route('admin.departments.show', $student->department) }}"
+                                        class="text-indigo-600 hover:underline">
                                         {{ $student->department->name }}
                                     </a>
                                 @else
@@ -73,7 +78,8 @@
                             <dt class="text-sm font-medium text-gray-500">University</dt>
                             <dd class="mt-1 text-gray-900">
                                 @if($student->department && $student->department->university)
-                                    <a href="{{ route('admin.universities.show', $student->department->university) }}" class="text-indigo-600 hover:underline">
+                                    <a href="{{ route('admin.universities.show', $student->department->university) }}"
+                                        class="text-indigo-600 hover:underline">
                                         {{ $student->department->university->name }}
                                     </a>
                                 @else

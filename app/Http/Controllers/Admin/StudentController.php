@@ -12,7 +12,16 @@ class StudentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::where('role', 'student')->with('student', 'department.university');
+        $this->authorize('viewAny', User::class);
+
+        $user = Auth::user();
+        $query = User::where('role', 'student')->with('student', 'university', 'department');
+
+        if ($user->role === 'university_admin') {
+            $query->where('university_id', $user->university_id);
+        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
+            $query->where('department_id', $user->department_id);
+        }
 
         if ($request->filled('name')) {
             $name = $request->name;
@@ -70,6 +79,8 @@ class StudentController extends Controller
 
     public function create()
     {
+        $this->authorize('create', User::class);
+
         $departments = Department::orderBy('name')->get();
 
         return view('admin.students.create', compact('departments'));
@@ -77,6 +88,8 @@ class StudentController extends Controller
 
     public function store(StoreStudentRequest $request)
     {
+        $this->authorize('create', User::class);
+
         $validated = $request->validated();
 
         try {
@@ -123,6 +136,8 @@ class StudentController extends Controller
 
     public function show(User $student)
     {
+        $this->authorize('view', $student);
+
         $student->load('student', 'department.university');
 
         return view('admin.students.show', compact('student'));
@@ -130,6 +145,8 @@ class StudentController extends Controller
 
     public function edit(User $student)
     {
+        $this->authorize('update', $student);
+
         $student->load('student');
 
         $departments = Department::orderBy('name')->get();
@@ -139,6 +156,8 @@ class StudentController extends Controller
 
     public function update(UpdateStudentRequest $request, User $student)
     {
+        $this->authorize('update', $student);
+
         if ($student->role !== 'student') {
             abort(404, 'Student not found.');
         }
@@ -202,7 +221,10 @@ class StudentController extends Controller
 
     public function toggleStatus(User $student)
     {
+        $this->authorize('toggleStatus', $student);
+
         $student->is_active = !$student->is_active;
+
         $student->save();
 
         AuditLog::create([
@@ -215,6 +237,7 @@ class StudentController extends Controller
         ]);
 
         $status = $student->is_active ? 'activated' : 'deactivated';
+        
         return redirect()->route('admin.students.index')
             ->with('success', "Student {$student->first_name} {$student->last_name} {$status} successfully.");
     }

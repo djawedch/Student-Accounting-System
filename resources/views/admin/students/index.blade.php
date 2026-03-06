@@ -11,10 +11,12 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Students</h2>
-                        <a href="{{ route('admin.students.create') }}"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Add New Student
-                        </a>
+                        @can('create', App\Models\User::class)
+                            <a href="{{ route('admin.students.create') }}"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Add New Student
+                            </a>
+                        @endcan
                     </div>
 
                     {{-- Success/Error messages --}}
@@ -178,30 +180,36 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('admin.students.show', $student) }}"
-                                                class="text-blue-600 hover:text-blue-900 mr-3">View</a>
-                                            <a href="{{ route('admin.students.edit', $student) }}"
-                                                class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                            @can('view', $student)
+                                                <a href="{{ route('admin.students.show', $student) }}"
+                                                    class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                                            @endcan
+                                            @can('update', $student)
+                                                <a href="{{ route('admin.students.edit', $student) }}"
+                                                    class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                                            @endcan
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <form action="{{ route('admin.students.toggle-status', $student) }}"
-                                                method="POST" class="inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="focus:outline-none">
-                                                    @if($student->is_active)
-                                                        <span
-                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 hover:bg-green-200 transition">
-                                                            Active
-                                                        </span>
-                                                    @else
-                                                        <span
-                                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 hover:bg-red-200 transition">
-                                                            Inactive
-                                                        </span>
-                                                    @endif
-                                                </button>
-                                            </form>
+                                            @can('toggleStatus', $student)
+                                                <form action="{{ route('admin.students.toggle-status', $student) }}"
+                                                    method="POST" class="inline">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" class="focus:outline-none">
+                                                        @if($student->is_active)
+                                                            <span
+                                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 hover:bg-green-200 transition">
+                                                                Active
+                                                            </span>
+                                                        @else
+                                                            <span
+                                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 hover:bg-red-200 transition">
+                                                                Inactive
+                                                            </span>
+                                                        @endif
+                                                    </button>
+                                                </form>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @empty
