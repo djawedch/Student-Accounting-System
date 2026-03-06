@@ -12,12 +12,14 @@
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">User Information</h2>
                         <div>
-                            <a href="{{ route('admin.users.edit', $user) }}"
-                               class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
-                                Edit
-                            </a>
+                            @can('update', $user)
+                                <a href="{{ route('admin.users.edit', $user) }}"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
+                                    Edit
+                                </a>
+                            @endcan
                             <a href="{{ route('admin.users.index') }}"
-                               class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
                                 Back to List
                             </a>
                         </div>
@@ -55,11 +57,13 @@
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1">
                                 @if($user->is_active)
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                         Active
                                     </span>
                                 @else
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                         Inactive
                                     </span>
                                 @endif
@@ -70,7 +74,8 @@
                             <dt class="text-sm font-medium text-gray-500">Department</dt>
                             <dd class="mt-1 text-lg text-gray-900">
                                 @if($user->department)
-                                    <a href="{{ route('admin.departments.show', $user->department) }}" class="text-indigo-600 hover:underline">
+                                    <a href="{{ route('admin.departments.show', $user->department) }}"
+                                        class="text-indigo-600 hover:underline">
                                         {{ $user->department->name }}
                                     </a>
                                 @else
@@ -83,7 +88,8 @@
                             <dt class="text-sm font-medium text-gray-500">University</dt>
                             <dd class="mt-1 text-lg text-gray-900">
                                 @if($user->university)
-                                    <a href="{{ route('admin.universities.show', $user->university) }}" class="text-indigo-600 hover:underline">
+                                    <a href="{{ route('admin.universities.show', $user->university) }}"
+                                        class="text-indigo-600 hover:underline">
                                         {{ $user->university->name }}
                                     </a>
                                     ({{ $user->university->city }})
@@ -111,16 +117,20 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead>
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">IP Address</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">IP
+                                            Address</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($user->auditLogs->take(5) as $log)
                                         <tr>
                                             <td class="px-6 py-2 whitespace-nowrap">{{ $log->event_type }}</td>
-                                            <td class="px-6 py-2 whitespace-nowrap">{{ $log->created_at->format('M d, Y H:i') }}</td>
+                                            <td class="px-6 py-2 whitespace-nowrap">{{ $log->created_at->format('M d, Y H:i') }}
+                                            </td>
                                             <td class="px-6 py-2 whitespace-nowrap">{{ $log->ip_address }}</td>
                                         </tr>
                                     @endforeach

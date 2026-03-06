@@ -3,63 +3,61 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
     public function viewAny(User $user): bool
     {
-        return false;
+        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, User $model): bool
+    public function view(User $user, User $targetUser): bool
     {
-        return false;
+        return $this->canManageUser($user, $targetUser);
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
     public function create(User $user): bool
     {
-        return false;
+        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, User $model): bool
+    public function update(User $user, User $targetUser): bool
     {
-        return false;
+        return $this->canManageUser($user, $targetUser);
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, User $targetUser): bool
     {
-        return false;
+        if ($user->id === $targetUser->id) {
+            return false;
+        }
+
+        return $this->canManageUser($user, $targetUser);
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, User $model): bool
+    public function toggleStatus(User $user, User $targetUser): bool
     {
-        return false;
+        if ($user->id === $targetUser->id) {
+            return false;
+        }
+
+        return $this->canManageUser($user, $targetUser);
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, User $model): bool
+    protected function canManageUser(User $currentUser, User $targetUser): bool
     {
+        if ($currentUser->role === 'super_admin') {
+            return true;
+        }
+
+        if ($currentUser->role === 'university_admin') {
+            return $targetUser->university_id === $currentUser->university_id;
+        }
+
+        if (in_array($currentUser->role, ['department_admin', 'staff_admin'])) {
+            return $targetUser->department_id === $currentUser->department_id;
+        }
+
         return false;
     }
 }

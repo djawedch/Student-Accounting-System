@@ -12,7 +12,17 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', User::class);
+
+        $user = Auth::user();
+
         $query = User::where('role', '!=', 'student')->with('department', 'university');
+
+        if ($user->role === 'university_admin') {
+            $query->where('university_id', $user->university_id);
+        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
+            $query->where('department_id', $user->department_id);
+        }
 
         if ($request->filled('name')) {
             $name = $request->name;
@@ -45,6 +55,8 @@ class UserController extends Controller
 
     public function create()
     {
+        $this->authorize('create', User::class);
+
         $universities = University::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
 
@@ -53,6 +65,8 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
+        $this->authorize('create', User::class);
+
         $validated = $request->validated();
 
         if (in_array($validated['role'], ['department_admin', 'staff_admin']) && !empty($validated['department_id'])) {
@@ -80,6 +94,8 @@ class UserController extends Controller
 
     public function show(User $user)
     {
+        $this->authorize('view', $user);
+
         $user->load('department', 'university');
 
         return view('admin.users.show', compact('user'));
@@ -91,6 +107,8 @@ class UserController extends Controller
             return redirect()->route('admin.students.edit', $user)
                 ->with('error', 'Please use the Student Management section to edit students.');
         }
+
+        $this->authorize('update', $user);
 
         $universities = University::orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
@@ -104,6 +122,8 @@ class UserController extends Controller
             return redirect()->route('admin.students.index')
                 ->with('error', 'Students cannot be updated here.');
         }
+
+        $this->authorize('update', $user);
 
         $validated = $request->validated();
 
@@ -132,7 +152,10 @@ class UserController extends Controller
 
     public function toggleStatus(User $user)
     {
+        $this->authorize('toggleStatus', $user);
+
         $user->is_active = !$user->is_active;
+
         $user->save();
 
         AuditLog::create([
@@ -145,6 +168,7 @@ class UserController extends Controller
         ]);
 
         $status = $user->is_active ? 'activated' : 'deactivated';
+
         return redirect()->route('admin.users.index')
             ->with('success', "User {$user->first_name} {$user->last_name} {$status} successfully.");
     }
