@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\StudentScholarshipFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StudentScholarship\{StoreStudentScholarshipRequest, UpdateStudentScholarshipRequest};
 use App\Models\{AuditLog, Student, Scholarship, StudentScholarship};
+use App\Scopes\StudentScholarshipRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};
 
@@ -15,51 +17,13 @@ class StudentScholarshipController extends Controller
         $this->authorize('viewAny', StudentScholarship::class);
 
         $user = Auth::user();
-        $query = StudentScholarship::with('student.user', 'scholarship');
+        $baseQuery = StudentScholarship::with('student.user', 'scholarship');
 
-        if ($user->role === 'university_admin') {
-            $query->whereHas('student.user', fn($q) => $q->where('university_id', $user->university_id));
-        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
-            $query->whereHas('student.user', fn($q) => $q->where('department_id', $user->department_id));
-        }
-
-        if ($request->filled('student')) {
-            $student = $request->student;
-            $query->whereHas('student.user', function ($q) use ($student) {
-                $q->where('first_name', 'like', "%{$student}%")
-                    ->orWhere('last_name', 'like', "%{$student}%");
-            });
-        }
-
-        if ($request->filled('scholarship')) {
-            $query->whereHas('scholarship', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->scholarship . '%');
-            });
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('grant_from')) {
-            $query->whereDate('grant_date', '>=', $request->grant_from);
-        }
-        if ($request->filled('grant_to')) {
-            $query->whereDate('grant_date', '<=', $request->grant_to);
-        }
-
-        if ($request->filled('paid_from')) {
-            $query->whereDate('paid_at', '>=', $request->paid_from);
-        }
-        if ($request->filled('paid_to')) {
-            $query->whereDate('paid_at', '<=', $request->paid_to);
-        }
-
-        if ($request->filled('reference')) {
-            $query->where('reference', 'like', '%' . $request->reference . '%');
-        }
-
-        $awards = $query->latest()->paginate(10)->withQueryString();
+        $awards = (new StudentScholarshipFilter($request))
+            ->apply((new StudentScholarshipRoleScope)->apply($baseQuery, $user))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         $statuses = ['awarded', 'paid', 'cancelled'];
 
@@ -155,7 +119,7 @@ class StudentScholarshipController extends Controller
             'department_admin', 'staff_admin' => Student::whereHas('user', fn($q) => $q->where('department_id', $user->department_id))->with('user')->get(),
             default => collect()
         };
-        
+
         $scholarships = Scholarship::orderBy('name')->get();
 
         return view('admin.student-scholarships.edit', compact('studentScholarship', 'students', 'scholarships'));
