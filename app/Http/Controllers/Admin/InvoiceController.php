@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\InvoiceFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoice\{StoreInvoiceRequest, UpdateInvoiceRequest};
 use App\Models\{AuditLog, Student, Fee, Invoice};
+use App\Scopes\InvoiceRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};
 
@@ -15,58 +17,13 @@ class InvoiceController extends Controller
         $this->authorize('viewAny', Invoice::class);
 
         $user = Auth::user();
-        $query = Invoice::with('student.user', 'fee.department');
+        $baseQuery = Invoice::with('student.user', 'fee.department');
 
-        if ($user->role === 'university_admin') {
-            $query->whereHas('student.user', fn($q) => $q->where('university_id', $user->university_id));
-        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
-            $query->whereHas('student.user', fn($q) => $q->where('department_id', $user->department_id));
-        }
-
-        if ($request->filled('student')) {
-            $student = $request->student;
-            $query->whereHas('student.user', function ($q) use ($student) {
-                $q->where('first_name', 'like', "%{$student}%")
-                    ->orWhere('last_name', 'like', "%{$student}%");
-            });
-        }
-
-        if ($request->filled('fee')) {
-            $query->whereHas('fee', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->fee . '%');
-            });
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('issued_from')) {
-            $query->whereDate('issued_date', '>=', $request->issued_from);
-        }
-        if ($request->filled('issued_to')) {
-            $query->whereDate('issued_date', '<=', $request->issued_to);
-        }
-
-        if ($request->filled('due_from')) {
-            $query->whereDate('due_date', '>=', $request->due_from);
-        }
-        if ($request->filled('due_to')) {
-            $query->whereDate('due_date', '<=', $request->due_to);
-        }
-
-        if ($request->filled('amount_min')) {
-            $query->whereHas('fee', function ($q) use ($request) {
-                $q->where('amount', '>=', $request->amount_min);
-            });
-        }
-        if ($request->filled('amount_max')) {
-            $query->whereHas('fee', function ($q) use ($request) {
-                $q->where('amount', '<=', $request->amount_max);
-            });
-        }
-
-        $invoices = $query->latest()->paginate(10)->withQueryString();
+        $scopedQuery = (new InvoiceRoleScope)->apply($baseQuery, $user);
+        $invoices = (new InvoiceFilter($request))->apply($scopedQuery)
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         $statuses = ['unpaid', 'paid', 'overdue', 'cancelled'];
 
