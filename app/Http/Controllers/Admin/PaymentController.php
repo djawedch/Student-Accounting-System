@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\PaymentFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Payment\{StorePaymentRequest, UpdatePaymentRequest};
 use App\Models\{Invoice, Payment, AuditLog};
+use App\Scopes\PaymentRoleScope;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\{Auth, DB};
 
 class PaymentController extends Controller
 {
@@ -16,49 +17,13 @@ class PaymentController extends Controller
         $this->authorize('viewAny', Payment::class);
 
         $user = Auth::user();
-        $query = Payment::with('invoice.student.user', 'invoice.fee');
+        $baseQuery = Payment::with('invoice.student.user', 'invoice.fee');
 
-        if ($user->role === 'university_admin') {
-            $query->whereHas('invoice.student.user', fn($q) => $q->where('university_id', $user->university_id));
-        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
-            $query->whereHas('invoice.student.user', fn($q) => $q->where('department_id', $user->department_id));
-        }
-
-        if ($request->filled('student')) {
-            $student = $request->student;
-            $query->whereHas('invoice.student.user', function ($q) use ($student) {
-                $q->where('first_name', 'like', "%{$student}%")
-                    ->orWhere('last_name', 'like', "%{$student}%");
-            });
-        }
-
-        if ($request->filled('invoice_id')) {
-            $query->where('invoice_id', $request->invoice_id);
-        }
-
-        if ($request->filled('payment_method')) {
-            $query->where('payment_method', $request->payment_method);
-        }
-
-        if ($request->filled('amount_min')) {
-            $query->where('amount', '>=', $request->amount_min);
-        }
-        if ($request->filled('amount_max')) {
-            $query->where('amount', '<=', $request->amount_max);
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('payment_date', '>=', $request->date_from);
-        }
-        if ($request->filled('date_to')) {
-            $query->whereDate('payment_date', '<=', $request->date_to);
-        }
-
-        if ($request->filled('reference')) {
-            $query->where('reference', 'like', '%' . $request->reference . '%');
-        }
-
-        $payments = $query->latest()->paginate(10)->withQueryString();
+        $payments = (new PaymentFilter($request))
+            ->apply((new PaymentRoleScope)->apply($baseQuery, $user))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         $paymentMethods = Payment::distinct()->pluck('payment_method');
 
