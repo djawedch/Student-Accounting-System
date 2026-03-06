@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\{User, AuditLog};
 use Illuminate\Http\Request;
+use App\Filters\AuditLogFilter;
 
 class AuditLogController extends Controller
 {
@@ -12,35 +13,13 @@ class AuditLogController extends Controller
     {
         $this->authorize('viewAny', AuditLog::class);
 
-        $query = AuditLog::with('user')->latest();
+        $filter = new AuditLogFilter($request);
 
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
-        }
+        $logs = $filter
+            ->apply(AuditLog::with('user')->latest())
+            ->paginate(20)
+            ->withQueryString();
 
-        if ($request->filled('event_type')) {
-            $query->where('event_type', $request->event_type);
-        }
-
-        if ($request->filled('model_type')) {
-            $query->where('model_type', $request->model_type);
-        }
-
-        if ($request->filled('role')) {
-            $query->whereHas('user', function ($q) use ($request) {
-                $q->where('role', $request->role);
-            });
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        $logs = $query->paginate(20)->withQueryString();
         $users = User::get(['id', 'first_name', 'last_name']);
         $eventTypes = AuditLog::select('event_type')->distinct()->pluck('event_type');
         $modelTypes = AuditLog::select('model_type')->distinct()->pluck('model_type');
