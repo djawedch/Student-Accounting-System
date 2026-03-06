@@ -10,6 +10,8 @@ class AuditLogController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', AuditLog::class);
+
         $query = AuditLog::with('user')->latest();
 
         if ($request->filled('user_id')) {
@@ -49,6 +51,8 @@ class AuditLogController extends Controller
 
     public function show(AuditLog $auditLog)
     {
+        $this->authorize('view', $auditLog);
+        
         $auditLog->load('user');
 
         return view('admin.audit-logs.show', compact('auditLog'));
