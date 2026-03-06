@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\FeeFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Fee\{StoreFeeRequest, UpdateFeeRequest};
 use App\Models\{Department, Fee, AuditLog};
@@ -14,36 +15,11 @@ class FeeController extends Controller
     {
         $this->authorize('viewAny', Fee::class);
 
-        $query = Fee::with('department.university');
+        $filter = new FeeFilter($request);
 
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if ($request->filled('department')) {
-            $query->whereHas('department', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->department . '%');
-            });
-        }
-
-        if ($request->filled('university')) {
-            $query->whereHas('department.university', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->university . '%');
-            });
-        }
-
-        if ($request->filled('amount_min')) {
-            $query->where('amount', '>=', $request->amount_min);
-        }
-        if ($request->filled('amount_max')) {
-            $query->where('amount', '<=', $request->amount_max);
-        }
-
-        if ($request->filled('academic_year')) {
-            $query->where('academic_year', 'like', '%' . $request->academic_year . '%');
-        }
-
-        $fees = $query->latest()->paginate(10)->withQueryString();
+        $fees = $filter->apply(Fee::with('department.university')->latest())
+            ->paginate(10)
+            ->withQueryString();
 
         return view('admin.fees.index', compact('fees'));
     }
@@ -127,7 +103,7 @@ class FeeController extends Controller
     public function destroy(Fee $fee)
     {
         $this->authorize('delete', $fee);
-        
+
         if ($fee->invoices()->exists()) {
             return redirect()->route('admin.fees.index')
                 ->with('error', 'Cannot delete fee because it has associated invoices.');
