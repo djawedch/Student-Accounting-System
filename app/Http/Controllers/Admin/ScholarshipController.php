@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\ScholarshipFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Scholarship\{StoreScholarshipRequest, UpdateScholarshipRequest};
 use App\Models\{Scholarship, AuditLog};
@@ -14,24 +15,11 @@ class ScholarshipController extends Controller
     {
         $this->authorize('viewAny', Scholarship::class);
 
-        $query = Scholarship::query();
-
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if ($request->filled('description')) {
-            $query->where('description', 'like', '%' . $request->description . '%');
-        }
-
-        if ($request->filled('amount_min')) {
-            $query->where('amount', '>=', $request->amount_min);
-        }
-        if ($request->filled('amount_max')) {
-            $query->where('amount', '<=', $request->amount_max);
-        }
-
-        $scholarships = $query->latest()->paginate(10)->withQueryString();
+        $scholarships = (new ScholarshipFilter($request))
+            ->apply(Scholarship::query())
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return view('admin.scholarships.index', compact('scholarships'));
     }
@@ -104,7 +92,7 @@ class ScholarshipController extends Controller
     public function destroy(Scholarship $scholarship)
     {
         $this->authorize('delete', $scholarship);
-        
+
         if ($scholarship->studentScholarships()->exists()) {
             return redirect()->route('admin.scholarships.index')
                 ->with('error', 'Cannot delete scholarship because it has been awarded to students.');
