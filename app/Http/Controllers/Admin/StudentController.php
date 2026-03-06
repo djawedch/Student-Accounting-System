@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\StudentFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Student\{StoreStudentRequest, UpdateStudentRequest};
 use App\Models\{AuditLog, Department, Student, User};
+use App\Scopes\StudentRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB, Hash};
 
@@ -15,61 +17,13 @@ class StudentController extends Controller
         $this->authorize('viewAny', User::class);
 
         $user = Auth::user();
-        $query = User::where('role', 'student')->with('student', 'university', 'department');
+        $baseQuery = User::where('role', 'student')->with('student', 'university', 'department');
 
-        if ($user->role === 'university_admin') {
-            $query->where('university_id', $user->university_id);
-        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
-            $query->where('department_id', $user->department_id);
-        }
-
-        if ($request->filled('name')) {
-            $name = $request->name;
-            $query->where(function ($q) use ($name) {
-                $q->where('first_name', 'like', "%{$name}%")
-                    ->orWhere('last_name', 'like', "%{$name}%");
-            });
-        }
-
-        if ($request->filled('email')) {
-            $query->where('email', 'like', '%' . $request->email . '%');
-        }
-
-        if ($request->filled('department')) {
-            $query->whereHas('department', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->department . '%');
-            });
-        }
-
-        if ($request->filled('university')) {
-            $query->whereHas('department.university', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->university . '%');
-            });
-        }
-
-        if ($request->filled('level')) {
-            $query->whereHas('student', function ($q) use ($request) {
-                $q->where('level', 'like', '%' . $request->level . '%');
-            });
-        }
-
-        if ($request->filled('study_system')) {
-            $query->whereHas('student', function ($q) use ($request) {
-                $q->where('study_system', $request->study_system);
-            });
-        }
-
-        if ($request->filled('academic_year')) {
-            $query->whereHas('student', function ($q) use ($request) {
-                $q->where('academic_year', 'like', '%' . $request->academic_year . '%');
-            });
-        }
-
-        if ($request->filled('is_active')) {
-            $query->where('is_active', $request->is_active);
-        }
-
-        $students = $query->latest()->paginate(10)->withQueryString();
+        $students = (new StudentFilter($request))
+            ->apply((new StudentRoleScope)->apply($baseQuery, $user))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         $studySystems = ['LMD', 'Classic'];
 
@@ -237,7 +191,7 @@ class StudentController extends Controller
         ]);
 
         $status = $student->is_active ? 'activated' : 'deactivated';
-        
+
         return redirect()->route('admin.students.index')
             ->with('success', "Student {$student->first_name} {$student->last_name} {$status} successfully.");
     }
