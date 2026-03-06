@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\DepartmentFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Department\{StoreDepartmentRequest, UpdateDepartmentRequest};
 use App\Models\{University, Department, AuditLog};
@@ -14,19 +15,11 @@ class DepartmentController extends Controller
     {
         $this->authorize('viewAny', Department::class);
 
-        $query = Department::with('university');
+        $filter = new DepartmentFilter($request);
 
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if ($request->filled('university')) {
-            $query->whereHas('university', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->university . '%');
-            });
-        }
-
-        $departments = $query->latest()->paginate(10)->withQueryString();
+        $departments = $filter->apply(Department::with('university')->latest())
+            ->paginate(10)
+            ->withQueryString();
 
         return view('admin.departments.index', compact('departments'));
     }
@@ -115,7 +108,7 @@ class DepartmentController extends Controller
     public function destroy(Department $department)
     {
         $this->authorize('delete', $department);
-        
+
         if ($department->users()->count() > 0) {
             return redirect()->route('admin.departments.index')
                 ->with('error', 'Cannot delete department because it has associated users.');
