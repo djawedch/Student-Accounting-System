@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\UserFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\User\{StoreUserRequest, UpdateUserRequest};
 use App\Models\{AuditLog, Department, University, User};
+use App\Scopes\UserRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Hash};
 
@@ -15,38 +17,15 @@ class UserController extends Controller
         $this->authorize('viewAny', User::class);
 
         $user = Auth::user();
+        $baseQuery = User::query()
+            ->where('role', '!=', 'student')
+            ->with('department', 'university');
 
-        $query = User::where('role', '!=', 'student')->with('department', 'university');
-
-        if ($user->role === 'university_admin') {
-            $query->where('university_id', $user->university_id);
-        } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {
-            $query->where('department_id', $user->department_id);
-        }
-
-        if ($request->filled('name')) {
-            $name = $request->name;
-            $query->where(function ($q) use ($name) {
-                $q->where('first_name', 'like', "%{$name}%")
-                    ->orWhere('last_name', 'like', "%{$name}%");
-            });
-        }
-
-        if ($request->filled('email')) {
-            $query->where('email', 'like', '%' . $request->email . '%');
-        }
-
-        if ($request->filled('role')) {
-            $query->where('role', $request->role);
-        }
-
-        if ($request->filled('department')) {
-            $query->whereHas('department', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->department . '%');
-            });
-        }
-
-        $users = $query->latest()->paginate(10)->withQueryString();
+        $users = (new UserFilter($request))
+            ->apply((new UserRoleScope)->apply($baseQuery, $user))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         $roles = ['super_admin', 'university_admin', 'department_admin', 'staff_admin'];
 
