@@ -74,7 +74,7 @@ class FeeController extends Controller
     {
         $this->authorize('update', $fee);
 
-        $departments = Department::orderBy('name')->get();
+        $departments = Department::with('university')->orderBy('name')->get();
 
         return view('admin.fees.edit', compact('fee', 'departments'));
     }
