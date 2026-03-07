@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Filters\UniversityFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\University\{StoreUniversityRequest, UpdateUniversityRequest};
 use App\Models\{University, AuditLog};
@@ -14,17 +15,11 @@ class UniversityController extends Controller
     {
         $this->authorize('viewAny', University::class);
 
-        $query = University::withCount('departments');
-
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if ($request->filled('city')) {
-            $query->where('city', 'like', '%' . $request->city . '%');
-        }
-
-        $universities = $query->latest()->paginate(10)->withQueryString();
+        $universities = (new UniversityFilter($request))
+            ->apply(University::query()->withCount('departments'))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return view('admin.universities.index', compact('universities'));
     }
