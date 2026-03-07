@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Filters\StudentFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Student\{StoreStudentRequest, UpdateStudentRequest};
-use App\Models\{AuditLog, Department, Student, User};
+use App\Models\{AuditLog, Department, Student, University, User};
 use App\Scopes\StudentRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB, Hash};
@@ -35,9 +35,23 @@ class StudentController extends Controller
     {
         $this->authorize('create', User::class);
 
-        $departments = Department::orderBy('name')->get();
+        $user = Auth::user();
 
-        return view('admin.students.create', compact('departments'));
+        $universities = match ($user->role) {
+            'super_admin' => University::orderBy('name')->get(),
+            'university_admin' => University::where('id', $user->university_id)->get(),
+            'department_admin', 'staff_admin' => University::where('id', $user->university_id)->get(),
+            default => collect()
+        };
+
+        $departments = match ($user->role) {
+            'super_admin' => Department::with('university')->orderBy('name')->get(),
+            'university_admin' => Department::with('university')->where('university_id', $user->university_id)->orderBy('name')->get(),
+            'department_admin', 'staff_admin' => Department::with('university')->where('id', $user->department_id)->orderBy('name')->get(),
+            default => collect()
+        };
+
+        return view('admin.students.create', compact('universities', 'departments'));
     }
 
     public function store(StoreStudentRequest $request)
@@ -55,6 +69,7 @@ class StudentController extends Controller
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
                 'date_of_birth' => $validated['date_of_birth'],
+                'university_id' => $validated['university_id'],
                 'department_id' => $validated['department_id'],
                 'role' => 'student',
                 'is_active' => $request->has('is_active'),
@@ -103,9 +118,22 @@ class StudentController extends Controller
 
         $student->load('student');
 
-        $departments = Department::orderBy('name')->get();
+        $user = Auth::user();
 
-        return view('admin.students.edit', compact('student', 'departments'));
+        $universities = match ($user->role) {
+            'super_admin' => University::orderBy('name')->get(),
+            'university_admin', 'department_admin', 'staff_admin' => University::where('id', $user->university_id)->get(),
+            default => collect()
+        };
+
+        $departments = match ($user->role) {
+            'super_admin' => Department::with('university')->orderBy('name')->get(),
+            'university_admin' => Department::with('university')->where('university_id', $user->university_id)->orderBy('name')->get(),
+            'department_admin', 'staff_admin' => Department::with('university')->where('id', $user->department_id)->orderBy('name')->get(),
+            default => collect()
+        };
+
+        return view('admin.students.edit', compact('student', 'universities', 'departments'));
     }
 
     public function update(UpdateStudentRequest $request, User $student)
@@ -126,6 +154,7 @@ class StudentController extends Controller
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
                 'date_of_birth' => $validated['date_of_birth'],
+                'university_id' => $validated['university_id'],
                 'department_id' => $validated['department_id'],
                 'is_active' => $request->has('is_active'),
             ];

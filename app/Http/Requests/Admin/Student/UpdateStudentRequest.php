@@ -28,6 +28,7 @@ class UpdateStudentRequest extends FormRequest
             ],
             'password' => 'nullable|string|min:8|confirmed',
             'date_of_birth' => 'required|date|before:today',
+            'university_id' => 'required|exists:university,id',
             'department_id' => 'required|exists:departments,id',
             'level' => 'required|string|max:50',
             'academic_year' => 'required|string|max:20',

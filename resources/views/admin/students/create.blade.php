@@ -74,6 +74,22 @@
                             </div>
                         </div>
 
+                        {{-- University --}}
+                        <div class="mb-4">
+                            <label for="university_id"
+                                class="block text-sm font-medium text-gray-700">University</label>
+                            <select name="university_id" id="university_id"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                required>
+                                <option value="">-- Select University --</option>
+                                @foreach($universities as $university)
+                                    <option value="{{ $university->id }}" {{ old('university_id') == $university->id ? 'selected' : '' }}>
+                                        {{ $university->name }} ({{ $university->city }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         {{-- Department --}}
                         <div class="mb-4">
                             <label for="department_id"
@@ -81,10 +97,11 @@
                             <select name="department_id" id="department_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 required>
-                                <option value="">-- Select Department --</option>
+                                <option value="">-- Select University First --</option>
                                 @foreach($departments as $department)
-                                    <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
-                                        {{ $department->name }} ({{ $department->university->name }})
+                                    <option value="{{ $department->id }}" data-university="{{ $department->university_id }}"
+                                        {{ old('department_id') == $department->id ? 'selected' : '' }}>
+                                        {{ $department->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -118,7 +135,8 @@
                                     <option value="">-- Select --</option>
                                     <option value="LMD" {{ old('study_system') == 'LMD' ? 'selected' : '' }}>
                                         LMD</option>
-                                    <option value="Classic" {{ old('study_system') == 'Classic' ? 'selected' : '' }}>Classic
+                                    <option value="Classic" {{ old('study_system') == 'Classic' ? 'selected' : '' }}>
+                                        Classic
                                     </option>
                                 </select>
                             </div>
@@ -158,3 +176,32 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    const universitySelect = document.getElementById('university_id');
+    const departmentSelect = document.getElementById('department_id');
+    const allDepartments = Array.from(departmentSelect.options).slice(1);
+
+    function filterDepartments() {
+        const selectedUniversity = universitySelect.value;
+
+        departmentSelect.innerHTML = '<option value="">-- Select Department --</option>';
+
+        if (!selectedUniversity) return;
+
+        const filtered = allDepartments.filter(opt => opt.dataset.university === selectedUniversity);
+
+        if (filtered.length === 0) {
+            departmentSelect.innerHTML = '<option value="">-- No departments found --</option>';
+            return;
+        }
+
+        filtered.forEach(opt => departmentSelect.appendChild(opt.cloneNode(true)));
+    }
+
+    universitySelect.addEventListener('change', filterDepartments);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (universitySelect.value) filterDepartments();
+    });
+</script>
