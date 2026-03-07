@@ -13,14 +13,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
 });
 
-Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
-
 Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('/dashboard', DashboardController::class)->only(['index']);
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('universities', UniversityController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('users', UserController::class)->except(['destroy']);
