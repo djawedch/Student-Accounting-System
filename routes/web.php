@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\{AuditLogController, UniversityController, DepartmentController, UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController, StudentScholarshipController};
+use App\Http\Controllers\Admin\{AuditLogController, DashboardController, UniversityController, DepartmentController, UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController, StudentScholarshipController};
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +20,7 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
 });
 
 Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('/dashboard', DashboardController::class)->only(['index']);
     Route::resource('universities', UniversityController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('users', UserController::class)->except(['destroy']);

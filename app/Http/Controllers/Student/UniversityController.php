@@ -10,6 +10,7 @@ class UniversityController extends Controller
     public function index()
     {
         $universities = University::withCount('departments')->latest()->get();
+        
         return view('student.universities.index', compact('universities'));
     }
 }
