@@ -53,7 +53,7 @@ class PaymentController extends Controller
     {
         $this->authorize('create', Payment::class);
 
-        $invoice = Invoice::with('student.user')->findOrFail($request->invoice_id);
+        $invoice = Invoice::with('student.user', 'fee')->findOrFail($request->invoice_id);
 
         $this->authorize('view', $invoice);
 
@@ -119,7 +119,7 @@ class PaymentController extends Controller
 
         try {
             $payment->update($request->validated());
-            $invoice = $payment->invoice;
+            $invoice = Invoice::with('fee')->findOrFail($payment->invoice_id);
             $totalPaid = $invoice->total_paid;
             $invoiceAmount = $invoice->fee->amount;
 
@@ -130,6 +130,7 @@ class PaymentController extends Controller
             } else {
                 $invoice->status = 'unpaid';
             }
+
             $invoice->save();
 
             AuditLog::create([
