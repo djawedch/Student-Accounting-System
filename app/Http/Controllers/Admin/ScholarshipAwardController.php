@@ -10,7 +10,7 @@ use App\Scopes\StudentScholarshipRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};
 
-class StudentScholarshipController extends Controller
+class ScholarshipAwardController extends Controller
 {
     public function index(Request $request)
     {

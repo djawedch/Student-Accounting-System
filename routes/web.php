@@ -1,9 +1,29 @@
 <?php
 
-use App\Http\Controllers\Admin\{AuditLogController, DashboardController, UniversityController, DepartmentController, UserController, StudentController, FeeController, InvoiceController, PaymentController, ScholarshipController, StudentScholarshipController};
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Student;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\{
+    AuditLogController,
+    DashboardController as AdminDashboardController,
+    UniversityController as AdminUniversityController,
+    DepartmentController as AdminDepartmentController,
+    UserController,
+    StudentController,
+    FeeController as AdminFeeController,
+    InvoiceController as AdminInvoiceController,
+    PaymentController as AdminPaymentController,
+    ScholarshipController,
+    ScholarshipAwardController as AdminScholarshipAwardController
+};
+use App\Http\Controllers\Student\{
+    DashboardController as StudentDashboardController,
+    UniversityController as StudentUniversityController,
+    DepartmentController as StudentDepartmentController,
+    FeeController as StudentFeeController,
+    InvoiceController as StudentInvoiceController,
+    PaymentController as StudentPaymentController,
+    ScholarshipAwardController as StudentScholarshipAwardController
+};
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,32 +34,29 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('universities', UniversityController::class);
-    Route::resource('departments', DepartmentController::class);
+    Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('universities', AdminUniversityController::class);
+    Route::resource('departments', AdminDepartmentController::class);
     Route::resource('users', UserController::class)->except(['destroy']);
     Route::resource('students', StudentController::class)->except(['destroy']);
-    Route::resource('fees', FeeController::class);
-    Route::resource('invoices', InvoiceController::class)->except(['destroy']);
-    Route::resource('payments', PaymentController::class)->except(['destroy']);
+    Route::resource('fees', AdminFeeController::class);
+    Route::resource('invoices', AdminInvoiceController::class)->except(['destroy']);
+    Route::resource('payments', AdminPaymentController::class)->except(['destroy']);
     Route::resource('scholarships', ScholarshipController::class);
-    Route::resource('student-scholarships', StudentScholarshipController::class)->except(['destroy']);
+    Route::resource('student-scholarships', AdminScholarshipAwardController::class)->except(['destroy']);
     Route::resource('audit-logs', AuditLogController::class)->only(['index', 'show']);
-});
-
-Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,staff_admin'])->prefix('admin/')->group(function () {
-    Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('admin.users.toggle-status');
-    Route::patch('students/{student}/toggle-status', [StudentController::class, 'toggleStatus'])->name('admin.students.toggle-status');
+    Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::patch('students/{student}/toggle-status', [StudentController::class, 'toggleStatus'])->name('students.toggle-status');
 });
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
-    Route::get('/dashboard', [Student\DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/universities', [Student\UniversityController::class, 'index'])->name('universities.index');
-    Route::get('/departments', [Student\DepartmentController::class, 'index'])->name('departments.index');
-    Route::get('/fees', [Student\FeeController::class, 'index'])->name('fees.index');
-    Route::get('/invoices', [Student\InvoiceController::class, 'index'])->name('invoices.index');
-    Route::get('/payments', [Student\PaymentController::class, 'index'])->name('payments.index');
-    Route::get('/scholarship-awards', [Student\ScholarshipAwardController::class, 'index'])->name('scholarship-awards.index');
+    Route::get('dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('universities', [StudentUniversityController::class, 'index'])->name('universities.index');
+    Route::get('departments', [StudentDepartmentController::class, 'index'])->name('departments.index');
+    Route::get('fees', [StudentFeeController::class, 'index'])->name('fees.index');
+    Route::get('invoices', [StudentInvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('payments', [StudentPaymentController::class, 'index'])->name('payments.index');
+    Route::get('scholarship-awards', [StudentScholarshipAwardController::class, 'index'])->name('scholarship-awards.index');
 });
 
 require __DIR__ . '/auth.php';
