@@ -35,9 +35,7 @@ class ScholarshipController extends Controller
     {
         $this->authorize('create', Scholarship::class);
 
-        $request->validated();
-
-        $scholarship = Scholarship::create($request->only(['name', 'amount', 'description']));
+        $scholarship = Scholarship::create($request->validated());
 
         AuditLog::create([
             'user_id' => Auth::id(),
@@ -72,9 +70,7 @@ class ScholarshipController extends Controller
     {
         $this->authorize('update', $scholarship);
 
-        $request->validated();
-
-        $scholarship->update($request->only(['name', 'amount', 'description']));
+        $scholarship->update($request->validated());
 
         AuditLog::create([
             'user_id' => Auth::id(),
