@@ -105,18 +105,18 @@ class StudentController extends Controller
 
     public function show(User $student)
     {
-        $this->authorize('view', $student);
-
         $student->load('student', 'department.university');
+        
+        $this->authorize('view', $student);
 
         return view('admin.students.show', compact('student'));
     }
 
     public function edit(User $student)
     {
-        $this->authorize('update', $student);
-
         $student->load('student');
+
+        $this->authorize('update', $student);
 
         $user = Auth::user();
 
