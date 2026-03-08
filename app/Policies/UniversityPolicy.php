@@ -18,7 +18,7 @@ class UniversityPolicy
 
     public function create(User $user): bool
     {
-        return in_array($user->role, ['super_admin', 'university_admin']);
+        return $user->role === 'super_admin';
     }
 
     public function update(User $user, University $university): bool
@@ -32,6 +32,6 @@ class UniversityPolicy
 
     public function delete(User $user, University $university): bool
     {
-        return $this->update($user, $university);
+        return $user->role === 'super_admin';
     }
 }
