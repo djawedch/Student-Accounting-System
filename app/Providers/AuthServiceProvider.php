@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Models\{University, Department, Fee, Invoice, Payment, Scholarship, StudentScholarship, User, AuditLog};
 use App\Policies\{UniversityPolicy, DepartmentPolicy, FeePolicy, InvoicePolicy, PaymentPolicy, ScholarshipPolicy, StudentScholarshipPolicy, UserPolicy, AuditLogPolicy};
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -19,4 +19,9 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         AuditLog::class => AuditLogPolicy::class,
     ];
+
+    public function boot(): void
+    {
+        $this->registerPolicies();
+    }
 }
