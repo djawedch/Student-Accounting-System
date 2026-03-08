@@ -119,24 +119,26 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
-        $this->authorize('view', $invoice);
-
         $invoice->load('student.user', 'fee.department');
+
+        $this->authorize('view', $invoice);
 
         return view('admin.invoices.show', compact('invoice'));
     }
 
     public function edit(Invoice $invoice)
     {
-        $this->authorize('update', $invoice);
-
         $invoice->load('student.user', 'fee');
+
+        $this->authorize('update', $invoice);
 
         return view('admin.invoices.edit', compact('invoice'));
     }
 
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
+        $invoice->load('student.user');
+
         $this->authorize('update', $invoice);
 
         $request->validated();
