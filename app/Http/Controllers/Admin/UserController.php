@@ -36,8 +36,19 @@ class UserController extends Controller
     {
         $this->authorize('create', User::class);
 
-        $universities = University::orderBy('name')->get();
-        $departments = Department::orderBy('name')->get();
+        $user = Auth::user();
+
+        $universities = match ($user->role) {
+            'super_admin' => University::orderBy('name')->get(),
+            default => University::where('id', $user->university_id)->get()
+        };
+
+        $departments = match ($user->role) {
+            'super_admin' => Department::with('university')->orderBy('name')->get(),
+            'university_admin' => Department::with('university')->where('university_id', $user->university_id)->orderBy('name')->get(),
+            'department_admin', 'staff_admin' => Department::with('university')->where('id', $user->department_id)->orderBy('name')->get(),
+            default => collect()
+        };
 
         return view('admin.users.create', compact('universities', 'departments'));
     }
@@ -73,9 +84,9 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $this->authorize('view', $user);
-
         $user->load('department', 'university');
+        
+        $this->authorize('view', $user);
 
         return view('admin.users.show', compact('user'));
     }
@@ -89,8 +100,19 @@ class UserController extends Controller
 
         $this->authorize('update', $user);
 
-        $universities = University::orderBy('name')->get();
-        $departments = Department::orderBy('name')->get();
+        $user = Auth::user();
+
+        $universities = match ($user->role) {
+            'super_admin' => University::orderBy('name')->get(),
+            default => University::where('id', $user->university_id)->get()
+        };
+
+        $departments = match ($user->role) {
+            'super_admin' => Department::with('university')->orderBy('name')->get(),
+            'university_admin' => Department::with('university')->where('university_id', $user->university_id)->orderBy('name')->get(),
+            'department_admin', 'staff_admin' => Department::with('university')->where('id', $user->department_id)->orderBy('name')->get(),
+            default => collect()
+        };
 
         return view('admin.users.edit', compact('universities', 'departments', 'user'));
     }
