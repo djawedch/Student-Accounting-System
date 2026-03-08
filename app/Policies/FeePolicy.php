@@ -13,7 +13,16 @@ class FeePolicy
 
     public function view(User $user, Fee $fee): bool
     {
-        return $this->viewAny($user);
+        if ($user->role === 'super_admin')
+            return true;
+
+        if ($user->role === 'university_admin')
+            return $fee->department->university_id === $user->university_id;
+
+        if (in_array($user->role, ['department_admin', 'staff_admin']))
+            return $fee->department_id === $user->department_id;
+
+        return false;
     }
 
     public function createAny(User $user): bool
@@ -58,6 +67,7 @@ class FeePolicy
         if (in_array($user->role, ['department_admin', 'staff_admin'])) {
             return $fee->department_id === $user->department_id;
         }
+        
         return false;
     }
 }

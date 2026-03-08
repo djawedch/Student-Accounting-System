@@ -6,6 +6,7 @@ use App\Filters\FeeFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Fee\{StoreFeeRequest, UpdateFeeRequest};
 use App\Models\{Department, Fee, AuditLog};
+use App\Scopes\FeeRoleScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -15,9 +16,11 @@ class FeeController extends Controller
     {
         $this->authorize('viewAny', Fee::class);
 
-        $filter = new FeeFilter($request);
+        $user = Auth::user();
+        $baseQuery = Fee::with('department.university')->latest();
 
-        $fees = $filter->apply(Fee::with('department.university')->latest())
+        $fees = (new FeeFilter($request))
+            ->apply((new FeeRoleScope)->apply($baseQuery, $user))
             ->paginate(10)
             ->withQueryString();
 
@@ -105,7 +108,7 @@ class FeeController extends Controller
     public function destroy(Fee $fee)
     {
         $fee->load('department');
-        
+
         $this->authorize('delete', $fee);
 
         if ($fee->invoices()->exists()) {
