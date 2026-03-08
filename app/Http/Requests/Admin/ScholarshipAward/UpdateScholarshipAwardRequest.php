@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\StudentScholarship;
+namespace App\Http\Requests\Admin\ScholarshipAward;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreStudentScholarshipRequest extends FormRequest
+class UpdateScholarshipAwardRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,10 +14,8 @@ class StoreStudentScholarshipRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_ids' => 'required|array|min:1',
-            'student_ids.*' => 'exists:students,id',
-            'scholarship_ids' => 'required|array|min:1',
-            'scholarship_ids.*' => 'exists:scholarships,id',
+            'student_id' => 'required|exists:students,id',
+            'scholarship_id' => 'required|exists:scholarships,id',
             'grant_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:grant_date',
             'status' => 'required|in:awarded,paid,cancelled',

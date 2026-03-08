@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Models\{University, Department, Fee, Invoice, Payment, Scholarship, StudentScholarship, User, AuditLog};
-use App\Policies\{UniversityPolicy, DepartmentPolicy, FeePolicy, InvoicePolicy, PaymentPolicy, ScholarshipPolicy, StudentScholarshipPolicy, UserPolicy, AuditLogPolicy};
+use App\Policies\{UniversityPolicy, DepartmentPolicy, FeePolicy, InvoicePolicy, PaymentPolicy, ScholarshipPolicy, ScholarshipAwardPolicy, UserPolicy, AuditLogPolicy};
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -15,7 +15,7 @@ class AuthServiceProvider extends ServiceProvider
         Invoice::class => InvoicePolicy::class,
         Payment::class => PaymentPolicy::class,
         Scholarship::class => ScholarshipPolicy::class,
-        StudentScholarship::class => StudentScholarshipPolicy::class,
+        StudentScholarship::class => ScholarshipAwardPolicy::class,
         User::class => UserPolicy::class,
         AuditLog::class => AuditLogPolicy::class,
     ];

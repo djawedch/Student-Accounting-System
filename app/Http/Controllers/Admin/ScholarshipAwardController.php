@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Filters\StudentScholarshipFilter;
+use App\Filters\ScholarshipAwardFilter;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\StudentScholarship\{StoreStudentScholarshipRequest, UpdateStudentScholarshipRequest};
+use App\Http\Requests\Admin\ScholarshipAward\{StoreScholarshipAwardRequest, UpdateScholarshipAwardRequest};
 use App\Models\{AuditLog, Student, Scholarship, StudentScholarship};
-use App\Scopes\StudentScholarshipRoleScope;
+use App\Scopes\ScholarshipAwardRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};
 
@@ -19,8 +19,8 @@ class ScholarshipAwardController extends Controller
         $user = Auth::user();
         $baseQuery = StudentScholarship::with('student.user', 'scholarship');
 
-        $awards = (new StudentScholarshipFilter($request))
-            ->apply((new StudentScholarshipRoleScope)->apply($baseQuery, $user))
+        $awards = (new ScholarshipAwardFilter($request))
+            ->apply((new ScholarshipAwardRoleScope)->apply($baseQuery, $user))
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -48,7 +48,7 @@ class ScholarshipAwardController extends Controller
         return view('admin.student-scholarships.create', compact('students', 'scholarships'));
     }
 
-    public function store(StoreStudentScholarshipRequest $request)
+    public function store(StoreScholarshipAwardRequest $request)
     {
         $this->authorize('create', StudentScholarship::class);
 
@@ -100,15 +100,17 @@ class ScholarshipAwardController extends Controller
 
     public function show(StudentScholarship $studentScholarship)
     {
-        $this->authorize('view', $studentScholarship);
-
         $studentScholarship->load('student.user', 'scholarship');
+
+        $this->authorize('view', $studentScholarship);
 
         return view('admin.student-scholarships.show', compact('studentScholarship'));
     }
 
     public function edit(StudentScholarship $studentScholarship)
     {
+        $studentScholarship->load('student.user');
+
         $this->authorize('update', $studentScholarship);
 
         $user = Auth::user();
@@ -125,15 +127,13 @@ class ScholarshipAwardController extends Controller
         return view('admin.student-scholarships.edit', compact('studentScholarship', 'students', 'scholarships'));
     }
 
-    public function update(UpdateStudentScholarshipRequest $request, StudentScholarship $studentScholarship)
+    public function update(UpdateScholarshipAwardRequest $request, StudentScholarship $studentScholarship)
     {
+        $studentScholarship->load('student.user');
+
         $this->authorize('update', $studentScholarship);
 
-        $request->validated();
-
-        $studentScholarship->toArray();
-
-        $studentScholarship->update($request->all());
+        $studentScholarship->update($request->validated());
 
         AuditLog::create([
             'user_id' => Auth::id(),

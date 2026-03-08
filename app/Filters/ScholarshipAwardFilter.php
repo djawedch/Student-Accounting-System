@@ -5,7 +5,7 @@ namespace App\Filters;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
-class StudentScholarshipFilter
+class ScholarshipAwardFilter
 {
     public function __construct(protected Request $request) {}
 

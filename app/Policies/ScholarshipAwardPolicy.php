@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\{User, StudentScholarship};
 
-class StudentScholarshipPolicy
+class ScholarshipAwardPolicy
 {
     public function viewAny(User $user): bool
     {

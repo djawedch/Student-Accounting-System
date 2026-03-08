@@ -5,7 +5,7 @@ namespace App\Scopes;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class StudentScholarshipRoleScope
+class ScholarshipAwardRoleScope
 {
     public function apply(Builder $query, User $user): Builder
     {
