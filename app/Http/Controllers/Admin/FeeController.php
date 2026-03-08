@@ -81,6 +81,8 @@ class FeeController extends Controller
 
     public function update(UpdateFeeRequest $request, Fee $fee)
     {
+        $fee->load('department');
+
         $this->authorize('update', $fee);
 
         $validated = $request->validated();
@@ -102,6 +104,8 @@ class FeeController extends Controller
 
     public function destroy(Fee $fee)
     {
+        $fee->load('department');
+        
         $this->authorize('delete', $fee);
 
         if ($fee->invoices()->exists()) {
