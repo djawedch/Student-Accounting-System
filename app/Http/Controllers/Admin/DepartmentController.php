@@ -39,12 +39,6 @@ class DepartmentController extends Controller
     {
         $this->authorize('create', Department::class);
 
-        $user = Auth::user();
-
-        if ($user->role === 'university_admin' && $request->university_id != $user->university_id) {
-            abort(403, 'You can only create departments in your own university.');
-        }
-
         $department = Department::create($request->validated());
 
         AuditLog::create([
@@ -83,12 +77,6 @@ class DepartmentController extends Controller
     public function update(UpdateDepartmentRequest $request, Department $department)
     {
         $this->authorize('update', $department);
-
-        $user = Auth::user();
-
-        if ($user->role === 'university_admin' && $request->university_id != $user->university_id) {
-            abort(403, 'You can only update departments in your own university.');
-        }
 
         $department->update($request->validated());
 
