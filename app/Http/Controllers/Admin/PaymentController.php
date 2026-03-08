@@ -95,24 +95,26 @@ class PaymentController extends Controller
 
     public function show(Payment $payment)
     {
-        $this->authorize('view', $payment);
-
         $payment->load('invoice.student.user', 'invoice.fee');
+
+        $this->authorize('view', $payment);
 
         return view('admin.payments.show', compact('payment'));
     }
 
     public function edit(Payment $payment)
     {
-        $this->authorize('update', $payment);
-
         $payment->load('invoice.student.user', 'invoice.fee');
+
+        $this->authorize('update', $payment);
 
         return view('admin.payments.edit', compact('payment'));
     }
 
     public function update(UpdatePaymentRequest $request, Payment $payment)
     {
+        $payment->load('invoice.student.user');
+        
         $this->authorize('update', $payment);
 
         DB::beginTransaction();
