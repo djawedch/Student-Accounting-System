@@ -36,21 +36,34 @@ class UserController extends Controller
     {
         $this->authorize('create', User::class);
 
-        $user = Auth::user();
+        $authUser = User::find(Auth::id());
 
-        $universities = match ($user->role) {
+        $allRoles = [
+            'super_admin' => 4,
+            'university_admin' => 3,
+            'department_admin' => 2,
+            'staff_admin' => 1,
+            'student' => 0,
+        ];
+
+        $roles = array_keys(array_filter(
+            $allRoles,
+            fn($rank) => $rank < $authUser->roleRank()
+        ));
+
+        $universities = match ($authUser->role) {
             'super_admin' => University::orderBy('name')->get(),
-            default => University::where('id', $user->university_id)->get()
+            default => University::where('id', $authUser->university_id)->get()
         };
 
-        $departments = match ($user->role) {
+        $departments = match ($authUser->role) {
             'super_admin' => Department::with('university')->orderBy('name')->get(),
-            'university_admin' => Department::with('university')->where('university_id', $user->university_id)->orderBy('name')->get(),
-            'department_admin', 'staff_admin' => Department::with('university')->where('id', $user->department_id)->orderBy('name')->get(),
+            'university_admin' => Department::with('university')->where('university_id', $authUser->university_id)->orderBy('name')->get(),
+            'department_admin', 'staff_admin' => Department::with('university')->where('id', $authUser->department_id)->orderBy('name')->get(),
             default => collect()
         };
 
-        return view('admin.users.create', compact('universities', 'departments'));
+        return view('admin.users.create', compact('universities', 'departments', 'roles'));
     }
 
     public function store(StoreUserRequest $request)
@@ -85,7 +98,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $user->load('department', 'university');
-        
+
         $this->authorize('view', $user);
 
         return view('admin.users.show', compact('user'));
@@ -100,21 +113,34 @@ class UserController extends Controller
 
         $this->authorize('update', $user);
 
-        $user = Auth::user();
+        $authUser = User::find(Auth::id());
 
-        $universities = match ($user->role) {
+        $allRoles = [
+            'super_admin' => 4,
+            'university_admin' => 3,
+            'department_admin' => 2,
+            'staff_admin' => 1,
+            'student' => 0,
+        ];
+
+        $roles = array_keys(array_filter(
+            $allRoles,
+            fn($rank) => $rank < $authUser->roleRank()
+        ));
+
+        $universities = match ($authUser->role) {
             'super_admin' => University::orderBy('name')->get(),
-            default => University::where('id', $user->university_id)->get()
+            default => University::where('id', $authUser->university_id)->get()
         };
 
-        $departments = match ($user->role) {
+        $departments = match ($authUser->role) {
             'super_admin' => Department::with('university')->orderBy('name')->get(),
-            'university_admin' => Department::with('university')->where('university_id', $user->university_id)->orderBy('name')->get(),
-            'department_admin', 'staff_admin' => Department::with('university')->where('id', $user->department_id)->orderBy('name')->get(),
+            'university_admin' => Department::with('university')->where('university_id', $authUser->university_id)->orderBy('name')->get(),
+            'department_admin', 'staff_admin' => Department::with('university')->where('id', $authUser->department_id)->orderBy('name')->get(),
             default => collect()
         };
 
-        return view('admin.users.edit', compact('universities', 'departments', 'user'));
+        return view('admin.users.edit', compact('universities', 'departments', 'roles', 'user'));
     }
 
     public function update(UpdateUserRequest $request, User $user)

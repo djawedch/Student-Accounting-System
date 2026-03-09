@@ -33,6 +33,18 @@ class User extends Authenticatable
         'updated_at' => 'datetime',
     ];
 
+    public function roleRank(): int
+    {
+        return match ($this->role) {
+            'super_admin' => 4,
+            'university_admin' => 3,
+            'department_admin' => 2,
+            'staff_admin' => 1,
+            'student' => 0,
+            default => -1,
+        };
+    }
+
     public function university()
     {
         return $this->belongsTo(University::class);

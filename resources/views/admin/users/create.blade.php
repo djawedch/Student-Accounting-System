@@ -70,8 +70,7 @@
 
                         {{-- Confirm Password --}}
                         <div class="mb-4">
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm
-                                Password</label>
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
                             <input type="password" name="password_confirmation" id="password_confirmation"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 required>
@@ -79,8 +78,7 @@
 
                         {{-- Date of Birth --}}
                         <div class="mb-4">
-                            <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of
-                                Birth</label>
+                            <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
                             <input type="date" name="date_of_birth" id="date_of_birth"
                                 value="{{ old('date_of_birth') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
@@ -95,45 +93,50 @@
                             <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
                             <select name="role" id="role" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="super_admin" {{ old('role') == 'super_admin' ? 'selected' : '' }}>Super
-                                    Admin</option>
-                                <option value="university_admin" {{ old('role') == 'university_admin' ? 'selected' : '' }}>University Admin</option>
-                                <option value="department_admin" {{ old('role') == 'department_admin' ? 'selected' : '' }}>Department Admin</option>
-                                <option value="staff_admin" {{ old('role') == 'staff_admin' ? 'selected' : '' }}>Staff
-                                </option>
+                                <option value="">-- Select Role --</option>
+                                @foreach($roles as $role)
+                                    <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>
+                                        {{ ucfirst(str_replace('_', ' ', $role)) }}
+                                    </option>
+                                @endforeach
                             </select>
+                            @error('role')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                        {{-- University field (visible for all except super_admin) --}}
-                        <div id="university-field"
-                            style="{{ in_array(old('role'), ['university_admin', 'department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
-                            <label for="university_id"
-                                class="block text-sm font-medium text-gray-700">University</label>
+                        {{-- University --}}
+                        <div id="university-field" style="{{ in_array(old('role'), ['university_admin', 'department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
+                            <label for="university_id" class="block text-sm font-medium text-gray-700">University</label>
                             <select name="university_id" id="university_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Select University</option>
+                                <option value="">-- Select University --</option>
                                 @foreach($universities as $university)
                                     <option value="{{ $university->id }}" {{ old('university_id') == $university->id ? 'selected' : '' }}>
                                         {{ $university->name }}
                                     </option>
                                 @endforeach
                             </select>
+                            @error('university_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                        {{-- Department field (visible only for department_admin and staff_admin) --}}
-                        <div id="department-field"
-                            style="{{ in_array(old('role'), ['department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
-                            <label for="department_id"
-                                class="block text-sm font-medium text-gray-700">Department</label>
+                        {{-- Department --}}
+                        <div id="department-field" style="{{ in_array(old('role'), ['department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
+                            <label for="department_id" class="block text-sm font-medium text-gray-700">Department</label>
                             <select name="department_id" id="department_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Select Department</option>
+                                <option value="">-- Select Department --</option>
                                 @foreach($departments as $department)
                                     <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
                                         {{ $department->name }} ({{ $department->university->name }})
                                     </option>
                                 @endforeach
                             </select>
+                            @error('department_id')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         {{-- Active Status --}}
@@ -172,13 +175,11 @@
         const universityField = document.getElementById('university-field');
         const departmentField = document.getElementById('department-field');
 
-        // Show university for all except super_admin
-        if (role === 'super_admin') {
+        if (role === 'super_admin' || role === '') {
             universityField.style.display = 'none';
             departmentField.style.display = 'none';
         } else {
             universityField.style.display = 'block';
-            // Department only for department_admin and staff_admin
             if (role === 'department_admin' || role === 'staff_admin') {
                 departmentField.style.display = 'block';
             } else {

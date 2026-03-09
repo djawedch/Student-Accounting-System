@@ -98,11 +98,16 @@
                             <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
                             <select name="role" id="role" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="super_admin" {{ old('role', $user->role) == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                                <option value="university_admin" {{ old('role', $user->role) == 'university_admin' ? 'selected' : '' }}>University Admin</option>
-                                <option value="department_admin" {{ old('role', $user->role) == 'department_admin' ? 'selected' : '' }}>Department Admin</option>
-                                <option value="staff_admin" {{ old('role', $user->role) == 'staff_admin' ? 'selected' : '' }}>Staff</option>
+                                <option value="">-- Select Role --</option>
+                                @foreach($roles as $role)
+                                <option value="{{ $role }}" {{ old('role', $user->role) == $role ? 'selected' : '' }}>
+                                    {{ ucfirst(str_replace('_', ' ', $role)) }}
+                                </option>
+                                @endforeach
                             </select>
+                            @error('role')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         {{-- University field (visible for all except super_admin) --}}
@@ -113,9 +118,9 @@
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">Select University</option>
                                 @foreach($universities as $university)
-                                    <option value="{{ $university->id }}" {{ old('university_id', $user->university_id) == $university->id ? 'selected' : '' }}>
-                                        {{ $university->name }}
-                                    </option>
+                                <option value="{{ $university->id }}" {{ old('university_id', $user->university_id) == $university->id ? 'selected' : '' }}>
+                                    {{ $university->name }}
+                                </option>
                                 @endforeach
                             </select>
                         </div>
@@ -128,9 +133,9 @@
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">Select Department</option>
                                 @foreach($departments as $department)
-                                    <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>
-                                        {{ $department->name }} ({{ $department->university->name }})
-                                    </option>
+                                <option value="{{ $department->id }}" {{ old('department_id', $user->department_id) == $department->id ? 'selected' : '' }}>
+                                    {{ $department->name }} ({{ $department->university->name }})
+                                </option>
                                 @endforeach
                             </select>
                         </div>
