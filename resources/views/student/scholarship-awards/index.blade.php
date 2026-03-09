@@ -27,6 +27,8 @@
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                         Reference</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -35,19 +37,26 @@
                                         <td class="px-6 py-4">{{ $award->scholarship->name }}</td>
                                         <td class="px-6 py-4">{{ $award->grant_date->format('Y-m-d') }}</td>
                                         <td class="px-6 py-4">
-                                            {{ $award->end_date ? $award->end_date->format('Y-m-d') : '—' }}</td>
+                                            {{ $award->end_date ? $award->end_date->format('Y-m-d') : '—' }}
+                                        </td>
                                         <td class="px-6 py-4">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    @if($award->status == 'active') bg-green-100 text-green-800
-                                                    @elseif($award->status == 'expired') bg-gray-100 text-gray-800
-                                                    @else bg-red-100 text-red-800
-                                                    @endif">
+                                                                @if($award->status == 'active') bg-green-100 text-green-800
+                                                                @elseif($award->status == 'expired') bg-gray-100 text-gray-800
+                                                                @else bg-red-100 text-red-800
+                                                                @endif">
                                                 {{ ucfirst($award->status) }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4">{{ $award->paid_at ? $award->paid_at->format('Y-m-d') : '—' }}
                                         </td>
                                         <td class="px-6 py-4">{{ $award->reference ?? '—' }}</td>
+                                        <td class="px-6 py-4">
+                                            <a href="{{ route('student.scholarship-awards.show', $award) }}"
+                                                class="text-blue-600 hover:text-blue-900 mr-3">
+                                                View
+                                            </a>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>

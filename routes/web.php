@@ -60,6 +60,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::get('payments', [StudentPaymentController::class, 'index'])->name('payments.index');
     Route::get('payments/{payment}', [StudentPaymentController::class, 'show'])->name('payments.show');
     Route::get('scholarship-awards', [StudentScholarshipAwardController::class, 'index'])->name('scholarship-awards.index');
+    Route::get('scholarship-awards/{award}', [StudentScholarshipAwardController::class, 'show'])->name('scholarship-awards.show');
 });
 
 require __DIR__ . '/auth.php';
