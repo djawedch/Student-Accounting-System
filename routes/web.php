@@ -56,6 +56,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::get('fees', [StudentFeeController::class, 'index'])->name('fees.index');
     Route::get('fees/{fee}', [StudentFeeController::class, 'show'])->name('fees.show');
     Route::get('invoices', [StudentInvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('invoices/{invoice}', [StudentInvoiceController::class, 'show'])->name('invoices.show');
     Route::get('payments', [StudentPaymentController::class, 'index'])->name('payments.index');
     Route::get('scholarship-awards', [StudentScholarshipAwardController::class, 'index'])->name('scholarship-awards.index');
 });
