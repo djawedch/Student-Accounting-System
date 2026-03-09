@@ -51,8 +51,8 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
-    Route::get('universities', [StudentUniversityController::class, 'index'])->name('universities.index');
-    Route::get('departments', [StudentDepartmentController::class, 'index'])->name('departments.index');
+    Route::get('university', [StudentUniversityController::class, 'show'])->name('university.show');
+    Route::get('department', [StudentDepartmentController::class, 'show'])->name('department.show');
     Route::get('fees', [StudentFeeController::class, 'index'])->name('fees.index');
     Route::get('invoices', [StudentInvoiceController::class, 'index'])->name('invoices.index');
     Route::get('payments', [StudentPaymentController::class, 'index'])->name('payments.index');

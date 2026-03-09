@@ -19,7 +19,7 @@ class StoreStudentRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'date_of_birth' => 'required|date|before:today',
-            'university_id' => 'required|exists:university,id',
+            'university_id' => 'required|exists:universities,id',
             'department_id' => 'required|exists:departments,id',
             'level' => 'required|string|max:50',
             'academic_year' => 'required|string|max:20',
