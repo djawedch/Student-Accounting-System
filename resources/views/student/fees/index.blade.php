@@ -23,6 +23,8 @@
                                         Year</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                         Description</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -32,6 +34,12 @@
                                         <td class="px-6 py-4">{{ number_format($fee->amount, 2) }}</td>
                                         <td class="px-6 py-4">{{ $fee->academic_year }}</td>
                                         <td class="px-6 py-4">{{ $fee->description ?? '—' }}</td>
+                                        <td class="px-6 py-4">
+                                            <a href="{{ route('student.fees.show', $fee) }}"
+                                                class="text-blue-600 hover:text-blue-900 mr-3">
+                                                View
+                                            </a>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
