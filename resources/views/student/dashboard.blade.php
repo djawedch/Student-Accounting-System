@@ -25,7 +25,8 @@
                 </a>
 
                 <!-- Departments -->
-                <a href="{{ route('student.department.show') }}" ...>
+                <a href="{{ route('student.department.show') }}"
+                    class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
                     <div class="p-6 border-l-4 border-green-600">
                         <h4 class="text-lg font-semibold">My Department</h4>
                         <p class="text-sm text-gray-600">View your department</p>
