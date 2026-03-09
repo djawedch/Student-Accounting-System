@@ -26,6 +26,8 @@
                                         Reference</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date
                                     </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -38,6 +40,12 @@
                                         </td>
                                         <td class="px-6 py-4">{{ $payment->reference ?? '—' }}</td>
                                         <td class="px-6 py-4">{{ $payment->payment_date->format('Y-m-d') }}</td>
+                                        <td class="px-6 py-4">
+                                            <a href="{{ route('student.payments.show', $payment) }}"
+                                                class="text-blue-600 hover:text-blue-900 -mr-3">
+                                                View
+                                            </a>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
