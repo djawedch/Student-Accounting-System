@@ -38,6 +38,7 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
     Route::resource('universities', AdminUniversityController::class);
     Route::resource('departments', AdminDepartmentController::class);
     Route::resource('users', UserController::class)->except(['destroy']);
+    Route::get('students/filter', [StudentController::class, 'filter'])->name('students.filter');
     Route::resource('students', StudentController::class)->except(['destroy']);
     Route::resource('fees', AdminFeeController::class);
     Route::resource('invoices', AdminInvoiceController::class)->except(['destroy']);

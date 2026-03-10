@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Filters\InvoiceFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoice\{StoreInvoiceRequest, UpdateInvoiceRequest};
-use App\Models\{AuditLog, Student, Fee, Invoice};
+use App\Models\{AuditLog, Student, Fee, Invoice, University};
 use App\Scopes\InvoiceRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};
@@ -36,10 +36,10 @@ class InvoiceController extends Controller
 
         $user = Auth::user();
 
-        $students = match ($user->role) {
-            'super_admin' => Student::with('user')->get(),
-            'university_admin' => Student::whereHas('user', fn($q) => $q->where('university_id', $user->university_id))->with('user')->get(),
-            'department_admin', 'staff_admin' => Student::whereHas('user', fn($q) => $q->where('department_id', $user->department_id))->with('user')->get(),
+        $universities = match ($user->role) {
+            'super_admin' => University::with('departments')->orderBy('name')->get(),
+            'university_admin' => University::with('departments')->where('id', $user->university_id)->get(),
+            'department_admin', 'staff_admin' => University::with('departments')->where('id', $user->university_id)->get(),
             default => collect()
         };
 
@@ -50,7 +50,25 @@ class InvoiceController extends Controller
             default => collect()
         };
 
-        return view('admin.invoices.create', compact('students', 'fees'));
+        $universitiesData = $universities->map(function ($u) {
+            return [
+                'id' => $u->id,
+                'departments' => $u->departments->map(function ($d) {
+                    return ['id' => $d->id, 'name' => $d->name];
+                })
+            ];
+        });
+
+        $feesData = $fees->map(function ($f) {
+            return [
+                'id' => $f->id,
+                'name' => $f->name,
+                'amount' => $f->amount,
+                'department_id' => $f->department_id,
+            ];
+        });
+
+        return view('admin.invoices.create', compact('universities', 'fees', 'universitiesData', 'feesData'));
     }
 
     public function store(StoreInvoiceRequest $request)
