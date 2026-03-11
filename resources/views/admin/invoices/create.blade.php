@@ -28,26 +28,34 @@
                         <div class="mb-4">
                             <label for="university_id" class="block text-sm font-medium text-gray-700">University</label>
                             <select id="university_id" name="university_id"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                {{ auth()->user()->role !== 'super_admin' ? 'disabled' : '' }}>
                                 <option value="">-- Select University --</option>
                                 @foreach($universities as $university)
-                                <option value="{{ $university->id }}" {{ old('university_id') == $university->id ? 'selected' : '' }}>
+                                <option value="{{ $university->id }}"
+                                    {{ auth()->user()->university_id == $university->id ? 'selected' : '' }}>
                                     {{ $university->name }}
                                 </option>
                                 @endforeach
                             </select>
                         </div>
 
+                        @if(auth()->user()->role === 'super_admin')
+                        <option value="">-- Select University --</option>
+                        @endif
+
                         {{-- Step 2: Department --}}
                         <div class="mb-4">
                             <label for="department_id" class="block text-sm font-medium text-gray-700">Department</label>
                             <select id="department_id" name="department_id"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                {{ in_array(auth()->user()->role, ['department_admin', 'staff_admin']) ? 'disabled' : '' }}>
                                 <option value="">-- Select Department --</option>
                                 @foreach($universities as $university)
                                 @foreach($university->departments as $department)
                                 <option value="{{ $department->id }}"
                                     data-university="{{ $university->id }}"
+                                    {{ in_array(auth()->user()->role, ['department_admin', 'staff_admin']) && auth()->user()->department_id == $department->id ? 'selected' : '' }}
                                     {{ old('department_id') == $department->id ? 'selected' : '' }}>
                                     {{ $department->name }}
                                 </option>
@@ -55,6 +63,10 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        @if(in_array(auth()->user()->role, ['department_admin', 'staff_admin']))
+                        <input type="hidden" name="department_id" value="{{ auth()->user()->department_id }}">
+                        @endif
 
                         {{-- Step 3: Level + Study System --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -210,6 +222,22 @@
             feesContainer.appendChild(label);
         });
     }
+
+    // Auto-trigger on page load for locked roles
+    document.addEventListener('DOMContentLoaded', function() {
+        if (departmentSelect.value) {
+            loadFees();
+            loadStudents();
+        }
+        if (universitySelect.value) {
+            const universityId = parseInt(universitySelect.value);
+            const options = departmentSelect.querySelectorAll('option');
+            options.forEach(opt => {
+                if (!opt.value) return;
+                opt.style.display = (!universityId || parseInt(opt.dataset.university) === universityId) ? '' : 'none';
+            });
+        }
+    });
 
     function loadStudents() {
         const departmentId = parseInt(departmentSelect.value);
