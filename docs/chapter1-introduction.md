@@ -25,6 +25,7 @@ The main objective of this project is to design and develop a web application de
 
 The specific objectives are as follows:
 
+- Support a multi-tenant architecture allowing management across multiple universities and departments
 - Set up a management system for students and their tuition fees
 - Automate the generation and tracking of invoices Record and track payments made outside the system
 - Manage the allocation of scholarships and their impact on the amounts to be paid
@@ -33,7 +34,7 @@ The specific objectives are as follows:
 
 ## 1.4 Project Scope
 
-The project covers the essential functionalities necessary for effective student accounting management. It is primarily aimed at three types of users: the Super Administrator, the Administrator, and the Student.
+The project covers the essential functionalities necessary for effective student accounting management. It is primarily aimed at five types of users: Super Administrator, University Administrator, Department Administrator, Staff Administrator, and Student.
 
 The application will allow the management of fees, invoices, payments, and scholarships within an academic framework. Payments are not processed by the system but are recorded after being performed externally (cash, bank transfer, etc.). Advanced hardware, legal, and accounting aspects are not supported within the scope of this project, which focuses on an academic software solution.
 
