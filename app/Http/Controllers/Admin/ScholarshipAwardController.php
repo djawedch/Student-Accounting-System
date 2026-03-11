@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Filters\ScholarshipAwardFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ScholarshipAward\{StoreScholarshipAwardRequest, UpdateScholarshipAwardRequest};
-use App\Models\{AuditLog, Student, Scholarship, StudentScholarship};
+use App\Models\{AuditLog, Student, Scholarship, StudentScholarship, University};
 use App\Scopes\ScholarshipAwardRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};
@@ -33,19 +33,16 @@ class ScholarshipAwardController extends Controller
     public function create()
     {
         $this->authorize('create', StudentScholarship::class);
-
         $user = Auth::user();
 
-        $students = match ($user->role) {
-            'super_admin' => Student::with('user')->get(),
-            'university_admin' => Student::whereHas('user', fn($q) => $q->where('university_id', $user->university_id))->with('user')->get(),
-            'department_admin', 'staff_admin' => Student::whereHas('user', fn($q) => $q->where('department_id', $user->department_id))->with('user')->get(),
-            default => collect()
+        $universities = match ($user->role) {
+            'super_admin' => University::with('departments')->orderBy('name')->get(),
+            default => University::with('departments')->where('id', $user->university_id)->get(),
         };
 
         $scholarships = Scholarship::orderBy('name')->get();
 
-        return view('admin.student-scholarships.create', compact('students', 'scholarships'));
+        return view('admin.student-scholarships.create', compact('universities', 'scholarships'));
     }
 
     public function store(StoreScholarshipAwardRequest $request)

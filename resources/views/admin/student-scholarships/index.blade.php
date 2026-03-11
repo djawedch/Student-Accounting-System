@@ -159,7 +159,7 @@
                                                 <a href="{{ route('admin.student-scholarships.show', $award) }}"
                                                     class="text-blue-600 hover:text-blue-900 mr-3">View</a>
                                             @endcan
-                                            @can('view', $award)
+                                            @can('update', $award)
                                                 <a href="{{ route('admin.student-scholarships.edit', $award) }}"
                                                     class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
                                             @endcan

@@ -146,7 +146,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             @can('view', $payment)
                                                 <a href="{{ route('admin.payments.show', $payment) }}"
-                                                    class="text-blue-600 hover:text-blue-900 -mr-3">View</a>
+                                                    class="text-blue-600 hover:text-blue-900 mr-3">View</a>
                                             @endcan
                                             @can('update', $payment)
                                                 <a href="{{ route('admin.payments.edit', $payment) }}"
