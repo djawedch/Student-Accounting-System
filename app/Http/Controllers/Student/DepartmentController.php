@@ -10,7 +10,8 @@ class DepartmentController extends Controller
     public function show()
     {
         $user = Auth::user();
-        $department = Department::with('university')
+
+        $department = Department::with('university', 'fees')
             ->findOrFail($user->department_id);
 
         return view('student.departments.show', compact('department'));

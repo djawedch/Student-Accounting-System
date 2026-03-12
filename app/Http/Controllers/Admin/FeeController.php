@@ -72,13 +72,19 @@ class FeeController extends Controller
 
         return view('admin.fees.show', compact('fee'));
     }
-
+    
     public function edit(Fee $fee)
     {
         $this->authorize('update', $fee);
 
-        $departments = Department::with('university')->orderBy('name')->get();
+        $user = Auth::user();
 
+        $departments = match ($user->role) {
+            'super_admin' => Department::with('university')->orderBy('name')->get(),
+            'university_admin' => Department::with('university')->where('university_id', $user->university_id)->orderBy('name')->get(),
+            'department_admin', 'staff_admin' => Department::with('university')->where('id', $user->department_id)->orderBy('name')->get(),
+            default => collect()
+        };
         return view('admin.fees.edit', compact('fee', 'departments'));
     }
 

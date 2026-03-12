@@ -17,6 +17,7 @@ class UserController extends Controller
         $this->authorize('viewAny', User::class);
 
         $user = Auth::user();
+
         $baseQuery = User::query()
             ->where('role', '!=', 'student')
             ->with('department', 'university');
@@ -97,9 +98,9 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $user->load('department', 'university');
-
         $this->authorize('view', $user);
+
+        $user->load('department', 'university');
 
         return view('admin.users.show', compact('user'));
     }

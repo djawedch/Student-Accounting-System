@@ -17,6 +17,7 @@ class StudentController extends Controller
         $this->authorize('viewAny', User::class);
 
         $user = Auth::user();
+
         $baseQuery = User::where('role', 'student')->with('student', 'university', 'department');
 
         $students = (new StudentFilter($request))
@@ -105,18 +106,18 @@ class StudentController extends Controller
 
     public function show(User $student)
     {
-        $student->load('student', 'department.university');
-
         $this->authorize('view', $student);
+
+        $student->load('student', 'department.university');
 
         return view('admin.students.show', compact('student'));
     }
 
     public function edit(User $student)
     {
-        $student->load('student');
-
         $this->authorize('update', $student);
+
+        $student->load('student');
 
         $user = Auth::user();
 
@@ -235,7 +236,6 @@ class StudentController extends Controller
         $query = Student::with('user')
             ->whereHas('user', fn($q) => $q->where('department_id', $departmentId));
 
-        // Scope check
         if ($user->role === 'university_admin') {
             $query->whereHas('user', fn($q) => $q->where('university_id', $user->university_id));
         } elseif (in_array($user->role, ['department_admin', 'staff_admin'])) {

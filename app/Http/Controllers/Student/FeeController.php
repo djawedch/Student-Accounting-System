@@ -20,7 +20,7 @@ class FeeController extends Controller
             abort(404, 'Your department is not assigned.');
         }
 
-        $fees = $user->department->fees()->latest()->get();
+        $fees = $user->department->fees->sortByDesc('created_at');
 
         return view('student.fees.index', compact('fees'));
     }

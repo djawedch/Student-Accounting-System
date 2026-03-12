@@ -16,6 +16,7 @@ class AuditLogController extends Controller
         $this->authorize('viewAny', AuditLog::class);
 
         $user = Auth::user();
+        
         $baseQuery = AuditLog::with('user')->latest();
 
         $logs = (new AuditLogFilter($request))

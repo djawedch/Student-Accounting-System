@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Filters\InvoiceFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Invoice\{StoreInvoiceRequest, UpdateInvoiceRequest};
-use App\Models\{AuditLog, Student, Fee, Invoice, University};
+use App\Models\{AuditLog, Fee, Invoice, University};
 use App\Scopes\InvoiceRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};

@@ -61,7 +61,7 @@ class PaymentController extends Controller
 
         try {
             $payment = Payment::create($request->validated());
-            $invoice = $payment->invoice;
+            $invoice->load('payments', 'fee');
             $totalPaid = $invoice->total_paid;
             $invoiceAmount = $invoice->fee->amount;
 
@@ -114,14 +114,15 @@ class PaymentController extends Controller
     public function update(UpdatePaymentRequest $request, Payment $payment)
     {
         $payment->load('invoice.student.user');
-        
+
         $this->authorize('update', $payment);
 
         DB::beginTransaction();
 
         try {
             $payment->update($request->validated());
-            $invoice = Invoice::with('fee')->findOrFail($payment->invoice_id);
+            $payment->load('invoice.fee', 'invoice.payments');
+            $invoice = $payment->invoice;
             $totalPaid = $invoice->total_paid;
             $invoiceAmount = $invoice->fee->amount;
 

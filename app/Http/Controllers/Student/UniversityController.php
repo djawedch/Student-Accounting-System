@@ -10,6 +10,7 @@ class UniversityController extends Controller
     public function show()
     {
         $user = Auth::user();
+        
         $university = University::with('departments')
             ->findOrFail($user->university_id);
 
