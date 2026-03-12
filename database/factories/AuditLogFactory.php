@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Factories;
 
 use App\Models\{User, AuditLog};
@@ -12,23 +11,23 @@ class AuditLogFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => User::factory(),
-            'event_type' => $this->faker->randomElement(['create', 'update', 'delete']),
+            'user_id'    => User::where('role', '!=', 'student')->inRandomOrder()->first()->id,
+            'event_type' => fake()->randomElement(['create', 'update', 'delete']),
             'model_type' => fake()->randomElement([
-                'App\Models\University',
-                'App\Models\Department',
-                'App\Models\User',
-                'App\Models\Student',
-                'App\Models\Fee',
-                'App\Models\Invoice',
-                'App\Models\Payment',
-                'App\Models\Scholarship',
-                'App\Models\StudentScholarship'
+                'University',
+                'Department',
+                'User',
+                'Student',
+                'Fee',
+                'Invoice',
+                'Payment',
+                'Scholarship',
+                'StudentScholarship',
             ]),
-            'model_id' => $this->faker->numberBetween(1, 1000),
-            'ip_address' => $this->faker->ipv4(),
-            'user_agent' => $this->faker->userAgent(),
-            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'model_id'   => fake()->numberBetween(1, 100),
+            'ip_address' => fake()->ipv4(),
+            'user_agent' => fake()->userAgent(),
+            'created_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }

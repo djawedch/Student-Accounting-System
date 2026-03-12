@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Factories;
 
 use App\Models\{Student, Fee, Invoice};
@@ -11,17 +10,20 @@ class InvoiceFactory extends Factory
 
     public function definition()
     {
-        $issued = $this->faker->dateTimeBetween('-1 year', 'now');
-        $due = (clone $issued)->modify('+30 days');
+        $student = Student::with('user')->inRandomOrder()->first();
+        $fee = Fee::where('department_id', $student->user->department_id)->inRandomOrder()->first();
+
+        $issued = fake()->dateTimeBetween('-1 year', 'now');
+        $due    = (clone $issued)->modify('+30 days');
 
         return [
-            'student_id' => Student::inRandomOrder()->first()?->id ?? Student::factory(),
-            'fee_id' => Fee::factory(),
-            'status' => $this->faker->randomElement(['unpaid', 'partially_paid', 'paid', 'overdue']),
+            'student_id'  => $student->id,
+            'fee_id'      => $fee?->id ?? Fee::factory(),
+            'status'      => fake()->randomElement(['unpaid', 'partially_paid', 'paid', 'overdue']),
             'issued_date' => $issued,
-            'due_date' => $due,
-            'created_at' => $issued,
-            'updated_at' => $issued,
+            'due_date'    => $due,
+            'created_at'  => $issued,
+            'updated_at'  => $issued,
         ];
     }
 }

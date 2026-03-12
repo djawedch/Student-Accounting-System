@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Factories;
 
 use App\Models\{Department, Fee};
@@ -11,14 +10,27 @@ class FeeFactory extends Factory
 
     public function definition()
     {
+        $feeTypes = [
+            'Tuition Fee'      => fake()->randomFloat(2, 20000, 80000),
+            'Library Fee'      => fake()->randomFloat(2, 1000, 5000),
+            'Sports Fee'       => fake()->randomFloat(2, 1000, 3000),
+            'Lab Fee'          => fake()->randomFloat(2, 5000, 15000),
+            'Registration Fee' => fake()->randomFloat(2, 2000, 8000),
+            'Exam Fee'         => fake()->randomFloat(2, 3000, 10000),
+            'Insurance Fee'    => fake()->randomFloat(2, 1000, 4000),
+        ];
+
+        $name   = fake()->randomElement(array_keys($feeTypes));
+        $amount = $feeTypes[$name];
+
         return [
             'department_id' => Department::inRandomOrder()->first()?->id ?? Department::factory(),
-            'name' => $this->faker->randomElement(['Tuition Fee', 'Library Fee', 'Sports Fee', 'Lab Fee', 'Registration Fee']),
-            'amount' => $this->faker->randomFloat(2, 5000, 50000),
-            'academic_year' => $this->faker->randomElement(['2023-2024', '2024-2025', '2025-2026']),
-            'description' => $this->faker->optional()->sentence(),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'name'          => $name,
+            'amount'        => $amount,
+            'academic_year' => fake()->randomElement(['2023-2024', '2024-2025', '2025-2026']),
+            'description'   => fake()->optional()->sentence(),
+            'created_at'    => now(),
+            'updated_at'    => now(),
         ];
     }
 }

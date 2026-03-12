@@ -9,6 +9,6 @@ class ScholarshipSeeder extends Seeder
 {
     public function run()
     {
-        Scholarship::factory(10)->create();
+        Scholarship::factory(15)->create();
     }
 }

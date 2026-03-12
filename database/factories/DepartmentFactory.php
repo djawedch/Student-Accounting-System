@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Factories;
 
 use App\Models\{University, Department};
@@ -11,11 +10,34 @@ class DepartmentFactory extends Factory
 
     public function definition(): array
     {
+        $departments = [
+            'Computer Science',
+            'Mathematics',
+            'Physics',
+            'Chemistry',
+            'Biology',
+            'Civil Engineering',
+            'Electrical Engineering',
+            'Mechanical Engineering',
+            'Architecture',
+            'Economics',
+            'Management',
+            'Law',
+            'Arabic Literature',
+            'French Literature',
+            'History',
+            'Geography',
+            'Sociology',
+            'Psychology',
+            'Medicine',
+            'Pharmacy',
+        ];
+
         return [
             'university_id' => University::inRandomOrder()->first()?->id ?? University::factory(),
-            'name' => $this->faker->unique()->word() . ' Department',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'name'          => fake()->randomElement($departments),
+            'created_at'    => now(),
+            'updated_at'    => now(),
         ];
     }
 }

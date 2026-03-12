@@ -1,31 +1,60 @@
 <?php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\{Department, User};
+use App\Models\{University, Department, User};
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
+        $password = Hash::make('password'); // hash once
+
+        // Super Admin — no university or department
         User::factory()->superAdmin()->create([
+            'first_name' => 'Super',
+            'last_name' => 'Admin',
             'email' => 'superadmin@example.com',
-            'department_id' => Department::first()->id ?? Department::factory(),
+            'password' => $password,
         ]);
 
-        User::factory(3)->universityAdmin()->create();
-
-        Department::all()->each(function ($department) 
-        {
-            User::factory()->departmentAdmin()->create([
-                'department_id' => $department->id,
-                'email' => 'admin.' . $department->id . '@example.com',
+        // One university_admin per university
+        University::all()->each(function ($university) use ($password) {
+            User::factory()->universityAdmin($university->id)->create([
+                'first_name' => 'Admin',
+                'last_name' => $university->name,
+                'email' => 'univadmin.' . $university->id . '@example.com',
+                'password' => $password,
             ]);
 
-            User::factory(2)->staffAdmin()->create();
+            // 5 departments per university — already seeded
+            Department::where('university_id', $university->id)->each(function ($department) use ($password, $university) {
 
-            User::factory(10)->student()->create();
+                // One department_admin per department
+                User::factory()->departmentAdmin($department->id, $university->id)->create([
+                    'first_name' => 'Dept',
+                    'last_name' => $department->name,
+                    'email' => 'deptadmin.' . $department->id . '@example.com',
+                    'password' => $password,
+                ]);
+
+                // One staff_admin per department
+                User::factory()->staffAdmin($department->id, $university->id)->create([
+                    'first_name' => 'Staff',
+                    'last_name' => $department->name,
+                    'email' => 'staff.' . $department->id . '@example.com',
+                    'password' => $password,
+                ]);
+
+                // 10 students per department
+                for ($i = 1; $i <= 10; $i++) {
+                    User::factory()->student($department->id, $university->id)->create([
+                        'email' => 'student.' . $department->id . '.' . $i . '@example.com',
+                        'password' => $password,
+                    ]);
+                }
+            });
         });
     }
 }
