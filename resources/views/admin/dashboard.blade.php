@@ -14,6 +14,98 @@
                 </div>
             </div>
 
+            {{-- Super Admin only stats --}}
+            @if(auth()->user()->role === 'super_admin')
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-indigo-600">
+                        <p class="text-sm text-gray-500">Total Universities</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalUniversities) }}</p>
+                    </div>
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-purple-600">
+                        <p class="text-sm text-gray-500">Total Departments</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalDepartments) }}</p>
+                    </div>
+                </div>
+            @endif
+
+            {{-- All roles stats --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-indigo-600">
+                    <p class="text-sm text-gray-500">Total Students</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalStudents) }}</p>
+                </div>
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-teal-600">
+                    <p class="text-sm text-gray-500">Total Invoices</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalInvoices) }}</p>
+                </div>
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-green-600">
+                    <p class="text-sm text-gray-500">Total Collected (DZD)</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalCollected, 2) }}</p>
+                </div>
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-cyan-600">
+                    <p class="text-sm text-gray-500">Scholarship Awards</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalScholarshipAwards) }}</p>
+                </div>
+            </div>
+
+            {{-- Invoice status breakdown --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-gray-400">
+                    <p class="text-sm text-gray-500">Unpaid Invoices</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalUnpaid) }}</p>
+                </div>
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-red-500">
+                    <p class="text-sm text-gray-500">Overdue Invoices</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalOverdue) }}</p>
+                </div>
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-yellow-500">
+                    <p class="text-sm text-gray-500">Partially Paid</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalPartiallyPaid) }}</p>
+                </div>
+                <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-green-500">
+                    <p class="text-sm text-gray-500">Paid Invoices</p>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalPaid) }}</p>
+                </div>
+            </div>
+
+            {{-- Payments Per Month Chart --}}
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Payments Collected — Last 6 Months</h3>
+                <canvas id="paymentsChart" height="100"></canvas>
+            </div>
+
+            @push('scripts')
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script>
+                    const labels = @json($paymentsPerMonth->pluck('label'));
+                    const data = @json($paymentsPerMonth->pluck('total'));
+
+                    new Chart(document.getElementById('paymentsChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'DZD Collected',
+                                data: data,
+                                backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                                borderColor: 'rgba(79, 70, 229, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                            },
+                            scales: {
+                                y: { beginAtZero: true }
+                            }
+                        }
+                    });
+                </script>
+            @endpush
+
             {{-- Quick access cards --}}
             @if(auth()->user() && in_array(auth()->user()->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']))
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
