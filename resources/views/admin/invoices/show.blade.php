@@ -17,6 +17,10 @@
                                     class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
                                     Edit
                                 </a>
+                                <a href="{{ route('admin.invoices.pdf', $invoice) }}"
+                                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 mr-2">
+                                    Download PDF
+                                </a>
                             @endcan
                             <a href="{{ route('admin.invoices.index') }}"
                                 class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">

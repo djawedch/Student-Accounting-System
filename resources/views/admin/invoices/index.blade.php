@@ -11,12 +11,18 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Invoices</h2>
-                        @can('create', App\Models\Invoice::class)
-                            <a href="{{ route('admin.invoices.create') }}"
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                                Generate New Invoices
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('admin.invoices.export.pdf') }}?{{ http_build_query(request()->query()) }}"
+                                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                                Export PDF
                             </a>
-                        @endcan
+                            @can('create', App\Models\Invoice::class)
+                                <a href="{{ route('admin.invoices.create') }}"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                    Generate New Invoices
+                                </a>
+                            @endcan
+                        </div>
                     </div>
 
                     @if(session('success'))
@@ -142,11 +148,11 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                            @if($invoice->status == 'paid') bg-green-100 text-green-800
-                                                                            @elseif($invoice->status == 'pending') bg-yellow-100 text-yellow-800
-                                                                            @elseif($invoice->status == 'overdue') bg-red-100 text-red-800
-                                                                            @else bg-gray-100 text-gray-800
-                                                                            @endif">
+                                                                                            @if($invoice->status == 'paid') bg-green-100 text-green-800
+                                                                                            @elseif($invoice->status == 'pending') bg-yellow-100 text-yellow-800
+                                                                                            @elseif($invoice->status == 'overdue') bg-red-100 text-red-800
+                                                                                            @else bg-gray-100 text-gray-800
+                                                                                            @endif">
                                                 {{ ucfirst($invoice->status) }}
                                             </span>
                                         </td>

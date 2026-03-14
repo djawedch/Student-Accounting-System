@@ -11,12 +11,18 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Payments</h2>
-                        @can('create', App\Models\Payment::class)
-                            <a href="{{ route('admin.payments.create') }}"
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                                Record Payment
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('admin.payments.export.pdf') }}?{{ http_build_query(request()->query()) }}"
+                                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                                Export PDF
                             </a>
-                        @endcan
+                            @can('create', App\Models\Payment::class)
+                                <a href="{{ route('admin.payments.create') }}"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                    Record Payment
+                                </a>
+                            @endcan
+                        </div>
                     </div>
 
                     @if(session('success'))

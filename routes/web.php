@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\{
     DashboardController as AdminDashboardController,
     UniversityController as AdminUniversityController,
     DepartmentController as AdminDepartmentController,
+    ExportController,
     UserController,
     StudentController,
     FeeController as AdminFeeController,
@@ -41,6 +42,10 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
     Route::get('students/filter', [StudentController::class, 'filter'])->name('students.filter');
     Route::resource('students', StudentController::class)->except(['destroy']);
     Route::resource('fees', AdminFeeController::class);
+    Route::get('invoices/export/pdf', [ExportController::class, 'invoicesListPdf'])->name('invoices.export.pdf');
+    Route::get('payments/export/pdf', [ExportController::class, 'paymentsListPdf'])->name('payments.export.pdf');
+    Route::get('invoices/{invoice}/pdf', [ExportController::class, 'invoicePdf'])->name('invoices.pdf');
+    Route::get('payments/{payment}/pdf', [ExportController::class, 'paymentPdf'])->name('payments.pdf');
     Route::resource('invoices', AdminInvoiceController::class)->except(['destroy']);
     Route::resource('payments', AdminPaymentController::class)->except(['destroy']);
     Route::resource('scholarships', ScholarshipController::class);
