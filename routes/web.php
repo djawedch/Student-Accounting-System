@@ -49,7 +49,9 @@ Route::middleware(['auth', 'role:super_admin,university_admin,department_admin,s
     Route::resource('invoices', AdminInvoiceController::class)->except(['destroy']);
     Route::resource('payments', AdminPaymentController::class)->except(['destroy']);
     Route::resource('scholarships', ScholarshipController::class);
-    Route::resource('scholarship-awards', AdminScholarshipAwardController::class)->except(['destroy']);
+    Route::resource('scholarship-awards', AdminScholarshipAwardController::class)
+        ->except(['destroy'])
+        ->parameters(['scholarship-awards' => 'award']);
     Route::resource('audit-logs', AuditLogController::class)->only(['index', 'show']);
     Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
     Route::patch('students/{student}/toggle-status', [StudentController::class, 'toggleStatus'])->name('students.toggle-status');

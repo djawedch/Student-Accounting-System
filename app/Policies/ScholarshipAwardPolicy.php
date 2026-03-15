@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\{User, StudentScholarship};
+use App\Models\{User, ScholarshipAward};
 
 class ScholarshipAwardPolicy
 {
@@ -11,7 +11,7 @@ class ScholarshipAwardPolicy
         return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
     }
 
-    public function view(User $user, StudentScholarship $award): bool
+    public function view(User $user, ScholarshipAward $award): bool
     {
         return $this->canAccessAward($user, $award);
     }
@@ -21,17 +21,17 @@ class ScholarshipAwardPolicy
         return $this->viewAny($user);
     }
 
-    public function update(User $user, StudentScholarship $award): bool
+    public function update(User $user, ScholarshipAward $award): bool
     {
         return $this->canAccessAward($user, $award);
     }
 
-    public function delete(User $user, StudentScholarship $award): bool
+    public function delete(User $user, ScholarshipAward $award): bool
     {
         return false;
     }
 
-    protected function canAccessAward(User $user, StudentScholarship $award): bool
+    protected function canAccessAward(User $user, ScholarshipAward $award): bool
     {
         $student = $award->student;
 

@@ -214,7 +214,7 @@
                     </a>
 
                     {{-- Scholarship Awards Card --}}
-                    <a href="{{ route('admin.student-scholarships.index') }}"
+                    <a href="{{ route('admin.scholarship-awards.index') }}"
                         class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
                         <div class="p-6 border-l-4 border-cyan-600">
                             <div class="flex items-center">
