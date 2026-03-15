@@ -2,9 +2,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\{Student, Scholarship, StudentScholarship};
+use App\Models\{Student, Scholarship, ScholarshipAward};
 
-class StudentScholarshipSeeder extends Seeder
+class ScholarshipAwardSeeder extends Seeder
 {
     public function run()
     {
@@ -12,7 +12,7 @@ class StudentScholarshipSeeder extends Seeder
             $scholarships = Scholarship::inRandomOrder()->take(rand(1, 3))->get();
 
             foreach ($scholarships as $scholarship) {
-                StudentScholarship::factory()->create([
+                ScholarshipAward::factory()->create([
                     'student_id'     => $student->id,
                     'scholarship_id' => $scholarship->id,
                 ]);

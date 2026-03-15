@@ -3,25 +3,25 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\{User,StudentScholarship};
+use App\Models\{ScholarshipAward, User};
 use Illuminate\Support\Facades\Auth;
 
 class ScholarshipAwardController extends Controller
 {
     public function index()
     {
-        $user = User::find(Auth::id())->load('student.studentScholarships.scholarship');
+        $user = User::find(Auth::id())->load('student.scholarshipAwards.scholarship');
 
         if (!$user->student) {
             abort(404, 'Student profile not found.');
         }
 
-        $awards = $user->student->studentScholarships->sortByDesc('created_at');
+        $awards = $user->student->scholarshipAwards->sortByDesc('created_at');
 
         return view('student.scholarship-awards.index', compact('awards'));
     }
 
-    public function show(StudentScholarship $award)
+    public function show(ScholarshipAward $award)
     {
         $user = User::find(Auth::id())->load('student');
 

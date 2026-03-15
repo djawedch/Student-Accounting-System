@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Filters\ScholarshipAwardFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ScholarshipAward\{StoreScholarshipAwardRequest, UpdateScholarshipAwardRequest};
-use App\Models\{AuditLog, Student, Scholarship, StudentScholarship, University};
+use App\Models\{AuditLog, Student, Scholarship, ScholarshipAward, University};
 use App\Scopes\ScholarshipAwardRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};
@@ -14,10 +14,10 @@ class ScholarshipAwardController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('viewAny', StudentScholarship::class);
+        $this->authorize('viewAny', ScholarshipAward::class);
 
         $user = Auth::user();
-        $baseQuery = StudentScholarship::with('student.user', 'scholarship');
+        $baseQuery = ScholarshipAward::with('student.user', 'scholarship');
 
         $awards = (new ScholarshipAwardFilter($request))
             ->apply((new ScholarshipAwardRoleScope)->apply($baseQuery, $user))
@@ -27,12 +27,12 @@ class ScholarshipAwardController extends Controller
 
         $statuses = ['awarded', 'paid', 'cancelled'];
 
-        return view('admin.student-scholarships.index', compact('awards', 'statuses'));
+        return view('admin.scholarship-awards.index', compact('awards', 'statuses'));
     }
 
     public function create()
     {
-        $this->authorize('create', StudentScholarship::class);
+        $this->authorize('create', ScholarshipAward::class);
         $user = Auth::user();
 
         $universities = match ($user->role) {
@@ -42,12 +42,12 @@ class ScholarshipAwardController extends Controller
 
         $scholarships = Scholarship::orderBy('name')->get();
 
-        return view('admin.student-scholarships.create', compact('universities', 'scholarships'));
+        return view('admin.scholarship-awards.create', compact('universities', 'scholarships'));
     }
 
     public function store(StoreScholarshipAwardRequest $request)
     {
-        $this->authorize('create', StudentScholarship::class);
+        $this->authorize('create', ScholarshipAward::class);
 
         $request->validated();
 
@@ -61,7 +61,7 @@ class ScholarshipAwardController extends Controller
             foreach ($studentIds as $studentId) {
                 foreach ($scholarshipIds as $scholarshipId) {
 
-                    $award = StudentScholarship::create([
+                    $award = ScholarshipAward::create([
                         'student_id' => $studentId,
                         'scholarship_id' => $scholarshipId,
                         'grant_date' => $request->grant_date,
@@ -74,7 +74,7 @@ class ScholarshipAwardController extends Controller
                     AuditLog::create([
                         'user_id' => Auth::id(),
                         'event_type' => 'create',
-                        'model_type' => 'StudentScholarship',
+                        'model_type' => 'ScholarshipAward',
                         'model_id' => $award->id,
                         'ip_address' => $request->ip(),
                         'user_agent' => $request->userAgent(),
@@ -86,7 +86,7 @@ class ScholarshipAwardController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.student-scholarships.index')
+            return redirect()->route('admin.scholarship-awards.index')
                 ->with('success', "{$createdCount} scholarship award(s) created successfully.");
         } catch (\Exception $e) {
             DB::rollBack();
@@ -95,20 +95,20 @@ class ScholarshipAwardController extends Controller
         }
     }
 
-    public function show(StudentScholarship $studentScholarship)
+    public function show(ScholarshipAward $award)
     {
-        $studentScholarship->load('student.user', 'scholarship');
+        $award->load('student.user', 'scholarship');
 
-        $this->authorize('view', $studentScholarship);
+        $this->authorize('view', $award);
 
-        return view('admin.student-scholarships.show', compact('studentScholarship'));
+        return view('admin.scholarship-awards.show', compact('award'));
     }
 
-    public function edit(StudentScholarship $studentScholarship)
+    public function edit(ScholarshipAward $award)
     {
-        $studentScholarship->load('student.user');
+        $award->load('student.user');
 
-        $this->authorize('update', $studentScholarship);
+        $this->authorize('update', $award);
 
         $user = Auth::user();
 
@@ -121,27 +121,27 @@ class ScholarshipAwardController extends Controller
 
         $scholarships = Scholarship::orderBy('name')->get();
 
-        return view('admin.student-scholarships.edit', compact('studentScholarship', 'students', 'scholarships'));
+        return view('admin.scholarship-awards.edit', compact('award', 'students', 'scholarships'));
     }
 
-    public function update(UpdateScholarshipAwardRequest $request, StudentScholarship $studentScholarship)
+    public function update(UpdateScholarshipAwardRequest $request, ScholarshipAward $award)
     {
-        $studentScholarship->load('student.user');
+        $award->load('student.user');
 
-        $this->authorize('update', $studentScholarship);
+        $this->authorize('update', $award);
 
-        $studentScholarship->update($request->validated());
+        $award->update($request->validated());
 
         AuditLog::create([
             'user_id' => Auth::id(),
             'event_type' => 'update',
-            'model_type' => 'StudentScholarship',
-            'model_id' => $studentScholarship->id,
+            'model_type' => 'ScholarshipAward',
+            'model_id' => $award->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
 
-        return redirect()->route('admin.student-scholarships.index')
+        return redirect()->route('admin.scholarship-awards.index')
             ->with('success', 'Scholarship award updated successfully.');
     }
 }

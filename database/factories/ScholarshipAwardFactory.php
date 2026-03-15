@@ -1,12 +1,12 @@
 <?php
 namespace Database\Factories;
 
-use App\Models\{Student, Scholarship, StudentScholarship};
+use App\Models\{Student, Scholarship, ScholarshipAward};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class StudentScholarshipFactory extends Factory
+class ScholarshipAwardFactory extends Factory
 {
-    protected $model = StudentScholarship::class;
+    protected $model = ScholarshipAward::class;
 
     public function definition()
     {

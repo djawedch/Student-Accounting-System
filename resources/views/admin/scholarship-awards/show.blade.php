@@ -13,12 +13,12 @@
                         <h2 class="text-2xl font-semibold">Award Information</h2>
                         <div>
                             @can('update', $studentScholarship)
-                                <a href="{{ route('admin.student-scholarships.edit', $studentScholarship) }}"
+                                <a href="{{ route('admin.scholarship-awards.edit', $studentScholarship) }}"
                                     class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mr-2">
                                     Edit
                                 </a>
                             @endcan
-                            <a href="{{ route('admin.student-scholarships.index') }}"
+                            <a href="{{ route('admin.scholarship-awards.index') }}"
                                 class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
                                 Back to List
                             </a>

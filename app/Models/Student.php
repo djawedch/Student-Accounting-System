@@ -34,8 +34,8 @@ class Student extends Model
         return $this->hasMany(Invoice::class);
     }
 
-    public function studentScholarships(): HasMany
+    public function scholarshipAwards(): HasMany
     {
-        return $this->hasMany(StudentScholarship::class);
+        return $this->hasMany(ScholarshipAward::class);
     }
 }

@@ -21,7 +21,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('admin.student-scholarships.update', $studentScholarship) }}">
+                    <form method="POST" action="{{ route('admin.scholarship-awards.update', $studentScholarship) }}">
                         @csrf
                         @method('PATCH')
 
@@ -107,7 +107,7 @@
 
                         {{-- Buttons --}}
                         <div class="flex items-center justify-end">
-                            <a href="{{ route('admin.student-scholarships.index') }}"
+                            <a href="{{ route('admin.scholarship-awards.index') }}"
                                 class="px-4 py-2 bg-gray-300 rounded-md mr-2 hover:bg-gray-400">
                                 Cancel
                             </a>

@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Invoice, Payment, Student, University, Department, StudentScholarship};
+use App\Models\{Invoice, Payment, Student, University, Department, ScholarshipAward};
 use Illuminate\Support\Facades\{Auth, DB};
 
 class DashboardController extends Controller
@@ -14,7 +14,7 @@ class DashboardController extends Controller
         $studentQuery     = Student::query();
         $invoiceQuery     = Invoice::query();
         $paymentQuery     = Payment::query();
-        $awardQuery       = StudentScholarship::query();
+        $awardQuery       = ScholarshipAward::query();
 
         match ($user->role) {
             'university_admin' => (function () use (&$studentQuery, &$invoiceQuery, &$paymentQuery, &$awardQuery, $user) {

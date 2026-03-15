@@ -54,7 +54,7 @@ class ScholarshipController extends Controller
     {
         $this->authorize('view', $scholarship);
 
-        $scholarship->load('studentScholarships.student.user');
+        $scholarship->load('scholarshipAwards.student.user');
 
         return view('admin.scholarships.show', compact('scholarship'));
     }
@@ -89,7 +89,7 @@ class ScholarshipController extends Controller
     {
         $this->authorize('delete', $scholarship);
 
-        if ($scholarship->studentScholarships()->exists()) {
+        if ($scholarship->scholarshipAwards()->exists()) {
             return redirect()->route('admin.scholarships.index')
                 ->with('error', 'Cannot delete scholarship because it has been awarded to students.');
         }

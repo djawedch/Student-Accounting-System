@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class StudentScholarship extends Model
+class ScholarshipAward extends Model
 {
     use HasFactory;
 
-    protected $table = 'student_scholarship';
+    protected $table = 'scholarship_awards';
 
     protected $fillable = [
         'student_id',

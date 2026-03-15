@@ -11,8 +11,8 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Scholarship Awards</h2>
-                        @can('create', App\Models\StudentScholarship::class)
-                            <a href="{{ route('admin.student-scholarships.create') }}"
+                        @can('create', App\Models\ScholarshipAward::class)
+                            <a href="{{ route('admin.scholarship-awards.create') }}"
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
                                 Award Scholarship
                             </a>
@@ -27,7 +27,7 @@
                     @endif
 
                     {{-- Filter Form --}}
-                    <form method="GET" action="{{ route('admin.student-scholarships.index') }}"
+                    <form method="GET" action="{{ route('admin.scholarship-awards.index') }}"
                         class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
                             <label for="student" class="block text-sm font-medium text-gray-700">Student Name</label>
@@ -93,7 +93,7 @@
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
                                 Filter
                             </button>
-                            <a href="{{ route('admin.student-scholarships.index') }}"
+                            <a href="{{ route('admin.scholarship-awards.index') }}"
                                 class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
                                 Reset
                             </a>
@@ -156,11 +156,11 @@
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $award->reference ?? '—' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             @can('view', $award)
-                                                <a href="{{ route('admin.student-scholarships.show', $award) }}"
+                                                <a href="{{ route('admin.scholarship-awards.show', $award) }}"
                                                     class="text-blue-600 hover:text-blue-900 mr-3">View</a>
                                             @endcan
                                             @can('update', $award)
-                                                <a href="{{ route('admin.student-scholarships.edit', $award) }}"
+                                                <a href="{{ route('admin.scholarship-awards.edit', $award) }}"
                                                     class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
                                             @endcan
                                         </td>
