@@ -42,7 +42,7 @@ class Invoice extends Model
 
     public function getTotalPaidAttribute()
     {
-        return $this->payments()->sum('amount');
+        return $this->payments->sum('amount');
     }
 
     public function getRemainingAmountAttribute()

@@ -18,7 +18,7 @@ class InvoicePolicy
 
     public function create(User $user): bool
     {
-        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
+        return $this->viewAny($user);
     }
 
     public function update(User $user, Invoice $invoice): bool
@@ -34,7 +34,7 @@ class InvoicePolicy
     protected function canAccessInvoice(User $user, Invoice $invoice): bool
     {
         $student = $invoice->student;
-        
+
         if (!$student) {
             return false;
         }

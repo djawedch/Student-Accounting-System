@@ -39,7 +39,7 @@ class StorePaymentRequest extends FormRequest
                     if ($user->role === 'university_admin' && $student->user->university_id !== $user->university_id) {
                         $fail('You cannot record payments for invoices outside your university.');
                     }
-                    
+
                     if (in_array($user->role, ['department_admin', 'staff_admin']) && $student->user->department_id !== $user->department_id) {
                         $fail('You cannot record payments for invoices outside your department.');
                     }

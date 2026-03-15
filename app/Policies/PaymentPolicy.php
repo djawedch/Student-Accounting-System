@@ -18,7 +18,7 @@ class PaymentPolicy
 
     public function create(User $user): bool
     {
-        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
+        return $this->viewAny($user);
     }
 
     public function update(User $user, Payment $payment): bool

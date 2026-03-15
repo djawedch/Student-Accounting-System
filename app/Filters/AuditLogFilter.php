@@ -7,9 +7,7 @@ use Illuminate\Http\Request;
 
 class AuditLogFilter
 {
-    public function __construct(protected Request $request)
-    {
-    }
+    public function __construct(protected Request $request) {}
 
     public function apply(Builder $query): Builder
     {

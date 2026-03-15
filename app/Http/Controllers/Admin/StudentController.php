@@ -6,7 +6,7 @@ use App\Filters\StudentFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Student\{StoreStudentRequest, UpdateStudentRequest};
 use App\Models\{AuditLog, Department, Student, University, User};
-use App\Scopes\StudentRoleScope;
+use App\Scopes\UserRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB, Hash};
 
@@ -21,7 +21,7 @@ class StudentController extends Controller
         $baseQuery = User::where('role', 'student')->with('student', 'university', 'department');
 
         $students = (new StudentFilter($request))
-            ->apply((new StudentRoleScope)->apply($baseQuery, $user))
+            ->apply((new UserRoleScope)->apply($baseQuery, $user))
             ->latest()
             ->paginate(10)
             ->withQueryString();

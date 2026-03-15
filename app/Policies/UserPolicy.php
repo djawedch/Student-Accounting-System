@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Policies;
 
 use App\Models\User;
@@ -17,7 +18,7 @@ class UserPolicy
 
     public function create(User $user): bool
     {
-        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
+        return $this->viewAny($user);
     }
 
     public function update(User $user, User $targetUser): bool
@@ -38,6 +39,7 @@ class UserPolicy
     protected function canManageUser(User $currentUser, User $targetUser): bool
     {
         if ($currentUser->id === $targetUser->id) return false;
+
         if ($currentUser->roleRank() <= $targetUser->roleRank()) return false;
 
         if ($currentUser->role === 'university_admin') {

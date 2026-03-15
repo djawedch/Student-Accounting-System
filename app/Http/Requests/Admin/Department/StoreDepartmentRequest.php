@@ -25,7 +25,7 @@ class StoreDepartmentRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('departments')->where(
-                    fn ($query) => $query->where('university_id', $this->university_id)
+                    fn($query) => $query->where('university_id', $this->university_id)
                 ),
             ],
         ];

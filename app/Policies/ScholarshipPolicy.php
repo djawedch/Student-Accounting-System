@@ -2,8 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\User;
-use App\Models\Scholarship;
+use App\Models\{User, Scholarship};
 
 class ScholarshipPolicy
 {
@@ -24,11 +23,11 @@ class ScholarshipPolicy
 
     public function update(User $user, Scholarship $scholarship): bool
     {
-        return $user->role === 'super_admin';
+        return $this->create($user);
     }
 
     public function delete(User $user, Scholarship $scholarship): bool
     {
-        return $user->role === 'super_admin';
+        return $this->create($user);
     }
 }

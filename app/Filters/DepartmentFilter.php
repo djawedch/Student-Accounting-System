@@ -12,11 +12,17 @@ class DepartmentFilter
     public function apply(Builder $query): Builder
     {
         return $query
-            ->when($this->request->filled('name'), fn($q) =>
+            ->when(
+                $this->request->filled('name'),
+                fn($q) =>
                 $q->where('name', 'like', '%' . $this->request->name . '%')
             )
-            ->when($this->request->filled('university'), fn($q) =>
-                $q->whereHas('university', fn($u) =>
+            ->when(
+                $this->request->filled('university'),
+                fn($q) =>
+                $q->whereHas(
+                    'university',
+                    fn($u) =>
                     $u->where('name', 'like', '%' . $this->request->university . '%')
                 )
             );
