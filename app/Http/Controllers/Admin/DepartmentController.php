@@ -6,6 +6,7 @@ use App\Filters\DepartmentFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Department\{StoreDepartmentRequest, UpdateDepartmentRequest};
 use App\Models\{University, Department, AuditLog};
+use App\Scopes\DepartmentRoleScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,9 +16,8 @@ class DepartmentController extends Controller
     {
         $this->authorize('viewAny', Department::class);
 
-        $filter = new DepartmentFilter($request);
-
-        $departments = $filter->apply(Department::with('university')->latest())
+        $departments = (new DepartmentFilter($request))
+            ->apply(Department::with('university')->latest())
             ->paginate(10)
             ->withQueryString();
 
