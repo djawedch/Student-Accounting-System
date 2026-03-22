@@ -13,7 +13,19 @@ class UserPolicy
 
     public function view(User $user, User $targetUser): bool
     {
-        return $this->canManageUser($user, $targetUser);
+        if ($user->id === $targetUser->id) return true;
+
+        if ($user->role === 'super_admin') return true;
+
+        if ($user->role === 'university_admin') {
+            return $targetUser->university_id === $user->university_id;
+        }
+
+        if (in_array($user->role, ['department_admin', 'staff_admin'])) {
+            return $targetUser->department_id === $user->department_id;
+        }
+
+        return false;
     }
 
     public function create(User $user): bool

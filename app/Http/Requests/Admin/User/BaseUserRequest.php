@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\Admin\User;
 
 use App\Models\User;
@@ -11,6 +10,29 @@ abstract class BaseUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if (!in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin'])) {
+            return false;
+        }
+
+        if ($this->role) {
+            $allRoles = [
+                'super_admin'      => 4,
+                'university_admin' => 3,
+                'department_admin' => 2,
+                'staff_admin'      => 1,
+                'student'          => 0,
+            ];
+
+            $requestedRank = $allRoles[$this->role] ?? -1;
+
+            if ($requestedRank >= $user->roleRank()) {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -48,7 +70,13 @@ abstract class BaseUserRequest extends FormRequest
                 Rule::requiredIf(in_array($this->role, ['department_admin', 'staff_admin'])),
                 'exists:departments,id',
             ],
-            'role'      => ['required', 'string', Rule::in($this->allowedRoles())],
+            'role'      => ['required', 'string', Rule::in(array_keys([
+                'super_admin'      => 4,
+                'university_admin' => 3,
+                'department_admin' => 2,
+                'staff_admin'      => 1,
+                'student'          => 0,
+            ]))],
             'is_active' => 'sometimes|boolean',
         ];
     }
