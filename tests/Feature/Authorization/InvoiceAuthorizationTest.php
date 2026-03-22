@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 test('super_admin can view invoices list', function () {
     $response = $this->actingAs(superAdmin())->get(route('admin.invoices.index'));
-    
+
     $response->assertStatus(200);
 });
 
