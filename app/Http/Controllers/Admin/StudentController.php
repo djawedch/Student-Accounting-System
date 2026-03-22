@@ -31,7 +31,6 @@ class StudentController extends Controller
         return view('admin.students.index', compact('students', 'studySystems'));
     }
 
-
     public function create()
     {
         $this->authorize('create', User::class);
