@@ -133,11 +133,11 @@ test('student can view their own payment', function () {
 test('student cannot view another student payment', function () {
     // Arrange
     [$university, $department] = createUniWithDept();
-    
+
     // Student 1 — the one trying to view
     $studentUser1 = studentUser($department, $university);
     Student::factory()->create(['user_id' => $studentUser1->id]);
-    
+
     // Student 2 — owns the payment
     $payment = createPayment($department, $university);
 
