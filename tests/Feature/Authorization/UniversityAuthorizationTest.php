@@ -8,8 +8,16 @@ use Illuminate\Support\Facades\Hash;
 function createUniWithDept(): array
 {
     $university = University::factory()->create();
-    $department = Department::factory()->create(['university_id' => $university->id]);
+    $department = createDepartment($university);
     return [$university, $department];
+}
+
+function createDepartment(University $university, ?string $name = null): Department
+{
+    return Department::factory()->create([
+        'university_id' => $university->id,
+        'name' => $name ?? uniqid('dept_'),
+    ]);
 }
 
 function superAdmin(): User

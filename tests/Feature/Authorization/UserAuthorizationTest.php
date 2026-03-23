@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\{User, University, Department};
-use Illuminate\Support\Facades\Hash;
+use App\Models\Department;
 
 // ─── viewAny ────────────────────────────────────────────────────────────────
 
@@ -120,16 +119,12 @@ test('department_admin can view user in their own department', function () {
 });
 
 test('department_admin cannot view user from another department', function () {
-    // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
     $target = deptAdmin($department2, $university);
 
-    // Act
     $response = $this->actingAs($admin)->get(route('admin.users.show', $target));
-
-    // Assert
     $response->assertStatus(403);
 });
 
@@ -149,7 +144,7 @@ test('staff_admin can view user in their own department', function () {
 test('staff_admin cannot view user from another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = staffAdmin($department1, $university);
     $target = staffAdmin($department2, $university);
 

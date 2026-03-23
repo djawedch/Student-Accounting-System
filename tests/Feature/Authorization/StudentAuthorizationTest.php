@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\{User, University, Department, Student};
-use Illuminate\Support\Facades\Hash;
+use App\Models\{Department, Student};
 
 // ─── viewAny ────────────────────────────────────────────────────────────────
 
@@ -105,7 +104,7 @@ test('department_admin can view student in their own department', function () {
 test('department_admin cannot view student from another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
     $studentUser = studentUser($department2, $university);
     $student = Student::factory()->create(['user_id' => $studentUser->id]);

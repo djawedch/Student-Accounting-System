@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\{User, University, Department, Fee};
-use Illuminate\Support\Facades\Hash;
+use App\Models\{Department, Fee, Student};
 
 // ─── viewAny ────────────────────────────────────────────────────────────────
 
@@ -92,7 +91,7 @@ test('department_admin can view fee in their own department', function () {
 test('department_admin cannot view fee from another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
     $fee = Fee::factory()->create(['department_id' => $department2->id]);
 
@@ -119,12 +118,13 @@ test('student can view fees of their own department', function () {
 test('student cannot view fee from another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
-    $student = studentUser($department1, $university);
+    $department2 = createDepartment($university);
+    $studentUser = studentUser($department1, $university);
+    Student::factory()->create(['user_id' => $studentUser->id]);
     $fee = Fee::factory()->create(['department_id' => $department2->id]);
 
     // Act
-    $response = $this->actingAs($student)->get(route('student.fees.show', $fee));
+    $response = $this->actingAs($studentUser)->get(route('admin.fees.show', $fee));
 
     // Assert
     $response->assertStatus(403);
@@ -237,7 +237,7 @@ test('department_admin can create a fee in their own department', function () {
 test('department_admin cannot create a fee in another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
 
     // Act
@@ -333,7 +333,7 @@ test('department_admin can update fee in their own department', function () {
 test('department_admin cannot update fee from another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
     $fee = Fee::factory()->create(['department_id' => $department2->id]);
 
@@ -428,7 +428,7 @@ test('department_admin can delete fee in their own department', function () {
 test('department_admin cannot delete fee from another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
     $fee = Fee::factory()->create(['department_id' => $department2->id]);
 

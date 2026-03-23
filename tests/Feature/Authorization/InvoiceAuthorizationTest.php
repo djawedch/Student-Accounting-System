@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\{User, University, Department, Fee, Invoice, Student};
-use Illuminate\Support\Facades\Hash;
+use App\Models\{University, Department, Fee, Invoice, Student};
 
 // ─── viewAny ────────────────────────────────────────────────────────────────
 
@@ -111,7 +110,7 @@ test('department_admin can view invoice in their own department', function () {
 test('department_admin cannot view invoice from another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
     $invoice = createInvoice($department2, $university);
 

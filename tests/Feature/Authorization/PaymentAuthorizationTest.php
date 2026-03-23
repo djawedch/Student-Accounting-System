@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\{User, University, Department, Fee, Invoice, Payment, Student};
-use Illuminate\Support\Facades\Hash;
+use App\Models\{University, Department, Fee, Invoice, Payment, Student};
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -103,7 +102,7 @@ test('department_admin can view payment in their own department', function () {
 test('department_admin cannot view payment from another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
     $payment = createPayment($department2, $university);
 

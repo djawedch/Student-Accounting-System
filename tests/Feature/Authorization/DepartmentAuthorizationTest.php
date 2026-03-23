@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\{User, University, Department};
-use Illuminate\Support\Facades\Hash;
+use App\Models\{University, Department};
 
 // ─── viewAny ────────────────────────────────────────────────────────────────
 
@@ -349,7 +348,7 @@ test('department_admin can access edit form for their own department', function 
 test('department_admin cannot access edit form for another department', function () {
     // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
 
     // Act
@@ -450,18 +449,15 @@ test('department_admin can update their own department', function () {
 });
 
 test('department_admin cannot update another department', function () {
-    // Arrange
     [$university, $department1] = createUniWithDept();
-    $department2 = Department::factory()->create(['university_id' => $university->id]);
+    $department2 = createDepartment($university);
     $admin = deptAdmin($department1, $university);
 
-    // Act
     $response = $this->actingAs($admin)->put(route('admin.departments.update', $department2), [
         'name'          => 'Hacked Department',
         'university_id' => $university->id,
     ]);
 
-    // Assert
     $response->assertStatus(403);
 });
 
@@ -501,7 +497,7 @@ test('super_admin can delete a department', function () {
     // Arrange
     $admin = superAdmin();
     $university = University::factory()->create();
-    $department = Department::factory()->create(['university_id' => $university->id]);
+    $department = createDepartment($university);
 
     // Act
     $response = $this->actingAs($admin)->delete(route('admin.departments.destroy', $department));
@@ -515,7 +511,7 @@ test('university_admin can delete department in their own university', function 
     // Arrange
     [$university, $department] = createUniWithDept();
     $admin = uniAdmin($university);
-    $newDepartment = Department::factory()->create(['university_id' => $university->id]);
+    $newDepartment = createDepartment($university);
 
     // Act
     $response = $this->actingAs($admin)->delete(route('admin.departments.destroy', $newDepartment));
