@@ -53,7 +53,7 @@
                     </dl>
 
                     {{-- List of student awards --}}
-                    @if($scholarship->studentScholarships->isNotEmpty())
+                    @if($scholarship->scholarshipAwards->isNotEmpty())
                         <h3 class="text-lg font-semibold mb-2">Awarded Students</h3>
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead>
@@ -66,7 +66,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($scholarship->studentScholarships as $award)
+                                @foreach($scholarship->scholarshipAwards as $award)
                                     <tr>
                                         <td class="px-6 py-2">{{ $award->student->user->first_name }} {{ $award->student->user->last_name }}</td>
                                         <td class="px-6 py-2">{{ $award->grant_date->format('Y-m-d') }}</td>
