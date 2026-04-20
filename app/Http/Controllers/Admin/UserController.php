@@ -49,7 +49,7 @@ class UserController extends Controller
 
         $roles = array_keys(array_filter(
             $allRoles,
-            fn($rank) => $rank < $authUser->roleRank()
+            fn($rank) => $rank < $authUser->roleRank() && $rank > 0
         ));
 
         $universities = match ($authUser->role) {
@@ -126,7 +126,7 @@ class UserController extends Controller
 
         $roles = array_keys(array_filter(
             $allRoles,
-            fn($rank) => $rank < $authUser->roleRank()
+            fn($rank) => $rank < $authUser->roleRank() && $rank > 0 
         ));
 
         $universities = match ($authUser->role) {
