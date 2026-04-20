@@ -40,7 +40,7 @@ class UserPolicy
 
     public function delete(User $user, User $targetUser): bool
     {
-        return $this->canManageUser($user, $targetUser);
+        return false;
     }
 
     public function toggleStatus(User $user, User $targetUser): bool
