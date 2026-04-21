@@ -27,10 +27,10 @@ class UserPolicy
 
         return false;
     }
-
+    
     public function create(User $user): bool
     {
-        return $this->viewAny($user);
+        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin']);
     }
 
     public function update(User $user, User $targetUser): bool
