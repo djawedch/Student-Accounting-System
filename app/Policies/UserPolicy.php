@@ -30,7 +30,7 @@ class UserPolicy
     
     public function create(User $user): bool
     {
-        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin']);
+        return $this->viewAny($user);
     }
 
     public function update(User $user, User $targetUser): bool

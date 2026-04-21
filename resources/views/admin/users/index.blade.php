@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold">All Users</h2>
-                        @can('create', App\Models\User::class)
+                        @can(auth()->user()->role !== 'staff_admin')
                             <a href="{{ route('admin.users.create') }}"
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
                                 Add New User
