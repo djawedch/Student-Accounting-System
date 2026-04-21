@@ -23,6 +23,10 @@ class ScholarshipAwardPolicy
 
     public function update(User $user, ScholarshipAward $award): bool
     {
+        if ($user->role === 'staff_admin') {
+            return false;
+        }
+
         return $this->canAccessAward($user, $award);
     }
 
