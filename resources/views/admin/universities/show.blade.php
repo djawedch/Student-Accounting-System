@@ -1,10 +1,16 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-900 leading-tight">
+            {{ __('University Details') }}
+        </h2>
+    </x-slot>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+                <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-semibold">University Details</h2>
+                        <h2 class="text-2xl font-semibold text-gray-900">University Details</h2>
                         <div>
                             @can('update', $university)
                                 <a href="{{ route('admin.universities.edit', $university) }}"
@@ -13,7 +19,7 @@
                                 </a>
                             @endcan
                             <a href="{{ route('admin.universities.index') }}"
-                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
                                 Back to List
                             </a>
                         </div>
@@ -43,30 +49,23 @@
 
                     {{-- Departments List --}}
                     <div class="mt-8">
-                        <h3 class="text-xl font-semibold mb-4">Departments in this University</h3>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Departments in this University</h3>
 
                         @if($university->departments->count() > 0)
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead>
                                     <tr>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            ID</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Name</th>
-                                        <th
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Created At</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($university->departments as $department)
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">{{ $department->id }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap">{{ $department->name }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                {{ $department->created_at->format('M d, Y') }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-gray-900">{{ $department->id }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-gray-900">{{ $department->name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-gray-900">{{ $department->created_at->format('M d, Y') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

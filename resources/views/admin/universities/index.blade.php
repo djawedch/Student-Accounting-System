@@ -1,10 +1,16 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-900 leading-tight">
+            {{ __('Universities') }}
+        </h2>
+    </x-slot>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+                <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-semibold">Universities</h2>
+                        <h2 class="text-2xl font-semibold text-gray-900">Universities</h2>
                         @can('create', App\Models\University::class)
                             <a href="{{ route('admin.universities.create') }}"
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Add University</a>
@@ -42,7 +48,7 @@
                                 Filter
                             </button>
                             <a href="{{ route('admin.universities.index') }}"
-                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
                                 Reset
                             </a>
                         </div>
@@ -51,26 +57,18 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Name</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    City</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Departments</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departments</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach($universities as $university)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $university->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $university->city }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $university->departments_count }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900">{{ $university->name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900">{{ $university->city }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900">{{ $university->departments_count }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="{{ route('admin.universities.show', $university) }}"
                                             class="text-blue-600 hover:text-blue-900 mr-3">View</a>
