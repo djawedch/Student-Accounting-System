@@ -1,29 +1,30 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+        <h2 class="font-semibold text-xl text-gray-900 leading-tight">
+            @if(auth()->user()->role === 'super_admin')
+                {{ __('Super Admin Dashboard') }}
+            @elseif(auth()->user()->role === 'university_admin')
+                {{ __('University Admin Dashboard') }}
+            @elseif(auth()->user()->role === 'department_admin')
+                {{ __('Department Admin Dashboard') }}
+            @elseif(auth()->user()->role === 'staff_admin')
+                {{ __('Staff Admin Dashboard') }}
+            @endif
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            {{-- Welcome message --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-
             {{-- Super Admin only stats --}}
             @if(auth()->user()->role === 'super_admin')
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                     <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-indigo-600">
                         <p class="text-sm text-gray-500">Total Universities</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalUniversities) }}</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalUniversities) }}</p>
                     </div>
                     <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-purple-600">
                         <p class="text-sm text-gray-500">Total Departments</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalDepartments) }}</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalDepartments) }}</p>
                     </div>
                 </div>
             @endif
@@ -32,19 +33,19 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-indigo-600">
                     <p class="text-sm text-gray-500">Total Students</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalStudents) }}</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalStudents) }}</p>
                 </div>
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-teal-600">
                     <p class="text-sm text-gray-500">Total Invoices</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalInvoices) }}</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalInvoices) }}</p>
                 </div>
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-green-600">
                     <p class="text-sm text-gray-500">Total Collected (DZD)</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalCollected, 2) }}</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalCollected, 2) }}</p>
                 </div>
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-cyan-600">
                     <p class="text-sm text-gray-500">Scholarship Awards</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalScholarshipAwards) }}</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalScholarshipAwards) }}</p>
                 </div>
             </div>
 
@@ -52,25 +53,25 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-gray-400">
                     <p class="text-sm text-gray-500">Unpaid Invoices</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalUnpaid) }}</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalUnpaid) }}</p>
                 </div>
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-red-500">
                     <p class="text-sm text-gray-500">Overdue Invoices</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalOverdue) }}</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalOverdue) }}</p>
                 </div>
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-yellow-500">
                     <p class="text-sm text-gray-500">Partially Paid</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalPartiallyPaid) }}</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalPartiallyPaid) }}</p>
                 </div>
                 <div class="bg-white shadow-sm sm:rounded-lg p-6 border-l-4 border-green-500">
                     <p class="text-sm text-gray-500">Paid Invoices</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ number_format($totalPaid) }}</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($totalPaid) }}</p>
                 </div>
             </div>
 
             {{-- Payments Per Month Chart --}}
             <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-6">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Payments Collected — Last 6 Months</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Payments Collected — Last 6 Months</h3>
                 <canvas id="paymentsChart" height="100"></canvas>
             </div>
 
