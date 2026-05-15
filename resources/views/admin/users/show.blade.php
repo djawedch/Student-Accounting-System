@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-900 leading-tight">
             {{ __('User Details') }}: {{ $user->first_name }} {{ $user->last_name }}
         </h2>
     </x-slot>
@@ -8,9 +8,9 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+                <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-semibold">User Information</h2>
+                        <h2 class="text-2xl font-semibold text-gray-900">User Information</h2>
                         <div>
                             @can('update', $user)
                                 <a href="{{ route('admin.users.edit', $user) }}"
@@ -19,7 +19,7 @@
                                 </a>
                             @endcan
                             <a href="{{ route('admin.users.index') }}"
-                                class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
                                 Back to List
                             </a>
                         </div>
@@ -57,15 +57,9 @@
                             <dt class="text-sm font-medium text-gray-500">Status</dt>
                             <dd class="mt-1">
                                 @if($user->is_active)
-                                    <span
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                        Active
-                                    </span>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
                                 @else
-                                    <span
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                        Inactive
-                                    </span>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>
                                 @endif
                             </dd>
                         </div>
@@ -113,25 +107,21 @@
                     {{-- Optional: Display audit log entries for this user --}}
                     @if($user->auditLogs && $user->auditLogs->count() > 0)
                         <div class="mt-8">
-                            <h3 class="text-xl font-semibold mb-4">Recent Activity</h3>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h3>
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead>
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">IP
-                                            Address</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">IP Address</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($user->auditLogs->take(5) as $log)
                                         <tr>
-                                            <td class="px-6 py-2 whitespace-nowrap">{{ $log->event_type }}</td>
-                                            <td class="px-6 py-2 whitespace-nowrap">{{ $log->created_at->format('M d, Y H:i') }}
-                                            </td>
-                                            <td class="px-6 py-2 whitespace-nowrap">{{ $log->ip_address }}</td>
+                                            <td class="px-6 py-2 whitespace-nowrap text-gray-900">{{ $log->event_type }}</td>
+                                            <td class="px-6 py-2 whitespace-nowrap text-gray-900">{{ $log->created_at->format('M d, Y H:i') }}</td>
+                                            <td class="px-6 py-2 whitespace-nowrap text-gray-900">{{ $log->ip_address }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

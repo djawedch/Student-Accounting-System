@@ -111,7 +111,7 @@
                         </div>
 
                         {{-- University field (visible for all except super_admin) --}}
-                        <div id="university-field"
+                        <div id="university-field" class="mb-4"
                             style="{{ in_array(old('role', $user->role), ['university_admin', 'department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
                             <label for="university_id" class="block text-sm font-medium text-gray-700">University</label>
                             <select name="university_id" id="university_id"
@@ -126,7 +126,7 @@
                         </div>
 
                         {{-- Department field (visible only for department_admin and staff_admin) --}}
-                        <div id="department-field"
+                        <div id="department-field" class="mb-4"
                             style="{{ in_array(old('role', $user->role), ['department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
                             <label for="department_id" class="block text-sm font-medium text-gray-700">Department</label>
                             <select name="department_id" id="department_id"

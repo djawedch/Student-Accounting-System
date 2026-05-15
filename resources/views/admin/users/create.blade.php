@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-900 leading-tight">
             {{ __('Create New User') }}
         </h2>
     </x-slot>
@@ -8,8 +8,8 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h2 class="text-2xl font-semibold mb-4">Add New User</h2>
+                <div class="p-6">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Add New User</h2>
 
                     @if ($errors->any())
                         <div class="mb-4">
@@ -106,7 +106,7 @@
                         </div>
 
                         {{-- University --}}
-                        <div id="university-field" style="{{ in_array(old('role'), ['university_admin', 'department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
+                        <div id="university-field" class="mb-4" style="{{ in_array(old('role'), ['university_admin', 'department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
                             <label for="university_id" class="block text-sm font-medium text-gray-700">University</label>
                             <select name="university_id" id="university_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -123,7 +123,7 @@
                         </div>
 
                         {{-- Department --}}
-                        <div id="department-field" style="{{ in_array(old('role'), ['department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
+                        <div id="department-field" class="mb-4" style="{{ in_array(old('role'), ['department_admin', 'staff_admin']) ? '' : 'display: none;' }}">
                             <label for="department_id" class="block text-sm font-medium text-gray-700">Department</label>
                             <select name="department_id" id="department_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -154,7 +154,7 @@
                         {{-- Buttons --}}
                         <div class="flex items-center justify-end">
                             <a href="{{ route('admin.users.index') }}"
-                                class="px-4 py-2 bg-gray-300 rounded-md mr-2 hover:bg-gray-400">
+                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md mr-2 hover:bg-gray-400">
                                 Cancel
                             </a>
                             <button type="submit"
