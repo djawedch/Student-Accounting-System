@@ -22,7 +22,7 @@ class AuditLogFactory extends Factory
                 'Invoice',
                 'Payment',
                 'Scholarship',
-                'StudentScholarship',
+                'ScholarshipAward',
             ]),
             'model_id'   => fake()->numberBetween(1, 100),
             'ip_address' => fake()->ipv4(),
