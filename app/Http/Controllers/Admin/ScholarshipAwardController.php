@@ -49,8 +49,6 @@ class ScholarshipAwardController extends Controller
     {
         $this->authorize('create', ScholarshipAward::class);
 
-        $request->validated();
-
         $studentIds = $request->student_ids;
         $scholarshipIds = $request->scholarship_ids;
         $createdCount = 0;
@@ -66,8 +64,8 @@ class ScholarshipAwardController extends Controller
                         'scholarship_id' => $scholarshipId,
                         'grant_date' => $request->grant_date,
                         'end_date' => $request->end_date,
-                        'status' => $request->status,
-                        'paid_at' => $request->paid_at,
+                        'status' => 'awarded', // Fixed: always awarded
+                        'paid_at' => null, // Fixed: always null on creation
                         'reference' => $request->reference,
                     ]);
 

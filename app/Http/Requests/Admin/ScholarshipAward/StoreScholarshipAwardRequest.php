@@ -42,8 +42,6 @@ class StoreScholarshipAwardRequest extends FormRequest
             'scholarship_ids.*' => 'exists:scholarships,id',
             'grant_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:grant_date',
-            'status' => 'required|in:awarded,paid,cancelled',
-            'paid_at' => 'nullable|date',
             'reference' => 'nullable|string|max:255',
         ];
     }

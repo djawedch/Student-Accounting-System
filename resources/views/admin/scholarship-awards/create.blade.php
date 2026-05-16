@@ -152,26 +152,6 @@
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
 
-                        {{-- Status --}}
-                        <div class="mb-4">
-                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                            <select name="status" id="status"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                required>
-                                <option value="awarded" {{ old('status') == 'awarded' ? 'selected' : '' }}>Awarded</option>
-                                <option value="paid" {{ old('status') == 'paid' ? 'selected' : '' }}>Paid</option>
-                                <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
-                        </div>
-
-                        {{-- Paid At --}}
-                        <div class="mb-4">
-                            <label for="paid_at" class="block text-sm font-medium text-gray-700">Paid At <span class="text-gray-400 font-normal">(optional)</span></label>
-                            <input type="date" name="paid_at" id="paid_at"
-                                value="{{ old('paid_at') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                        </div>
-
                         {{-- Reference --}}
                         <div class="mb-4">
                             <label for="reference" class="block text-sm font-medium text-gray-700">Reference <span class="text-gray-400 font-normal">(optional)</span></label>
