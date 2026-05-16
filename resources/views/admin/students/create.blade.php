@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-900 leading-tight">
             {{ __('Add New Student') }}
         </h2>
     </x-slot>
@@ -8,8 +8,8 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h2 class="text-2xl font-semibold mb-4">Student Registration</h2>
+                <div class="p-6">
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-4">Student Registration</h2>
 
                     @if ($errors->any())
                         <div class="mb-4">
@@ -27,8 +27,7 @@
                         {{-- Personal Information --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="mb-4">
-                                <label for="first_name" class="block text-sm font-medium text-gray-700">First
-                                    Name</label>
+                                <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
                                 <input type="text" name="first_name" id="first_name" value="{{ old('first_name') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     required>
@@ -49,8 +48,7 @@
                                     required>
                             </div>
                             <div class="mb-4">
-                                <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of
-                                    Birth</label>
+                                <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
                                 <input type="date" name="date_of_birth" id="date_of_birth"
                                     value="{{ old('date_of_birth') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
@@ -66,8 +64,7 @@
                                     required>
                             </div>
                             <div class="mb-4">
-                                <label for="password_confirmation"
-                                    class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                                <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
                                 <input type="password" name="password_confirmation" id="password_confirmation"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     required>
@@ -76,8 +73,7 @@
 
                         {{-- University --}}
                         <div class="mb-4">
-                            <label for="university_id"
-                                class="block text-sm font-medium text-gray-700">University</label>
+                            <label for="university_id" class="block text-sm font-medium text-gray-700">University</label>
                             <select name="university_id" id="university_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 required>
@@ -92,8 +88,7 @@
 
                         {{-- Department --}}
                         <div class="mb-4">
-                            <label for="department_id"
-                                class="block text-sm font-medium text-gray-700">Department</label>
+                            <label for="department_id" class="block text-sm font-medium text-gray-700">Department</label>
                             <select name="department_id" id="department_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 required>
@@ -116,8 +111,7 @@
                                     required placeholder="e.g., L1, M2">
                             </div>
                             <div class="mb-4">
-                                <label for="academic_year" class="block text-sm font-medium text-gray-700">Academic
-                                    Year</label>
+                                <label for="academic_year" class="block text-sm font-medium text-gray-700">Academic Year</label>
                                 <input type="text" name="academic_year" id="academic_year"
                                     value="{{ old('academic_year') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
@@ -127,22 +121,17 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="mb-4">
-                                <label for="study_system" class="block text-sm font-medium text-gray-700">Study
-                                    System</label>
+                                <label for="study_system" class="block text-sm font-medium text-gray-700">Study System</label>
                                 <select name="study_system" id="study_system"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     required>
                                     <option value="">-- Select --</option>
-                                    <option value="LMD" {{ old('study_system') == 'LMD' ? 'selected' : '' }}>
-                                        LMD</option>
-                                    <option value="Classic" {{ old('study_system') == 'Classic' ? 'selected' : '' }}>
-                                        Classic
-                                    </option>
+                                    <option value="LMD" {{ old('study_system') == 'LMD' ? 'selected' : '' }}>LMD</option>
+                                    <option value="Classic" {{ old('study_system') == 'Classic' ? 'selected' : '' }}>Classic</option>
                                 </select>
                             </div>
                             <div class="mb-4">
-                                <label for="baccalaureate_year"
-                                    class="block text-sm font-medium text-gray-700">Baccalaureate Year</label>
+                                <label for="baccalaureate_year" class="block text-sm font-medium text-gray-700">Baccalaureate Year</label>
                                 <input type="number" name="baccalaureate_year" id="baccalaureate_year"
                                     value="{{ old('baccalaureate_year') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
@@ -162,7 +151,7 @@
                         {{-- Buttons --}}
                         <div class="flex items-center justify-end">
                             <a href="{{ route('admin.students.index') }}"
-                                class="px-4 py-2 bg-gray-300 rounded-md mr-2 hover:bg-gray-400">
+                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md mr-2 hover:bg-gray-400">
                                 Cancel
                             </a>
                             <button type="submit"
