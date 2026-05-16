@@ -14,9 +14,7 @@ class UpdateInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|in:unpaid,partially_paid,paid,overdue',
-            'issued_date' => 'required|date',
-            'due_date' => 'required|date|after_or_equal:issued_date',
+            'due_date' => 'required|date|after_or_equal:today',
         ];
     }
 }

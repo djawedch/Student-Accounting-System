@@ -33,29 +33,6 @@
                                 {{ number_format($invoice->fee->amount, 2) }}</p>
                         </div>
 
-                        {{-- Status dropdown --}}
-                        <div class="mb-4">
-                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                            <select name="status" id="status"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                required>
-                                <option value="unpaid" {{ old('status', $invoice->status) == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
-                                <option value="partially_paid" {{ old('status', $invoice->status) == 'partially_paid' ? 'selected' : '' }}>Partially Paid</option>
-                                <option value="paid" {{ old('status', $invoice->status) == 'paid' ? 'selected' : '' }}>
-                                    Paid</option>
-                                <option value="overdue" {{ old('status', $invoice->status) == 'overdue' ? 'selected' : '' }}>Overdue</option>
-                            </select>
-                        </div>
-
-                        {{-- Issued Date --}}
-                        <div class="mb-4">
-                            <label for="issued_date" class="block text-sm font-medium text-gray-700">Issued Date</label>
-                            <input type="date" name="issued_date" id="issued_date"
-                                value="{{ old('issued_date', $invoice->issued_date->format('Y-m-d')) }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                required>
-                        </div>
-
                         {{-- Due Date --}}
                         <div class="mb-4">
                             <label for="due_date" class="block text-sm font-medium text-gray-700">Due Date</label>
