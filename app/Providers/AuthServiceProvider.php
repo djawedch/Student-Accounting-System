@@ -14,6 +14,7 @@ class AuthServiceProvider extends ServiceProvider
         Fee::class => FeePolicy::class,
         Invoice::class => InvoicePolicy::class,
         Payment::class => PaymentPolicy::class,
+        Student::class => StudentPolicy::class,
         Scholarship::class => ScholarshipPolicy::class,
         ScholarshipAward::class => ScholarshipAwardPolicy::class,
         User::class => UserPolicy::class,

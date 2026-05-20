@@ -14,7 +14,7 @@ class StudentController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('viewAny', User::class);
+        $this->authorize('viewAny', Student::class);
 
         $user = Auth::user();
 
@@ -33,7 +33,7 @@ class StudentController extends Controller
 
     public function create()
     {
-        $this->authorize('create', User::class);
+        $this->authorize('create', Student::class);
 
         $user = Auth::user();
 
@@ -56,7 +56,7 @@ class StudentController extends Controller
 
     public function store(StoreStudentRequest $request)
     {
-        $this->authorize('create', User::class);
+        $this->authorize('create', Student::class);
 
         $validated = $request->validated();
 
