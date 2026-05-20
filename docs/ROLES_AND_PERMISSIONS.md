@@ -2,7 +2,7 @@
 
 ## UniversityController:
 
-- **super_admin** → full CRUD (create, read, update, delete) on any university.
+- **super_admin** → full CRUD (create, read, update, delete) on any university. Delete allowed ONLY if university has ZERO departments.
 - **university_admin** → read only on all universities, plus update access only on the university they belong to (no create/delete).
 - **department_admin** → read only on all universities, no write actions.
 - **staff_admin** → read only on all universities, no write actions.
