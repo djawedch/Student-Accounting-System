@@ -39,7 +39,7 @@ test('department_admin can view users list', function () {
     $response->assertStatus(200);
 });
 
-test('staff_admin can view users list', function () {
+test('staff_admin cannot view users list', function () {
     // Arrange
     [$university, $department] = createUniWithDept();
     $admin = staffAdmin($department, $university);
@@ -48,7 +48,7 @@ test('staff_admin can view users list', function () {
     $response = $this->actingAs($admin)->get(route('admin.users.index'));
 
     // Assert
-    $response->assertStatus(200);
+    $response->assertStatus(403);
 });
 
 test('student cannot view users list', function () {
