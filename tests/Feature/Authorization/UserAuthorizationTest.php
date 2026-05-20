@@ -205,7 +205,7 @@ test('department_admin can access create user form', function () {
     $response->assertStatus(200);
 });
 
-test('staff_admin can access create user form', function () {
+test('staff_admin cannot access create user form', function () {
     // Arrange
     [$university, $department] = createUniWithDept();
     $admin = staffAdmin($department, $university);
@@ -214,7 +214,7 @@ test('staff_admin can access create user form', function () {
     $response = $this->actingAs($admin)->get(route('admin.users.create'));
 
     // Assert
-    $response->assertStatus(200);
+    $response->assertStatus(403);
 });
 
 test('student cannot access create user form', function () {
