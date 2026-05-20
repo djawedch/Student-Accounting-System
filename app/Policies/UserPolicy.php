@@ -8,7 +8,7 @@ class UserPolicy
 {
     public function viewAny(User $user): bool
     {
-        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin', 'staff_admin']);
+        return in_array($user->role, ['super_admin', 'university_admin', 'department_admin']);
     }
 
     public function view(User $user, User $targetUser): bool
